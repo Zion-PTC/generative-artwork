@@ -1,8 +1,7 @@
-import fs from 'fs'
-import { dirname } from 'path'
-import { fileURLToPath } from 'url'
-import { LayerManager } from './LayerManager.js'
-import { RarityWeight } from './RarityWeight.js'
+import { Generator } from './Generator.js';
+import { LayerManager } from './LayerManager.js';
+import { RarityWeight } from './RarityWeight.js';
+import { System } from './System.js';
 
 export class Dna {
   constructor({
@@ -16,12 +15,13 @@ export class Dna {
     sourceFolderName,
     baseImageUri = '',
     rarityWeigths,
+    outputPath,
   }) {
-    this.description = description
-    this.baseImageUri = baseImageUri
-    this.startEditionFrom = startEditionFrom
-    this.endEditionAt = endEditionAt
-    this.supply = supply
+    this.description = description;
+    this.baseImageUri = baseImageUri;
+    this.startEditionFrom = startEditionFrom;
+    this.endEditionAt = endEditionAt;
+    this.supply = supply;
     this.rarityWeigths = [
       new RarityWeight(
         'super_rare',
@@ -38,32 +38,24 @@ export class Dna {
         rarityWeigths[2][0],
         this.supply
       ),
-    ]
-    this.metadataList = []
-    this.attributesList = []
-    this.dnaList = []
+    ];
+    this.outputPath = outputPath;
+    this.metadataList = [];
+    this.attributesList = [];
+    this.dnaList = [];
     this.layerManager = new LayerManager(
       importMetaUrl,
       width,
       heigth,
       sourceFolderName
-    )
+    );
   }
   isDnaUnique = (dnaList = [], dna = []) => {
     let foundDna = dnaList.find(
-      i => i.join('') === dna.join('')
-    )
+      (i) => i.join('') === dna.join('')
+    );
     return foundDna == undefined ? true : false;
-  }
-  createDna = (layers, rarity) => {
-    let randomNumber = [];
-    layers.forEach(layer => {
-      let num = Math.floor(Math.random()
-        * layer.elements[rarity].length);
-      randomNumber.push(num);
-    })
-    return randomNumber;
-  }
+  };
   addMetadata = (dna, edition) => {
     let date = Date.now();
     let tempMetadata = {
@@ -73,61 +65,69 @@ export class Dna {
       image: `${this.baseImageUri}/${edition}`,
       edition: edition,
       date,
-      attributeList: this.attributesList
+      attributeList: this.attributesList,
     };
     this.metadataList.push(tempMetadata);
-    this.attributesList = []
-  }
+    this.attributesList = [];
+  };
   addAttributes = (element) => {
-    let selectedElement
-      = element.layer.selectedElement;
+    let selectedElement = element.layer.selectedElement;
     this.attributesList.push({
       name: selectedElement.name,
-      rarity: selectedElement.rarity
-    })
-  }
+      rarity: selectedElement.rarity,
+    });
+  };
   getRarity = (editionCount) => {
     let rarity = '';
-    this.rarityWeigths.forEach(rarityWeight => {
+    this.rarityWeigths.forEach((rarityWeight) => {
       if (
-        editionCount >= rarityWeight.from
-        && editionCount <= rarityWeight.to
+        editionCount >= rarityWeight.from &&
+        editionCount <= rarityWeight.to
       ) {
-        rarity = rarityWeight.value
+        rarity = rarityWeight.value;
       }
     });
-    return rarity
-  }
+    return rarity;
+  };
   constructionLayerToDna = (
     dna = [],
     layers = [],
     rarity
   ) => {
-    let mappedDnaToLayers = layers.map((
-      layer,
-      index
-    ) => {
-      let selectedElement
-        = layer.elements[rarity][dna[index]];
+    let mappedDnaToLayers = layers.map((layer, index) => {
+      let selectedElement =
+        layer.elements[rarity][dna[index]];
       return {
         location: layer.location,
         position: layer.position,
         size: layer.size,
-        selectedElement: selectedElement
+        selectedElement: selectedElement,
       };
     });
-    return mappedDnaToLayers
+    return mappedDnaToLayers;
   };
   writeMetadata = (data) => {
-    fs.writeFileSync(
-      './output/_metadata.json',
-      data
+    System.writeJson(this.outputPath, data);
+  };
+  saveCanvasToPng = (canvas, editionCount) => {
+    const bufferTypes = [
+      'application/pdf',
+      'image/jpeg',
+      'image/png',
+      'raw',
+    ];
+    return System.writePng(
+      `./output/${editionCount}.png`,
+      canvas.toBuffer('image/png')
     );
   };
-  saveImage = (canvas, editionCount, bufferType) => {
-    fs.writeFileSync(
-      `./output/${editionCount}.png`,
-      canvas.toBuffer(bufferType)
-    )
+  static createDna = (layers, rarity) => {
+    return layers.map((layer) => {
+      let layerElementsOfRarity =
+        layer.elements[rarity].length;
+      return Generator.numeroRandomIntero(
+        layerElementsOfRarity
+      );
+    });
   };
 }

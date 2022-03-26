@@ -11,18 +11,17 @@ export class Drawer {
     this.canvasProperties = {
       context: context,
       width: width,
-      heigth: heigth
-    }
-    this._prova = 2
-    this.loadedElements = []
-    this.canvas = createCanvas(width, heigth)
-    this.ctx
-      = this.canvas.getContext(
-        this.canvasProperties.context
-      )
+      heigth: heigth,
+    };
+    this._prova = 2;
+    this.loadedElements = [];
+    this.canvas = createCanvas(width, heigth);
+    this.ctx = this.canvas.getContext(
+      this.canvasProperties.context
+    );
   }
   get prova() {
-    return this._prova
+    return this._prova;
   }
   drawElement = (element) => {
     this.ctx.drawImage(
@@ -34,25 +33,27 @@ export class Drawer {
     );
   };
   randomBackground() {
-    this.ctx.fillStyle = Generator.color()
+    this.ctx.fillStyle = Generator.color();
     this.ctx.fillRect(
       0,
       0,
       this.canvasProperties.width,
       this.canvasProperties.heigth
-    )
+    );
   }
   signImage = (sig) => {
     this.ctx.fillStyle = '#000000';
     this.ctx.font = 'bold 30pt Courier';
     this.ctx.textBaseline = 'top';
     this.ctx.textAlign = 'left';
-    this.ctx.fillText(sig, 40, 40)
-  }
+    this.ctx.fillText(sig, 40, 40);
+  };
   async loadLayerImage(layer) {
     return new Promise(async (res, rej) => {
-      const image = await loadImage(`${layer.selectedElement.path}`);
-      res({ layer, loadedImage: image })
-    })
+      const image = await loadImage(
+        `${layer.selectedElement.path}`
+      );
+      res({ layer, loadedImage: image });
+    });
   }
 }
