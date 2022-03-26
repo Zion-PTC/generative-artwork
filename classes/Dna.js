@@ -6,18 +6,16 @@ import { RarityWeight } from './RarityWeight.js'
 
 export class Dna {
   constructor({
-    description = '',
     width,
     heigth,
+    startEditionFrom = 1,
+    endEditionAt = 2,
+    supply,
+    description = '',
     importMetaUrl,
     sourceFolderName,
     baseImageUri = '',
-    startEditionFrom = 1,
-    endEditionAt = 4,
-    supply = 4,
     rarityWeigths,
-    metadataList = [],
-    attributesList = []
   }) {
     this.description = description
     this.baseImageUri = baseImageUri
@@ -41,8 +39,8 @@ export class Dna {
         this.supply
       ),
     ]
-    this.metadataList = metadataList
-    this.attributesList = attributesList
+    this.metadataList = []
+    this.attributesList = []
     this.dnaList = []
     this.layerManager = new LayerManager(
       importMetaUrl,
