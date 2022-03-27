@@ -7,48 +7,50 @@ export class Dna {
   constructor({
     width,
     heigth,
+    importMetaUrl,
+    sourceFolderName,
     startEditionFrom = 1,
     endEditionAt = 2,
     supply,
     description = '',
-    importMetaUrl,
-    sourceFolderName,
     baseImageUri = '',
-    rarityWeigths,
+    rarityWeights,
     outputPath,
   }) {
+    this.layerManager = new LayerManager(
+      width,
+      heigth,
+      importMetaUrl,
+      sourceFolderName
+    );
     this.description = description;
     this.baseImageUri = baseImageUri;
     this.startEditionFrom = startEditionFrom;
     this.endEditionAt = endEditionAt;
     this.supply = supply;
-    this.rarityWeigths = [
+    this.rarityWeights = [
       new RarityWeight(
         'super_rare',
-        rarityWeigths[0][0],
-        rarityWeigths[0][1]
+        rarityWeights[0][0],
+        rarityWeights[0][1],
+        () => {}
       ),
       new RarityWeight(
         'rare',
-        rarityWeigths[1][0],
-        rarityWeigths[1][1]
+        rarityWeights[1][0],
+        rarityWeights[1][1]
       ),
       new RarityWeight(
         'original',
-        rarityWeigths[2][0],
+        rarityWeights[2][0],
         this.supply
       ),
     ];
+    this.rarity = '';
     this.outputPath = outputPath;
     this.metadataList = [];
     this.attributesList = [];
     this.dnaList = [];
-    this.layerManager = new LayerManager(
-      importMetaUrl,
-      width,
-      heigth,
-      sourceFolderName
-    );
   }
   isDnaUnique = (dnaList = [], dna = []) => {
     let foundDna = dnaList.find(
@@ -78,25 +80,21 @@ export class Dna {
     });
   };
   getRarity = (editionCount) => {
-    let rarity = '';
-    this.rarityWeigths.forEach((rarityWeight) => {
+    this.rarity = '';
+    this.rarityWeights.forEach((rarityWeight) => {
       if (
         editionCount >= rarityWeight.from &&
         editionCount <= rarityWeight.to
       ) {
-        rarity = rarityWeight.value;
+        this.rarity = rarityWeight.name;
       }
     });
-    return rarity;
+    return this;
   };
-  constructionLayerToDna = (
-    dna = [],
-    layers = [],
-    rarity
-  ) => {
+  constructionLayerToDna = (dna = [], layers = []) => {
     let mappedDnaToLayers = layers.map((layer, index) => {
       let selectedElement =
-        layer.elements[rarity][dna[index]];
+        layer.elements[this.rarity][dna[index]];
       return {
         location: layer.location,
         position: layer.position,
@@ -107,7 +105,7 @@ export class Dna {
     return mappedDnaToLayers;
   };
   writeMetadata = (data) => {
-    System.writeJson(this.outputPath, data);
+    return System.writeJson(this.outputPath, data);
   };
   saveCanvasToPng = (canvas, editionCount) => {
     const bufferTypes = [
@@ -121,12 +119,10 @@ export class Dna {
       canvas.toBuffer('image/png')
     );
   };
-  static createDna = (layers, rarity) => {
-    return layers.map((layer) => {
-      let layerElementsOfRarity =
-        layer.elements[rarity].length;
-      return Generator.numeroRandomIntero(
-        layerElementsOfRarity
+  createDna = (rarity) => {
+    return this.layerManager.layers.map((layer) => {
+      return Generator.integerRandomNumber(
+        layer.elements[rarity].length
       );
     });
   };

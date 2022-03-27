@@ -1,6 +1,17 @@
 import fs from 'fs';
 import { dirname } from 'path';
 import { fileURLToPath } from 'url';
+import * as readline from 'readline';
+let terminalInterface = readline.createInterface({
+  input: process.stdin,
+  output: process.stdout,
+});
+terminalInterface.close();
+// console.log(terminalInterface);
+// terminalInterface.question(`What's your name?`, (name) => {
+//   console.log(`Hi ${name}!`);
+//   terminalInterface.close();
+// });
 
 export class System {
   static arrayOfFoldersInDirectory = (path) => {
@@ -32,5 +43,16 @@ export class System {
   }
   static writePng(path, data) {
     return fs.writeFileSync(path, data);
+  }
+  /**
+   * @title createNestedDir
+   * @note funzione per creare una serie di cartelle
+   * @param {String} dir
+   */
+  static createNestedDir(dir) {
+    //example './tmp/but/then/nested';
+    if (!fs.existsSync(dir)) {
+      fs.mkdirSync(dir, { recursive: true });
+    }
   }
 }

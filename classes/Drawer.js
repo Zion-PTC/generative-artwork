@@ -3,11 +3,7 @@ import { Generator } from './Generator.js';
 const { createCanvas, loadImage } = pkg;
 
 export class Drawer {
-  constructor(
-    width = 1000,
-    heigth = 1000,
-    context = '2d'
-  ) {
+  constructor(width = 1000, heigth = 1000, context = '2d') {
     this.canvasProperties = {
       context: context,
       width: width,
@@ -56,4 +52,12 @@ export class Drawer {
       res({ layer, loadedImage: image });
     });
   }
+  loadElements = async (results) => {
+    let arrayOfPromise = [];
+    results.forEach((layer) => {
+      arrayOfPromise.push(this.loadLayerImage(layer));
+    });
+    let array = await Promise.all(arrayOfPromise);
+    return array;
+  };
 }

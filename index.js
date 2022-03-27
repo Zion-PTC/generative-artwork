@@ -12,7 +12,7 @@ let dnaObject = {
   importMetaUrl: import.meta.url,
   sourceFolderName: 'input',
   baseImageUri: 'http://gotek.znft.tech/nft',
-  rarityWeigths: [[1, 1], [2, 2], [3]],
+  rarityWeights: [[1, 1], [2, 2], [3]],
   outputPath: './output/_metadata.json',
 };
 
@@ -23,22 +23,15 @@ const startCreating = async () => {
   dna.writeMetadata('');
   let editionCount = dna.startEditionFrom;
   while (editionCount <= dna.endEditionAt) {
-    let rarity = dna.getRarity(editionCount);
-    let newDna = Dna.createDna(
-      dna.layerManager.layers,
-      rarity
-    );
+    let newDna = dna
+      .getRarity(editionCount)
+      .createDna(dna.rarity);
     if (dna.isDnaUnique(dna.dnaList, newDna)) {
       let results = dna.constructionLayerToDna(
         newDna,
-        dna.layerManager.layers,
-        rarity
+        dna.layerManager.layers
       );
-      let loadedElements = []; //array di promesse
-      results.forEach((layer) => {
-        loadedElements.push(drawer.loadLayerImage(layer));
-      });
-      let elementArray = await Promise.all(loadedElements);
+      let elementArray = await drawer.loadElements(results);
       drawer.randomBackground();
       elementArray.forEach((element) => {
         drawer.drawElement(element);

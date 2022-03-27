@@ -4,7 +4,7 @@ export class Generator {
     let pastel = `hls(${hue}, 100%, 85%)`;
     return pastel;
   }
-  static numeroRandomIntero(intervallo) {
+  static integerRandomNumber(intervallo) {
     return Math.floor(Math.random() * intervallo);
   }
 }
