@@ -13,55 +13,59 @@ terminalInterface.close();
 //   terminalInterface.close();
 // });
 
-let folderStructure = {
-  GenerativeArtMachine: [
-    [
-      { System: [] },
-      [
-        'Class.js',
-        'Collection.js',
-        'CombinatorManager',
-        '...',
-      ],
-    ],
-  ],
-};
-
 export class System {
-  constructor() {
-    this.folders = [];
-    this.files = [];
-    this.folderStructure = new Folders();
-  }
-  readdirSync = fs.readdirSync();
+  /**
+   * @param {String} path target path
+   * @returns {Array} an array containing the name of folders in
+   * the provided directory
+   */
   static arrayOfFoldersInDirectory = (path) => {
-    return fs
-      .readdirSync(path, {
-        withFile_Types: true,
-      })
-      .filter((directoryEntity) =>
-        directoryEntity.isDirectory()
-      )
-      .map((directoryEntity) => directoryEntity.name);
+    return fs.readdirSync(path, {
+      withFile_Types: true,
+    });
+    // .filter((directoryEntity) =>
+    //   directoryEntity.isDirectory()
+    // )
+    // .map((directoryEntity) => directoryEntity.name);
   };
+  /**
+   * @param {String} path target path
+   * @returns {}  an array of name of the files contained in
+   * the target path
+   */
   static arrayOfNamesOfFilesInFolder = (path) => {
     return fs
       .readdirSync(path)
       .filter((item) => !/(^|\/)\.['\/\.]/g.test(item))
       .map((fileName) => {
         return {
-          name: fileName.slice(0, -4),
-          path: `${path}/${fileName}`,
+          name: fileName,
+          path: `${path}${fileName}`,
         };
-        u;
       });
   };
+  /**
+   * @param {String} importMetaUrl  data which can be retrieved with in the callee file
+   * bay typing import.meta.url
+   * @returns {String}  the complete path to the file from which this function is called
+   */
   static pathOfFileFromImportMetaUrl = (importMetaUrl) => {
     return `${dirname(fileURLToPath(importMetaUrl))}`;
   };
+  /**
+   *
+   * @param {String} targetPath path with filename included
+   * @param {String} data data to be written in the file
+   * @returns
+   */
   static writeJson(targetPath, data) {
-    fs.writeFileSync(targetPath, data);
+    return fs.writeFileSync(targetPath, data, () => {});
   }
+  /**
+   * @param {String} path target path with file name included
+   * @param {String} data data to insert in the file
+   * @returns
+   */
   static writePng(path, data) {
     return fs.writeFileSync(path, data);
   }
@@ -192,6 +196,15 @@ export class System {
       }
     }
     return root;
+  }
+  static deleteFile(path, callback) {
+    fs.rm(path, callback);
+  }
+  static deleteFolder(path, options) {
+    return fs.rmdirSync(path, options);
+  }
+  static existsSync(path) {
+    return fs.existsSync(path);
   }
   get folders() {}
   get files() {}

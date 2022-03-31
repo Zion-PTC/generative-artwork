@@ -1,9 +1,27 @@
 import { expect } from 'chai';
+import Mocha from 'mocha';
+import { zionUtil } from '../../../telegram-bots/Classes/Utils.js';
 import { System } from '../../Machines/System/System.js';
-import { describe, it } from 'mocha';
+
+const testRunner = new Mocha({ slow: 1000 });
+testRunner.suite.emit(
+  'pre-require',
+  global,
+  'nofile',
+  testRunner
+);
+var suiteRun = testRunner.run();
+process.on('exit', (code) => {
+  process.exit(suiteRun.stats.failures > 0);
+});
+
 const initialPath =
   '/Users/WAW/Documents/Projects/zion-GenerativeArtMachine/Machines/System';
 const tree = System.buildTree(initialPath);
+let log = zionUtil.debuglog('log');
+
+let TESTPATH =
+  '/Users/WAW/Documents/Projects/zion-GenerativeArtMachine/Machines/GenerativeArtMachine/Machines/';
 
 export let system = describe('TreeBuilder', () => {
   it('Should return root node', () => {
@@ -43,6 +61,7 @@ export let system = describe('TreeBuilder', () => {
       expect(utils.name).to.be.equal('utils');
     });
   });
+  // METHODS
   describe('TreeNode.prototype.toStringedTree()', () => {
     it('Should return a string formatted directory tree', () => {
       /**
@@ -55,6 +74,101 @@ export let system = describe('TreeBuilder', () => {
       expect(tree.toStringedTree()).to.be.equal(
         expectedString
       );
+    });
+  });
+  describe('System static method :arrayOfFoldersInDirectory()', () => {
+    it('dovrebbe ritornare un array contenente i folder contenuti nel percorso fornito', () => {
+      let array =
+        System.arrayOfFoldersInDirectory(TESTPATH);
+      expect(array[0]).to.be.equal('Gotek GenArt Machine');
+    });
+  });
+  describe('System static method :arrayOfNamesOfFilesInFolder()', () => {
+    const TESTMACHINENAME = 'Gotek GenArt Machine';
+    const NOMEDELLAPROPRIETA = 'path';
+    const array =
+      System.arrayOfNamesOfFilesInFolder(TESTPATH);
+    it('dovrebbe creare un array con i nomi dei file contenuti nella cartella', () => {
+      expect(array.length).not.to.be.null;
+    });
+    it('il primo elemento dovrebbe avere un membro "name" non nullo', () => {
+      expect(array[0].name).to.be.not.null;
+    });
+    it(`il primo elemento dovrebbe avere il nome: ${TESTMACHINENAME}`, () => {
+      expect(array[0].name).to.be.equal(TESTMACHINENAME);
+    });
+    it(`il primo elemento dovrebbe avere una proprietà chiamata: ${NOMEDELLAPROPRIETA} con valore: \n${TESTPATH}${TESTMACHINENAME}`, () => {
+      expect(array[0]).to.have.property(
+        NOMEDELLAPROPRIETA,
+        `${TESTPATH}${TESTMACHINENAME}`
+      );
+    });
+  });
+  describe('System static method: pathOfFileFromImportMetaUrl()', () => {
+    const EXPECTEDPATH =
+      '/Users/WAW/Documents/Projects/zion-GenerativeArtMachine/test/System';
+    const importMetaUrl = import.meta.url;
+    const path =
+      System.pathOfFileFromImportMetaUrl(importMetaUrl);
+    it('dovrebbe ritornare il percorso del file da cui si manda il import.meta.url', () => {
+      expect(path).to.be.equal(EXPECTEDPATH);
+    });
+  });
+  describe('System static method: writeJson()', () => {
+    const NOMEFILE = 'ciao.json';
+    const DATA = 'ciao';
+    it(`dovrebbe scrivere un file JSON di nome: ${NOMEFILE} nel Test Path`, () => {
+      System.writeJson(TESTPATH + NOMEFILE, DATA);
+      expect(
+        System.arrayOfNamesOfFilesInFolder(TESTPATH)[1].name
+      ).to.be.equal(NOMEFILE);
+      System.deleteFile(TESTPATH + NOMEFILE, () => {});
+    });
+  });
+  describe('System stati methof: createNestedDir', () => {
+    const BASEPATH =
+      '/Users/WAW/Documents/Projects/zion-GenerativeArtMachine/test';
+    const PROVAPATHTARGET = 'zeta';
+    const PROVAPATH1 = 'prova';
+    const PROVAPATH2 = 'ricursiva';
+    it('dovrebbe creare una cartella ricursivamente', () => {
+      System.createNestedDir(
+        BASEPATH +
+          '/' +
+          PROVAPATHTARGET +
+          '/' +
+          PROVAPATH1 +
+          '/' +
+          PROVAPATH2
+      );
+      log(
+        System.arrayOfFoldersInDirectory(
+          `${BASEPATH}/${PROVAPATHTARGET}/`
+        )
+      );
+      expect(
+        System.existsSync(`${BASEPATH}/${PROVAPATHTARGET}/`)
+      ).to.be.true;
+      expect(
+        System.existsSync(
+          `${BASEPATH}/${PROVAPATHTARGET}` +
+            `/${PROVAPATH1}`
+        )
+      ).to.be.true;
+      expect(
+        System.existsSync(
+          `${BASEPATH}/${PROVAPATHTARGET}` +
+            `/${PROVAPATH1}/${PROVAPATH2}`
+        )
+      ).to.be.true;
+      System.deleteFolder(
+        `${BASEPATH}/${PROVAPATHTARGET}` +
+          `/${PROVAPATH1}/${PROVAPATH2}`
+      );
+      System.deleteFolder(
+        `${BASEPATH}/${PROVAPATHTARGET}` + `/${PROVAPATH1}`
+      );
+      System.deleteFolder(`${BASEPATH}/${PROVAPATHTARGET}`);
     });
   });
 });

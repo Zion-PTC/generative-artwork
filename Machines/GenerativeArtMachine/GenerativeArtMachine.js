@@ -9,11 +9,14 @@ export class GenerativeArtMachine {
     this.path = path;
     //Collections
     this.collections = [];
-    this.createMachine(name);
+    (async () => {
+      await this.createMachine(name);
+    })();
   }
   //METHODS
   //GenerativeArtMachine
   async createMachine(name) {
+    console.log(await this.machineExists(name));
     !(await this.machineExists(name))
       ? this.createMachineDirectoryAndJson(name)
       : console.log('Machine already exists');
@@ -37,24 +40,10 @@ export class GenerativeArtMachine {
       JSON.stringify(this)
     );
   }
-  //Rarity
-  getRarity() {}
   //Dna
-  createDna() {}
-  isDnaUnique() {}
-  constructionLayerToDna() {}
-  addAttributes() {}
-  addMetadata() {}
-  addDnaToDnaList() {}
-  saveCanvasToPng() {}
-  writeMetadata() {}
 
+  addDnaToDnaList() {}
   createUniqueDna() {}
-  //Drawer
-  loadElements() {}
-  randomBackground() {} // or try to inherit from Drawer
-  drawElement() {}
-  signImage() {}
 
   // COLLECTION
   getCollections() {}

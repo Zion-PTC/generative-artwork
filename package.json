@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "mocha"
+    "test": "mocha",
+    "testSystem": "NODE_DEBUG=log node /Users/WAW/Documents/Projects/zion-GenerativeArtMachine/test/System/System.js"
   },
   "author": "",
   "license": "ISC",
