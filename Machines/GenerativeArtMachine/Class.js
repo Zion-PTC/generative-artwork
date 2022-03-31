@@ -1,7 +1,7 @@
-import { System } from '../../../../../classes/System.js';
-import { Rarity } from '../../Rarity/Rarity.js';
-import { Element } from './Layer/Element/Element.js';
-import { Layer } from './Layer/Layer.js';
+import { System } from '../System/System.js';
+import { Rarity } from './Rarity.js';
+import { Element } from './Element.js';
+import { Layer } from './Layer.js';
 import { zionUtil } from '/Users/WAW/Documents/Projects/telegram-bots/Classes/Utils.js';
 
 export class Class {
@@ -51,35 +51,14 @@ export class Class {
       });
       return raritiesByLayers.push(newRarityNames);
     });
-    if (this.checkRarities(raritiesByLayers)) {
+    if (this.haveAllLayersSameRarities(raritiesByLayers)) {
     } else {
       console.log(
         'Layers do not have the same Rarity Folders'
       );
     }
   }
-  checkRarities(arrayOfArrays) {
-    let results = [];
-    for (
-      let index = 0;
-      index < arrayOfArrays.length - 1;
-      index++
-    ) {
-      const array = arrayOfArrays[index];
-      const nextArray = arrayOfArrays[index + 1];
-
-      if (zionUtil.checkArraysContent(array, nextArray)) {
-        return results.push(true);
-      } else {
-        return results.push(false);
-      }
-    }
-    if (!results.includes(false)) {
-      return true;
-    } else {
-      return false;
-    }
-  }
+  // ELEMENTS
   createElements() {
     this.rarities.forEach((rarity) => {
       let elements = System.arrayOfNamesOfFilesInFolder(
@@ -101,6 +80,30 @@ export class Class {
       return;
     });
   }
+  // CONTROL
+  haveAllLayersSameRarities(arrayOfArrays) {
+    let results = [];
+    for (
+      let index = 0;
+      index < arrayOfArrays.length - 1;
+      index++
+    ) {
+      const array = arrayOfArrays[index];
+      const nextArray = arrayOfArrays[index + 1];
+
+      if (zionUtil.checkArraysContent(array, nextArray)) {
+        return results.push(true);
+      } else {
+        return results.push(false);
+      }
+    }
+    if (!results.includes(false)) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+  // GETTERS
   get raritiesSortedByLayer() {
     let obj = [];
     this.layers.forEach((layer) => {

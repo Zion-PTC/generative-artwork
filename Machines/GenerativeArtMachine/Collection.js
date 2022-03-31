@@ -1,6 +1,4 @@
-import { System } from '../../../classes/System.js';
-import { Class } from './Edition/Class/Class.js';
-import { Layer } from './Edition/Class/Layer/Layer.js';
+import { Class } from './Class.js';
 
 export class Collection {
   constructor(name, path, classes) {
@@ -11,7 +9,6 @@ export class Collection {
     this.supply;
     this.type;
     this.classes = [];
-    this.rarities = [];
     this.createClasses(classes);
   }
   //COLLECTIONS
@@ -31,6 +28,25 @@ export class Collection {
     let array = [];
     this.classes.forEach((cl) => {
       return array.push(cl.name);
+    });
+    return array;
+  }
+  get arrayOfRarities() {
+    let array = [];
+    this.classes.forEach((cl) => {
+      cl.raritySet.forEach((rarityName) => {
+        let obj = {};
+        obj.name = rarityName;
+        obj.layers = [];
+        cl.rarities
+          .filter((rarity) => {
+            return rarity.name === rarityName;
+          })
+          .forEach((rarity) => {
+            obj.layers.push(rarity.layer.name);
+          });
+        array.push(obj);
+      });
     });
     return array;
   }

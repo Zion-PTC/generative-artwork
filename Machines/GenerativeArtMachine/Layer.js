@@ -4,6 +4,5 @@ export class Layer {
     this.path = path;
     this.collection = collection;
     this.class;
-    this.elements;
   }
 }

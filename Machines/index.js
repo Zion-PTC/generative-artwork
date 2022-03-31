@@ -1,4 +1,7 @@
+import { zionUtil } from '../../telegram-bots/Classes/Utils.js';
 import { GenerativeArtMachine } from './GenerativeArtMachine/GenerativeArtMachine.js';
+
+export let log = zionUtil.debuglog('log');
 
 let gotekMachine = new GenerativeArtMachine(
   'Gotek GenArt Machine',
@@ -11,21 +14,4 @@ let propaganda = gotekMachine.createNewCollection(
   'Propaganga',
   ['basic']
 );
-console.log(propaganda.arrayOfClasses);
-
-// console.log(
-//   gotekMachine.collections[0].classes[0]
-//     .raritiesSortedByLayer
-// );
-// console.log(
-//   gotekMachine.collections[0].classes[0]
-//     .elementCountsByRarity
-// );
-// console.log(
-//   gotekMachine.collections[0].classes[0]
-//     .possibleCombinationsPerRarity
-// );
-// console.log(
-//   gotekMachine.collections[0].classes[0]
-//     .possibleCombinationsOfClass
-// );
+log(gotekMachine.collections[0]);

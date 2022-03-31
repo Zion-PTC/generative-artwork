@@ -1,5 +1,5 @@
-import { System } from '../../classes/System.js';
-import { Collection } from './Collection/Collection.js';
+import { System } from '../System/System.js';
+import { Collection } from './Collection.js';
 
 export class GenerativeArtMachine {
   constructor(name, description, url, path) {

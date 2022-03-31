@@ -1,4 +1,4 @@
-import { System } from '../../../../classes/System.js';
+import { System } from '../System/System.js';
 
 export class Rarity {
   constructor(name, path, collection, cl, layer) {

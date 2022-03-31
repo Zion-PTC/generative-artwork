@@ -1,7 +1,7 @@
 import { Generator } from './Generator.js';
 import { LayerManager } from './LayerManager.js';
 import { RarityWeight } from './RarityWeight.js';
-import { System } from './System.js';
+import { System } from '../Machines/System/System.js';
 
 export class Dna {
   constructor({
