@@ -51,6 +51,16 @@ export class Collection {
     return array;
   }
   //LAYERS
+  getCollections() {}
+  createNewCollection(name, classes) {
+    let newCollection = new Collection(
+      name,
+      this.path,
+      classes
+    );
+    this.collections.push(newCollection);
+    return newCollection;
+  }
   getReleasedEditions() {}
   getUnreleasedEditions() {}
 }

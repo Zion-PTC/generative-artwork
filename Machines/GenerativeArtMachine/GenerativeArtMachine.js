@@ -6,19 +6,14 @@ export class GenerativeArtMachine {
     this.name = name;
     this.description = description;
     this.url = url;
-    this.path = path;
+    this.path = `${path}${name}`;
     //Collections
     this.collections = [];
+    this.logMessage;
     // this.createMachine(name);
     return this;
   }
-  //METHODS
-  //GenerativeArtMachine
-  async createMachine() {
-    // !(await this.machineExists(name))
-    //   ? this.createMachineDirectoryAndJson(name)
-    //   : console.log('Machine already exists');
-  }
+  //STATIC METHODS
   static async machineExists(name) {
     return new Promise((resolve, reject) => {
       let listOfMachines = System.arrayOfFoldersInDirectory(
@@ -29,37 +24,27 @@ export class GenerativeArtMachine {
         : resolve(false);
     });
   }
-  createMachineDirectoryAndJson(name) {
-    System.createNestedDir(
-      `/Users/WAW/Documents/Projects/zion-GenerativeArtMachine/Machines/GenerativeArtMachine/Machines${name}/Collections`
+  //METHODS
+  async createMachineDirectoryAndJson() {
+    this.logMessage = undefined;
+    let ERRORMESSAGE = `It already exists a machine with name ${this.name}`;
+    let response = await GenerativeArtMachine.machineExists(
+      this.name
     );
-    System.writeJson(
-      `./GenerativeArtMachine/Machines/${name}/${name}.json`,
-      JSON.stringify(this)
-    );
+    response;
+    if (!response) {
+      System.createNestedDir(`${this.path}/Collections`);
+      System.writeJson(
+        `${this.path}/${this.name}.json`,
+        JSON.stringify(this)
+      );
+      return this;
+    } else {
+      this.logMessage = ERRORMESSAGE;
+      return this;
+    }
   }
-  //Dna
-
-  addDnaToDnaList() {}
-  createUniqueDna() {}
-
-  // COLLECTION
-  getCollections() {}
-  createNewCollection(name, classes) {
-    let newCollection = new Collection(
-      name,
-      this.path,
-      classes
-    );
-    this.collections.push(newCollection);
-    return newCollection;
+  async deleteMachineDirectoryAndJson() {
+    return System.deleteRecursiveDir(this.path);
   }
-  editCollection() {}
-  searchCollection() {}
-  // EDITION
-  createNextEdition() {}
-  createSpecificEdition() {}
-  createEditions(from, to) {}
-  getEdition(edition) {}
-  getEditionsBatch() {}
 }

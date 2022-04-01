@@ -15,19 +15,15 @@ var suiteRun = testRunner.run();
 process.on('exit', (code) => {
   process.exit(suiteRun.stats.failures > 0);
 });
-
-const initialPath =
-  '/Users/WAW/Documents/Projects/zion-GenerativeArtMachine/Machines/System';
-const tree = System.buildTree(initialPath);
 let log = zionUtil.debuglog('log');
 
-let PROVA = 'prova';
-let DESCRIZIONE = 'descrizione';
-let URL = 'url';
-let PATH =
-  '/Users/WAW/Documents/Projects/zion-GenerativeArtMachine/input';
-let MACHINESPATH =
-  '/Users/WAW/Documents/Projects/zion-GenerativeArtMachine/Machines/GenerativeArtMachine/Machines';
+// let PROVA = 'prova';
+// let DESCRIZIONE = 'descrizione';
+// let URL = 'url';
+// let PATH =
+//   '/Users/WAW/Documents/Projects/zion-GenerativeArtMachine/input';
+// let MACHINESPATH =
+//   '/Users/WAW/Documents/Projects/zion-GenerativeArtMachine/Machines/GenerativeArtMachine/Machines';
 
 // let prova = new GenerativeArtMachine(
 //   PROVA,
@@ -43,7 +39,7 @@ export let generativeArtMachine =
     let DESCRIPTION = 'This is my first GenArt Machine';
     let URL = 'https://gotek.znft.tech';
     let PATH =
-      '/Users/WAW/Documents/Projects/zion-GenerativeArtMachine/input';
+      '/Users/WAW/Documents/Projects/zion-GenerativeArtMachine/Machines/GenerativeArtMachine/Machines/';
     let gotekMachine = new GenerativeArtMachine(
       NAME,
       DESCRIPTION,
@@ -62,8 +58,10 @@ export let generativeArtMachine =
       it(`dovrebbe creare un oggetto con url: ${URL}`, () => {
         expect(gotekMachine.url).to.be.equal(URL);
       });
-      it(`dovrebbe creare un oggetto con path: ${PATH}`, () => {
-        expect(gotekMachine.path).to.be.equal(PATH);
+      it(`dovrebbe creare un oggetto con path: ${PATH}${NAME}`, () => {
+        expect(gotekMachine.path).to.be.equal(
+          `${PATH}${NAME}`
+        );
       });
       // let propaganda = gotekMachine.createNewCollection(
       //   'Propaganga',
@@ -71,16 +69,33 @@ export let generativeArtMachine =
       // );
       // log(gotekMachine.collections[0]);
     });
-    describe('GenerativeArtMachine method: createMachine', () => {
-      it('dovrebbe aver creato un oggetto con i dati della macchina.', () => {
-        log(gotekMachine);
-      });
-    });
-    describe('machineExists()', () => {
-      it('ciao', async () => {
-        expect(
-          await GenerativeArtMachine.machineExists(NAME)
-        ).to.be.false;
-      });
-    });
+    describe(
+      'GenerativeArtMachine method: ' + 'machineExists()',
+      () => {
+        it('dovrebbe ritornare che la macchina non è ancora stata salvata.', async () => {
+          expect(
+            await GenerativeArtMachine.machineExists(NAME)
+          ).to.be.false;
+        });
+      }
+    );
+    describe(
+      'GenerativeArtMachine method: ' +
+        'createMachineDirectoryAndJson()',
+      () => {
+        it(
+          'dovrebbe aver creato un file Json con i ' +
+            'dati della macchina.',
+          async () => {
+            await gotekMachine.createMachineDirectoryAndJson();
+            expect(
+              System.arrayOfFoldersInDirectory(
+                PATH
+              ).includes(NAME)
+            ).to.be.equal(true);
+            await gotekMachine.deleteMachineDirectoryAndJson();
+          }
+        );
+      }
+    );
   });

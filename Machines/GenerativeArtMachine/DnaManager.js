@@ -156,4 +156,9 @@ export class DnaManager {
       );
     });
   };
+
+  //Dna
+
+  addDnaToDnaList() {}
+  createUniqueDna() {}
 }

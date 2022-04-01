@@ -9,4 +9,6 @@ export class EditionManager {
   createEditions(from, to) {}
   getEdition(edition) {}
   getEditionsBatch() {}
+  editCollection() {}
+  searchCollection() {}
 }

@@ -192,6 +192,9 @@ export class System {
   static deleteFolder(path, options) {
     return fs.rmdirSync(path, options);
   }
+  static deleteRecursiveDir(dir) {
+    return fs.rmSync(dir, { recursive: true, force: true });
+  }
   static existsSync(path) {
     return fs.existsSync(path);
   }
