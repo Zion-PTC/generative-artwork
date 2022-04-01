@@ -29,7 +29,7 @@ export class System {
       .map((fileName) => {
         return {
           name: fileName,
-          path: `${path}${fileName}`,
+          path: `${path}/${fileName}`,
         };
       });
   };

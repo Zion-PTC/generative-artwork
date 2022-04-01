@@ -32,7 +32,7 @@ let log = zionUtil.debuglog('log');
 //   PATH
 // );
 
-export let generativeArtMachine =
+export let GenerativeArtMachineTest =
   describe('GenerativeArtMachine', async () => {
     // CREAZIONE MACHINE E COLLEZIONE
     let NAME = 'Gotek GenArt Machine';

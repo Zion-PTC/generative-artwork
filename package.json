@@ -5,10 +5,10 @@
   "main": "index.js",
   "scripts": {
     "test": "mocha",
-    "testSystem": "NODE_DEBUG=log node test/System/System.js",
-    "testGenArtMachine": "NODE_DEBUG=log node test/GenerativeArtMachine/GenerativeArtMachine.js",
-    "testUserInterface": "NODE_DEBUG=log node test/GenerativeArtMachine/UserInterface.js",
-    "testTerminal": "NODE_DEBUG=log node test/Terminal/Terminal.js"
+    "testSystem": "NODE_DEBUG=log node test/System/System.test.js",
+    "testGenArtMachine": "NODE_DEBUG=log node test/GenerativeArtMachine/GenerativeArtMachine.test.js",
+    "testUserInterface": "NODE_DEBUG=log node test/GenerativeArtMachine/UserInterface.test.js",
+    "testTerminal": "NODE_DEBUG=log node test/Terminal/Terminal.test.js"
   },
   "author": "",
   "license": "ISC",
