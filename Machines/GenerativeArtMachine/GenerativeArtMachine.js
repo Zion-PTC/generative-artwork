@@ -9,22 +9,20 @@ export class GenerativeArtMachine {
     this.path = path;
     //Collections
     this.collections = [];
-    (async () => {
-      await this.createMachine(name);
-    })();
+    // this.createMachine(name);
+    return this;
   }
   //METHODS
   //GenerativeArtMachine
-  async createMachine(name) {
-    console.log(await this.machineExists(name));
-    !(await this.machineExists(name))
-      ? this.createMachineDirectoryAndJson(name)
-      : console.log('Machine already exists');
+  async createMachine() {
+    // !(await this.machineExists(name))
+    //   ? this.createMachineDirectoryAndJson(name)
+    //   : console.log('Machine already exists');
   }
-  async machineExists(name) {
+  static async machineExists(name) {
     return new Promise((resolve, reject) => {
       let listOfMachines = System.arrayOfFoldersInDirectory(
-        './GenerativeArtMachine/Machines/'
+        '/Users/WAW/Documents/Projects/zion-GenerativeArtMachine/Machines/GenerativeArtMachine/Machines'
       );
       listOfMachines.includes(name)
         ? resolve(true)
@@ -33,7 +31,7 @@ export class GenerativeArtMachine {
   }
   createMachineDirectoryAndJson(name) {
     System.createNestedDir(
-      `./GenerativeArtMachine/Machines/${name}/Collections`
+      `/Users/WAW/Documents/Projects/zion-GenerativeArtMachine/Machines/GenerativeArtMachine/Machines${name}/Collections`
     );
     System.writeJson(
       `./GenerativeArtMachine/Machines/${name}/${name}.json`,

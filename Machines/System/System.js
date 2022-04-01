@@ -1,17 +1,6 @@
 import fs from 'fs';
 import { dirname } from 'path';
 import { fileURLToPath } from 'url';
-import * as readline from 'readline';
-let terminalInterface = readline.createInterface({
-  input: process.stdin,
-  output: process.stdout,
-});
-terminalInterface.close();
-// console.log(terminalInterface);
-// terminalInterface.question(`What's your name?`, (name) => {
-//   console.log(`Hi ${name}!`);
-//   terminalInterface.close();
-// });
 
 export class System {
   /**

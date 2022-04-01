@@ -14,11 +14,11 @@ var suiteRun = testRunner.run();
 process.on('exit', (code) => {
   process.exit(suiteRun.stats.failures > 0);
 });
+let log = zionUtil.debuglog('log');
 
 const initialPath =
   '/Users/WAW/Documents/Projects/zion-GenerativeArtMachine/Machines/System';
 const tree = System.buildTree(initialPath);
-let log = zionUtil.debuglog('log');
 
 let TESTPATH =
   '/Users/WAW/Documents/Projects/zion-GenerativeArtMachine/Machines/GenerativeArtMachine/Machines/';
@@ -76,14 +76,14 @@ export let system = describe('TreeBuilder', () => {
       );
     });
   });
-  describe('System static method :arrayOfFoldersInDirectory()', () => {
+  describe('System static method: arrayOfFoldersInDirectory()', () => {
     it('dovrebbe ritornare un array contenente i folder contenuti nel percorso fornito', () => {
       let array =
         System.arrayOfFoldersInDirectory(TESTPATH);
       expect(array[0]).to.be.equal('Gotek GenArt Machine');
     });
   });
-  describe('System static method :arrayOfNamesOfFilesInFolder()', () => {
+  describe('System static method: arrayOfNamesOfFilesInFolder()', () => {
     const TESTMACHINENAME = 'Gotek GenArt Machine';
     const NOMEDELLAPROPRIETA = 'path';
     const array =

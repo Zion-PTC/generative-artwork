@@ -5,7 +5,10 @@
   "main": "index.js",
   "scripts": {
     "test": "mocha",
-    "testSystem": "NODE_DEBUG=log node /Users/WAW/Documents/Projects/zion-GenerativeArtMachine/test/System/System.js"
+    "testSystem": "NODE_DEBUG=log node test/System/System.js",
+    "testGenArtMachine": "NODE_DEBUG=log node test/GenerativeArtMachine/GenerativeArtMachine.js",
+    "testUserInterface": "NODE_DEBUG=log node test/GenerativeArtMachine/UserInterface.js",
+    "testTerminal": "NODE_DEBUG=log node test/Terminal/Terminal.js"
   },
   "author": "",
   "license": "ISC",

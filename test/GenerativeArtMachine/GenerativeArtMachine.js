@@ -1,11 +1,25 @@
 import { expect } from 'chai';
-import { describe, it } from 'mocha';
-import { GenerativeArtMachine } from '../../Machines/GenerativeArtMachine/GenerativeArtMachine.js';
-import { log } from '../../Machines/index.js';
+import Mocha from 'mocha';
+import { zionUtil } from '../../../telegram-bots/Classes/Utils.js';
 import { System } from '../../Machines/System/System.js';
+import { GenerativeArtMachine } from '../../Machines/GenerativeArtMachine/GenerativeArtMachine.js';
 
-import { zionUtil } from '../../telegram-bots/Classes/Utils.js';
-import { GenerativeArtMachine } from './GenerativeArtMachine/GenerativeArtMachine.js';
+const testRunner = new Mocha({ slow: 1000 });
+testRunner.suite.emit(
+  'pre-require',
+  global,
+  'nofile',
+  testRunner
+);
+var suiteRun = testRunner.run();
+process.on('exit', (code) => {
+  process.exit(suiteRun.stats.failures > 0);
+});
+
+const initialPath =
+  '/Users/WAW/Documents/Projects/zion-GenerativeArtMachine/Machines/System';
+const tree = System.buildTree(initialPath);
+let log = zionUtil.debuglog('log');
 
 let PROVA = 'prova';
 let DESCRIZIONE = 'descrizione';
@@ -14,8 +28,6 @@ let PATH =
   '/Users/WAW/Documents/Projects/zion-GenerativeArtMachine/input';
 let MACHINESPATH =
   '/Users/WAW/Documents/Projects/zion-GenerativeArtMachine/Machines/GenerativeArtMachine/Machines';
-
-let log = zionUtil.debuglog('log');
 
 // let prova = new GenerativeArtMachine(
 //   PROVA,
@@ -27,26 +39,48 @@ let log = zionUtil.debuglog('log');
 export let generativeArtMachine =
   describe('GenerativeArtMachine', async () => {
     // CREAZIONE MACHINE E COLLEZIONE
-    describe('CREAZIONE MACHINE E COLLEZIONE', () => {
-      let gotekMachine = new GenerativeArtMachine(
-        'Gotek GenArt Machine',
-        'This is my first GenArt Machine',
-        'https://gotek.znft.tech',
-        '/Users/WAW/Documents/Projects/zion-GenerativeArtMachine/input'
-      );
-
-      let propaganda = gotekMachine.createNewCollection(
-        'Propaganga',
-        ['basic']
-      );
-      log(gotekMachine.collections[0]);
+    let NAME = 'Gotek GenArt Machine';
+    let DESCRIPTION = 'This is my first GenArt Machine';
+    let URL = 'https://gotek.znft.tech';
+    let PATH =
+      '/Users/WAW/Documents/Projects/zion-GenerativeArtMachine/input';
+    let gotekMachine = new GenerativeArtMachine(
+      NAME,
+      DESCRIPTION,
+      URL,
+      PATH
+    );
+    describe('Costruttore della classe GenerativeArtMachine', async () => {
+      it(`dovrebbe creare un oggetto con nome: ${NAME}`, () => {
+        expect(gotekMachine.name).to.be.equal(NAME);
+      });
+      it(`dovrebbe creare un oggetto con descrizione: ${DESCRIPTION}`, () => {
+        expect(gotekMachine.description).to.be.equal(
+          DESCRIPTION
+        );
+      });
+      it(`dovrebbe creare un oggetto con url: ${URL}`, () => {
+        expect(gotekMachine.url).to.be.equal(URL);
+      });
+      it(`dovrebbe creare un oggetto con path: ${PATH}`, () => {
+        expect(gotekMachine.path).to.be.equal(PATH);
+      });
+      // let propaganda = gotekMachine.createNewCollection(
+      //   'Propaganga',
+      //   ['basic']
+      // );
+      // log(gotekMachine.collections[0]);
     });
-
-    // describe('machineExists()', () => {
-    //   it('ciao', () => {
-    //     let contentOfMachinesPath =
-    //       System.arrayOfFoldersInDirectory(MACHINESPATH);
-    //     console.log(contentOfMachinesPath);
-    //   });
-    // });
+    describe('GenerativeArtMachine method: createMachine', () => {
+      it('dovrebbe aver creato un oggetto con i dati della macchina.', () => {
+        log(gotekMachine);
+      });
+    });
+    describe('machineExists()', () => {
+      it('ciao', async () => {
+        expect(
+          await GenerativeArtMachine.machineExists(NAME)
+        ).to.be.false;
+      });
+    });
   });
