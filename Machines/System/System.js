@@ -235,6 +235,15 @@ export class System {
   static statSync(path, options) {
     return fs.statSync(path, options);
   }
+  /**
+   *
+   * @param {String} path percorso target
+   * @param {String[]} options oggetto con opzioni
+   * @returns {String[]} lista dei nomi degli oggetti contenuti nella directory target
+   */
+  static readDirSync(path, options) {
+    return fs.readdirSync(path, options);
+  }
   get folders() {}
   get files() {}
 }
