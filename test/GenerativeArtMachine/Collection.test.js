@@ -26,6 +26,7 @@ const BASEURI = './some/mighty/path';
 const _BASEURI = 'baseUri';
 const FOLDERSTRUCTURE = '';
 const _FOLDERSTRUCTURE = 'folderStructure';
+const _ROOT = 'root';
 
 let newCollection = new Collection(NAME, PATH, BASEURI);
 
@@ -46,9 +47,21 @@ export let CollectionTest =
           BASEURI
         );
       });
-      it(`dovrebbe avere una proprietà ${_FOLDERSTRUCTURE}, con valore: ${FOLDERSTRUCTURE}`, () => {
-        log(newCollection[_FOLDERSTRUCTURE]);
-        // expect(newCollection[_FOLDERSTRUCTURE]).to.be.equal();
+      describe(`Collection constructor attribute: ${_FOLDERSTRUCTURE}`, () => {
+        it(`dovrebbe avere una proprietà ${_FOLDERSTRUCTURE}, con valore: ${FOLDERSTRUCTURE}`, () => {
+          expect(newCollection[_FOLDERSTRUCTURE]).to.be.not
+            .null;
+        });
+
+        it(`l'oggetto: ${_FOLDERSTRUCTURE}\ndovrebbe contenere un nodo con attributo: ${_ROOT},\ncon valore: '${PATH}'`, () => {
+          expect(
+            newCollection.folderStructure[_ROOT]
+          ).to.be.equal(PATH);
+        });
+        it(`l'oggetto: ${_FOLDERSTRUCTURE}\ndovrebbe contenere un child con attributo: ${_PATH},\ncon valore: '${PATH}/some'`, () => {
+          expect(newCollection.folderStructure.children[0])
+            .not.to.be.null;
+        });
       });
     });
   });
