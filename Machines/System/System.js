@@ -168,7 +168,6 @@ export class System {
     }
     let root = new TreeNode(rootPath);
     const stack = [root];
-
     // https://en.wikipedia.org/wiki/Depth-first_search
     // Depth-first search aka DFS
     while (stack.length) {

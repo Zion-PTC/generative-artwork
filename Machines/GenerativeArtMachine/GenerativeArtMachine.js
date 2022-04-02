@@ -1,5 +1,4 @@
 import { System } from '../System/System.js';
-import { Collection } from './Collection.js';
 
 export class GenerativeArtMachine {
   constructor(name, description, url, path) {
@@ -9,7 +8,6 @@ export class GenerativeArtMachine {
     this.path = `${path}${name}`;
     this.collections = [];
     this.logMessage;
-    // this.createMachine(name);
     return this;
   }
   //STATIC METHODS
