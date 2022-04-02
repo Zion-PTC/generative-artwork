@@ -1,29 +1,22 @@
+import { System } from '../System/System.js';
 import { Class } from './Class.js';
 
 export class Collection {
-  constructor(name, path, classes) {
-    this.id;
+  #count = 0;
+  constructor(name, path, baseUri) {
+    this.#count++;
+    this.id = this.#count;
     this.name = name;
     this.path = path;
-    this.baseUri;
+    this.baseUri = baseUri;
     this.supply;
     this.type;
+    this.folderStructure = System.buildTree(this.path);
     this.classes = [];
-    this.createClasses(classes);
   }
   //COLLECTIONS
-  collectionExists(name) {}
+  static collectionExists(name) {}
   //CLASSES
-  createClasses(classes) {
-    classes.forEach((className) => {
-      let newClass = new Class(
-        className,
-        this.path,
-        this.name
-      );
-      this.classes.push(newClass);
-    });
-  }
   get arrayOfClasses() {
     let array = [];
     this.classes.forEach((cl) => {
