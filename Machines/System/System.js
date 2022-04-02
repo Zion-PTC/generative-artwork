@@ -3,6 +3,7 @@ import { dirname } from 'path';
 import { fileURLToPath } from 'url';
 
 export class System {
+  #blackListFileNames = ['.DS_Store'];
   /**
    * @param {String} path target path
    * @returns {Array} an array containing the name of folders in
@@ -70,8 +71,8 @@ export class System {
     }
   }
   /**
-   *
-   * @param {String} rootPath is the starting poing from which the function will
+   * @title buildTree()
+   * @param {String} rootPath  rootPath is the starting point from which the function will
    * build a Directory Structure Object
    * @returns {TreeNode} returns a complete Tree starting from the rootPath
    */
@@ -83,7 +84,12 @@ export class System {
           if (this.type === _types[0]) {
             return path.match(/\w+$/g)[0];
           }
-          return path.match(/(?<=[/])\w*[.]\w*/g)[0];
+          let jointSpacesPath = path.replace(/ /g, '_');
+
+          let res = jointSpacesPath.match(
+            /(?<=[/])\w*[.]\w*/g
+          )[0];
+          return res;
         };
         this.root = rootPath;
         this.path = path;

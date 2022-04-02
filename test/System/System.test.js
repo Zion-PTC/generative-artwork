@@ -87,20 +87,19 @@ export let SystemTest = describe('System.js', () => {
     });
   });
   describe('System static method: arrayOfFoldersInDirectory()', () => {
+    const BASE = './';
     const NEST1 = `nested`;
     const NEST2 = `url`;
-    const PATH = `${import.meta.url}/${NEST1}/${NEST2}`;
+    const PATH = `${BASE}${NEST1}/${NEST2}`;
     it('dovrebbe ritornare un array contenente i folder contenuti nel percorso fornito', () => {
       System.createNestedDir(PATH);
       let array1 = System.arrayOfFoldersInDirectory(
-        import.meta.url
+        `${BASE}${NEST1}`
       );
-      let array2 = System.arrayOfFoldersInDirectory(
-        `${import.meta.url}/${NEST1}/`
-      );
-      expect(array1[0]).to.be.equal(NEST1);
-      expect(array2[0]).to.be.equal(NEST2);
-      System.deleteRecursiveDir(PATH);
+      console.log(`${BASE}${NEST1}`);
+      // expect(array1[0]).to.be.equal(NEST1);
+      expect(array1[0]).to.be.equal(NEST2);
+      System.deleteRecursiveDir(`${BASE}${NEST1}`);
     });
   });
   describe('System static method: arrayOfNamesOfFilesInFolder()', () => {
@@ -143,7 +142,7 @@ export let SystemTest = describe('System.js', () => {
       System.deleteFile(`${BASE}/${FILENAME1}`, () => {});
     });
   });
-  describe('System stati methof: createNestedDir', () => {
+  describe('System static method: createNestedDir', () => {
     const BASEPATH =
       '/Users/WAW/Documents/Projects/zion-GenerativeArtMachine/test';
     const PROVAPATHTARGET = 'zeta';
