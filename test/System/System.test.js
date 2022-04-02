@@ -147,7 +147,7 @@ export let SystemTest = describe('System.js', () => {
       System.deleteFile(`${BASE}/${FILENAME1}`, () => {});
     });
   });
-  describe('System static method: createNestedDir', () => {
+  describe('System static method: createNestedDir()', () => {
     const BASEPATH =
       '/Users/WAW/Documents/Projects/zion-GenerativeArtMachine/test';
     const PROVAPATHTARGET = 'zeta';
@@ -186,6 +186,22 @@ export let SystemTest = describe('System.js', () => {
         `${BASEPATH}/${PROVAPATHTARGET}` + `/${PROVAPATH1}`
       );
       System.deleteFolder(`${BASEPATH}/${PROVAPATHTARGET}`);
+    });
+  });
+  describe(`System static method: deleteRecursiveDir()`, () => {
+    const NESTEDDIR = './sono/una/nested/dir';
+    const ROOTDIR = './sono';
+    const SECONDLEVDIR = './sono/una/';
+    it(`dovrebbe cancellare il contenuto di una nested directory`, () => {
+      System.createNestedDir(NESTEDDIR);
+      expect(System.readDirSync(ROOTDIR)[0]).to.be.equal(
+        'una'
+      );
+      System.deleteRecursiveDir(SECONDLEVDIR);
+      expect(System.readDirSync(ROOTDIR)[0]).to.be.equal(
+        undefined
+      );
+      System.deleteRecursiveDir(ROOTDIR);
     });
   });
 });
