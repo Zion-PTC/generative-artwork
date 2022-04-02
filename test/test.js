@@ -2,4 +2,5 @@
 import { SystemTest } from './System/System.test.js';
 
 import { GenerativeArtMachineTest } from './GenerativeArtMachine/GenerativeArtMachine.test.js';
-import { UserInterfaceTest } from './GenerativeArtMachine/UserInterface.test.js';
+import { CollectionTest } from './GenerativeArtMachine/Collection.test.js';
+// import { UserInterfaceTest } from './GenerativeArtMachine/UserInterface.test.js';
