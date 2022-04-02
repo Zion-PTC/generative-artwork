@@ -5,18 +5,20 @@ import { fileURLToPath } from 'url';
 export class System {
   #blackListFileNames = ['.DS_Store'];
   /**
-   * @param {String} path target path
-   * @returns {Array} an array containing the name of folders in
-   * the provided directory
+   * @param {String} path percorso target
+   * @returns {String[]} ritorna un array contenente la lista dei nomi delle carelle contenute nel percorso target
    */
   static arrayOfFoldersInDirectory = (path) => {
-    return fs.readdirSync(path, {
-      withFile_Types: true,
-    });
-    // .filter((directoryEntity) =>
-    //   directoryEntity.isDirectory()
-    // )
-    // .map((directoryEntity) => directoryEntity.name);
+    return fs
+      .readdirSync(path, {
+        withFile_Types: true,
+      })
+      .filter(
+        // vengono esclusi i risultati che contengono un '.'
+        // in quanto si tratta di nomi di files e non
+        // di cartelle
+        (directoryEntity) => !directoryEntity.includes('.')
+      );
   };
   /**
    * @param {String} path target path
@@ -191,17 +193,47 @@ export class System {
     }
     return root;
   }
+  /**
+   *
+   * @param {String} path percorso target
+   * @param {*} callback funzione callback senza parametri
+   */
   static deleteFile(path, callback) {
-    fs.rm(path, callback);
+    return fs.rm(path, callback);
   }
+  /**
+   *
+   * @param {String} path percorso target
+   * @param {Object} options oggetto con opzioni
+   * @returns fs.rmdirSync
+   */
   static deleteFolder(path, options) {
     return fs.rmdirSync(path, options);
   }
+  /**
+   *
+   * @param {String} dir directory target
+   * @returns fs.rmSync()
+   */
   static deleteRecursiveDir(dir) {
     return fs.rmSync(dir, { recursive: true, force: true });
   }
+  /**
+   *
+   * @param {String} path percorso target
+   * @returns fm.existsSync()
+   */
   static existsSync(path) {
     return fs.existsSync(path);
+  }
+  /**
+   *
+   * @param {String} path percorso target
+   * @param {Object} options oggetto opzioni
+   * @returns fs.StatSync()
+   */
+  static statSync(path, options) {
+    return fs.statSync(path, options);
   }
   get folders() {}
   get files() {}

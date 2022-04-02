@@ -93,11 +93,16 @@ export let SystemTest = describe('System.js', () => {
     const PATH = `${BASE}${NEST1}/${NEST2}`;
     it('dovrebbe ritornare un array contenente i folder contenuti nel percorso fornito', () => {
       System.createNestedDir(PATH);
+      // System.writeJson(
+      //   `${BASE}${NEST1}/newFile.json`,
+      //   'new file'
+      // );
       let array1 = System.arrayOfFoldersInDirectory(
         `${BASE}${NEST1}`
       );
-      console.log(`${BASE}${NEST1}`);
-      // expect(array1[0]).to.be.equal(NEST1);
+      log(`${BASE}${NEST1}`);
+      log(array1);
+      // log(System.statSync(array1[0]));
       expect(array1[0]).to.be.equal(NEST2);
       System.deleteRecursiveDir(`${BASE}${NEST1}`);
     });
