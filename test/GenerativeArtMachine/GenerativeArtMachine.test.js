@@ -88,6 +88,7 @@ export let GenerativeArtMachineTest =
             'dati della macchina.',
           async () => {
             await gotekMachine.createMachineDirectoryAndJson();
+            log(gotekMachine.path);
             expect(
               System.arrayOfFoldersInDirectory(
                 PATH

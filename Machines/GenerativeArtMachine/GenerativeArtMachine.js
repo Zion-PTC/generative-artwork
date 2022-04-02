@@ -7,7 +7,6 @@ export class GenerativeArtMachine {
     this.description = description;
     this.url = url;
     this.path = `${path}${name}`;
-    //Collections
     this.collections = [];
     this.logMessage;
     // this.createMachine(name);
@@ -31,7 +30,6 @@ export class GenerativeArtMachine {
     let response = await GenerativeArtMachine.machineExists(
       this.name
     );
-    response;
     if (!response) {
       System.createNestedDir(`${this.path}/Collections`);
       System.writeJson(
@@ -45,6 +43,7 @@ export class GenerativeArtMachine {
     }
   }
   async deleteMachineDirectoryAndJson() {
-    return System.deleteRecursiveDir(this.path);
+    System.deleteRecursiveDir(this.path);
+    return this;
   }
 }
