@@ -18,6 +18,16 @@ export class Class {
   }
   // CLASS
   classExists() {}
+  createClasses(classes) {
+    classes.forEach((className) => {
+      let newClass = new Class(
+        className,
+        this.path,
+        this.name
+      );
+      this.classes.push(newClass);
+    });
+  }
   // LAYERS
   createLayers() {
     let layersName = System.arrayOfFoldersInDirectory(
