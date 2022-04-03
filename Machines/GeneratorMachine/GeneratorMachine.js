@@ -69,18 +69,3 @@ export class GeneratorMachine {
   static color() {}
   static integerRandomNumber() {}
 }
-let arrayOfArrays = [
-  [1, 2, 5, 8, 6, 7],
-  [2, 4, 5, 3, 5, 9],
-  [3, 3, 6, 5, 4, 10],
-  [3, 3, 6, 6, 8],
-  [3, 3, 6, 6, 8],
-  [3, 3, 6, 6, 8],
-  [3, 4, 6, 6, 8],
-];
-
-let gi =
-  GeneratorMachine.Combinator.generateCombinations(
-    arrayOfArrays
-  );
-console.log(gi);
