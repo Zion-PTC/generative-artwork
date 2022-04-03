@@ -1,24 +1,52 @@
 import pkg from 'canvas';
-import { Generator } from './Generator.js';
+import { GeneratorMachine } from '../GeneratorMachine/GeneratorMachine.js';
 const { createCanvas, loadImage } = pkg;
 
+class Layer {
+  constructor() {
+    this.positionX;
+    this.position.x;
+    this.size.width;
+    this.size.heigth;
+  }
+}
+
+class Element {
+  constructor(width, heigth, context) {
+    this.loadedImage;
+    this.layer = new Layer();
+  }
+}
+
 export class Drawer {
+  /**
+   *
+   * @param {number} width : 1000; larghezza del canvas legaro al drawer
+   * @param {number} heigth
+   * @param {*} context
+   */
   constructor(width = 1000, heigth = 1000, context = '2d') {
     this.canvasProperties = {
       context: context,
       width: width,
       heigth: heigth,
     };
-    this._prova = 2;
     this.loadedElements = [];
     this.canvas = createCanvas(width, heigth);
     this.ctx = this.canvas.getContext(
       this.canvasProperties.context
     );
   }
-  get prova() {
-    return this._prova;
-  }
+  /**
+   *
+   * @param {Element} element - Oggetto contente le informazioni sull'elemento
+   * @param {buffer} element.loadedImage -
+   * @param {buffer} element.layer.position.x -
+   * @param {buffer} element.layer.position.y -
+   * @param {buffer} element.layer.size.width -
+   * @param {buffer} element.layer.size.heigth -
+   *
+   */
   drawElement = (element) => {
     this.ctx.drawImage(
       element.loadedImage,
@@ -29,7 +57,7 @@ export class Drawer {
     );
   };
   randomBackground() {
-    this.ctx.fillStyle = Generator.color();
+    this.ctx.fillStyle = GeneratorMachine.color();
     this.ctx.fillRect(
       0,
       0,
