@@ -6,10 +6,11 @@
   "scripts": {
     "test": "mocha",
     "testSystem": "NODE_DEBUG=log node test/System/System.test.js",
+    "testTerminal": "NODE_DEBUG=log node test/Terminal/Terminal.test.js",
+    "testGeneratorMachine": "NODE_DEBUG=log nodemon test/GeneratorMachine/GeneratorMachine.test.js",
     "testGenArtMachine": "NODE_DEBUG=log node test/GenerativeArtMachine/GenerativeArtMachine.test.js",
     "testCollection": "NODE_DEBUG=log node test/GenerativeArtMachine/Collection.test.js",
-    "testUserInterface": "NODE_DEBUG=log node test/GenerativeArtMachine/UserInterface.test.js",
-    "testTerminal": "NODE_DEBUG=log node test/Terminal/Terminal.test.js"
+    "testUserInterface": "NODE_DEBUG=log node test/GenerativeArtMachine/UserInterface.test.js"
   },
   "author": "",
   "license": "ISC",
