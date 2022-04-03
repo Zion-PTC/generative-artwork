@@ -49,7 +49,11 @@ import { System } from '../System/System.js';
  * in queste possibilità tutti gli elementi compaiono
  * con la stessa probabilità. Anche gli elementi rari
  * compaiono nella stessa quantità ovvero ogni elemento
- * appare 8 volte. Per far si che un elemento 
+ * appare 8 volte.
+ * Fra queste 512 combinazioni ce nè solo una che contiene
+ * tutti e 3 elementi piu rari.
+ * Se teniamo solo due livelli con elementi super rari
+ * rimane un solo liver
  * 
  * Ogni edizione può essere composta da elementi di
  * rarità diversa.

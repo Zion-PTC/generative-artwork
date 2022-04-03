@@ -53,20 +53,20 @@ function areEqualNoOrder(array1, array2) {
 
   return false;
 }
+let joinArraysToString = (A = [], B = []) => {
+  let arr = [];
+  let aToString = `${A.toString()}`;
+  let bToString = `${B.toString()}`;
+  let string = `[${aToString},${bToString}]`;
+  arr.push(string);
+  return arr;
+};
 
 let arrayOfArrayElementsToString = (arrayOfArrays = []) => {
   let jointArrays = [];
-  let joinToString = (A = [], B = []) => {
-    let arr = [];
-    let aToString = `${A.toString()}`;
-    let bToString = `${B.toString()}`;
-    let string = `[${aToString},${bToString}]`;
-    arr.push(string);
-    return arr;
-  };
   arrayOfArrays.forEach((e) => {
     e.reduce((p, c) => {
-      jointArrays.push(joinToString(p, c));
+      return jointArrays.push(joinArraysToString(p, c));
     });
   });
   return jointArrays;
