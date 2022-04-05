@@ -58,22 +58,23 @@ import { System } from '../System/System.js';
  * Ogni edizione può essere composta da elementi di
  * rarità diversa.
  */
-
 export class Collection {
   #count = 0;
   #types = ['Edition', 'Element'];
   #supply = 0;
   #type;
+  /**
+   *
+   * @param {string} name nome della collezione
+   * @param {string} path percorso della cartella contenente i dati della collezione
+   * @param {string} baseUri percorso base per gli oggetti della collezione. Questo dato è quello che apparirà nei metadata degli NFT.
+   */
   constructor(name, path, baseUri) {
     this.#count++;
     this.id = this.#count;
     this.name = name;
-    this.path = path; // percorso della
-    // cartella che contiene i file e le
-    // cartelle della collezione
-    this.baseUri = baseUri; // percorso della
-    // cartella Collezioni della macchina che
-    // ha generato la collezione
+    this.path = path;
+    this.baseUri = baseUri;
     this.folderStructure = System.buildTree(this.path);
     this.classes = [];
   }

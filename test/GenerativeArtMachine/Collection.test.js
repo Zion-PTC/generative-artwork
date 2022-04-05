@@ -32,12 +32,20 @@ const _ROOT = 'root';
 let newCollection = new Collection(NAME, PATH, BASEURI);
 let arrayConIlContenutoDellaDirectory =
   System.readDirSync(PATH);
-log(newCollection);
+// nel caso in cui la lista contenga il file .DS_Store
+if (
+  arrayConIlContenutoDellaDirectory.includes('.DS_Store')
+) {
+  zionUtil.popFirst(arrayConIlContenutoDellaDirectory);
+}
+// log(newCollection);
+// log(newCollection.folderStructure.children[0].children[0]);
 
 export let CollectionTest =
   describe('COLLECTION CLASS', () => {
     describe('COLLECTION CONSTRUCTOR', () => {
       it(`L'oggetto dovrebbe avere una proprieta: ${_ID}, con valore: 1`, () => {
+        log(newCollection[_ID]);
         expect(newCollection[_ID]).to.be.equal(1);
       });
       it(`L'oggetto dovrebbe avere una proprietà: '${_NAME}' con valore: ${NAME}`, () => {
@@ -56,12 +64,12 @@ export let CollectionTest =
           expect(newCollection[_FOLDERSTRUCTURE]).to.be.not
             .null;
         });
-        it(`l'oggetto: ${_FOLDERSTRUCTURE}\ndovrebbe contenere un nodo con attributo: ${_ROOT},\ncon valore: '${PATH}'`, () => {
+        it(`l'oggetto: ${_FOLDERSTRUCTURE} dovrebbe contenere un nodo con attributo: ${_ROOT}, con valore: '${PATH}'`, () => {
           expect(
             newCollection.folderStructure[_ROOT]
           ).to.be.equal(PATH);
         });
-        it(`l'oggetto: ${_FOLDERSTRUCTURE}\ndovrebbe contenere un child con attributo: ${_PATH},\ncon valore: '${arrayConIlContenutoDellaDirectory[0]}`, () => {
+        it(`l'oggetto: ${_FOLDERSTRUCTURE} dovrebbe contenere un child con attributo: ${_PATH}, con valore: '${arrayConIlContenutoDellaDirectory[0]}`, () => {
           expect(newCollection.folderStructure.children[0])
             .not.to.be.null;
           expect(
@@ -70,46 +78,53 @@ export let CollectionTest =
             `${PATH}/${arrayConIlContenutoDellaDirectory[0]}`
           );
         });
-      });
-    });
-    describe(`COLLETION STATIC METHODS`, () => {
-      describe(`Method: collectionExists()`, () => {
-        it(`dovrebbe verificare che la directory della collezione: ${newCollection.name} non è ancora stata creata`, () => {
-          System.createNestedDir(BASEURI);
-          log(System.readDirSync(BASEURI));
-          expect(
-            Collection.collectionExists(NAME, BASEURI)
-          ).to.be.equal(false);
-          System.deleteRecursiveDir('./some');
-        });
-        it(`dovrebbe verificare che la directory della collezione: ${newCollection.name} è ancora stata creata`, () => {
-          System.createNestedDir(`${BASEURI}/${NAME}`);
-          log(System.readDirSync(BASEURI));
-          expect(
-            Collection.collectionExists(NAME, BASEURI)
-          ).to.be.equal(true);
-          System.deleteRecursiveDir('./some');
+        describe(`Class TreeNode`, () => {
+          it(`dovrebbe ritronare una stringa formattata che mostra il tree`, () => {
+            console.log(
+              newCollection.folderStructure.toStringedTree()
+            );
+          });
         });
       });
     });
-    describe(`COLLECTION INSTANCE SETTERS`, () => {
-      const SUPPLY = 'supply';
-      const VALUE = 1000;
-      describe(`Method: set supply()`, () => {
-        it(`dovrebbe registrare l'attributo: ${SUPPLY} con un valore uguale a: ${VALUE}`, () => {
-          newCollection.supply = VALUE;
-          expect(newCollection.supply).to.be.equal(VALUE);
-        });
-      });
-      const TYPE = 'type';
-      const EXPECTEDVALUE = 'Edition';
-      describe(`Method: set type`, () => {
-        it(`dovrebbe registrare l'attributo: ${TYPE} con il valore: ${EXPECTEDVALUE}`, () => {
-          newCollection.type = 1;
-          expect(newCollection.type).to.be.equal(
-            EXPECTEDVALUE
-          );
-        });
-      });
-    });
+    // describe(`COLLETION STATIC METHODS`, () => {
+    //   describe(`Method: collectionExists()`, () => {
+    //     it(`dovrebbe verificare che la directory della collezione: ${newCollection.name} non è ancora stata creata`, () => {
+    //       System.createNestedDir(BASEURI);
+    //       log(System.readDirSync(BASEURI));
+    //       expect(
+    //         Collection.collectionExists(NAME, BASEURI)
+    //       ).to.be.equal(false);
+    //       System.deleteRecursiveDir('./some');
+    //     });
+    //     it(`dovrebbe verificare che la directory della collezione: ${newCollection.name} è ancora stata creata`, () => {
+    //       System.createNestedDir(`${BASEURI}/${NAME}`);
+    //       log(System.readDirSync(BASEURI));
+    //       expect(
+    //         Collection.collectionExists(NAME, BASEURI)
+    //       ).to.be.equal(true);
+    //       System.deleteRecursiveDir('./some');
+    //     });
+    //   });
+    // });
+    // describe(`COLLECTION INSTANCE SETTERS`, () => {
+    //   const SUPPLY = 'supply';
+    //   const VALUE = 1000;
+    //   describe(`Method: set supply()`, () => {
+    //     it(`dovrebbe registrare l'attributo: ${SUPPLY} con un valore uguale a: ${VALUE}`, () => {
+    //       newCollection.supply = VALUE;
+    //       expect(newCollection.supply).to.be.equal(VALUE);
+    //     });
+    //   });
+    //   const TYPE = 'type';
+    //   const EXPECTEDVALUE = 'Edition';
+    //   describe(`Method: set type`, () => {
+    //     it(`dovrebbe registrare l'attributo: ${TYPE} con il valore: ${EXPECTEDVALUE}`, () => {
+    //       newCollection.type = 1;
+    //       expect(newCollection.type).to.be.equal(
+    //         EXPECTEDVALUE
+    //       );
+    //     });
+    //   });
+    // });
   });

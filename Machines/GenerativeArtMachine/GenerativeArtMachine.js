@@ -1,6 +1,14 @@
 import { System } from '../System/System.js';
 
 export class GenerativeArtMachine {
+  /**
+   *
+   * @param {string} name Nome da assegnare alla macchine dovrebbe corrispondere con lo user name.
+   * @param {string} description Descrizione della macchina. Deve includere delle informazioni relative al progetto.
+   * @param {string} url Url che punta verso la pagina del progetto.
+   * @param {string} path É il percorso dove vengono salvati i file relativi all'istanza della GenArtMachine.
+   * @returns ritorna this.
+   */
   constructor(name, description, url, path) {
     this.name = name;
     this.description = description;
