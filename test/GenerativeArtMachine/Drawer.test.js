@@ -16,7 +16,7 @@ process.on('exit', (code) => {
 });
 let log = zionUtil.debuglog('log');
 
-describe(`DRAWER CLASS`, () => {
+export let DrawerTest = describe(`DRAWER CLASS`, () => {
   describe(`DRAWER CONSTRUCTOR`, () => {
     describe(`method description`, () => {
       it(`task description`, () => {});
