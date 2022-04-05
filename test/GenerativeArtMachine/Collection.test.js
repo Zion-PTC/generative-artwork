@@ -3,6 +3,12 @@ import Mocha from 'mocha';
 import { zionUtil } from '../../../telegram-bots/Classes/Utils.js';
 import { Collection } from '../../Machines/GenerativeArtMachine/Collection.js';
 import { System } from '../../Machines/System/System.js';
+import { ZionRegEx } from '../../../telegram-bots/Classes/ZionRegEx.js';
+
+function expectedTreeStringResult() {
+  let string = `└──input\n ⋮└──background\n ⋮ ⋮└──original\n ⋮ ⋮ ⋮├──Background_1.png\n ⋮ ⋮ ⋮├──Background_2.png\n ⋮ ⋮ ⋮├──Background_3.png\n ⋮ ⋮ ⋮├──Background_4.png\n ⋮ ⋮ ⋮├──Background_5.png\n ⋮ ⋮ ⋮└──asdf\n ⋮ ⋮└──rare\n ⋮ ⋮ ⋮├──Background1.png\n ⋮ ⋮ ⋮└──Background2.png\n ⋮ ⋮└──super_rare\n ⋮ ⋮ ⋮└──Background1.png\n ⋮└──circle\n ⋮ ⋮└──original\n ⋮ ⋮ ⋮├──Circle1.png\n ⋮ ⋮ ⋮├──Circle2.png\n ⋮ ⋮ ⋮├──Circle3.png\n ⋮ ⋮ ⋮├──Circle4.png\n ⋮ ⋮ ⋮└──Circle5.png\n ⋮ ⋮└──rare\n ⋮ ⋮ ⋮├──Circle1.png\n ⋮ ⋮ ⋮└──Circle2.png\n ⋮ ⋮└──super_rare\n ⋮ ⋮ ⋮└──Circle1.png\n ⋮└──innercircle\n ⋮ ⋮└──original\n ⋮ ⋮ ⋮├──InnerCircle1.png\n ⋮ ⋮ ⋮├──InnerCircle2.png\n ⋮ ⋮ ⋮├──InnerCircle3.png\n ⋮ ⋮ ⋮├──InnerCircle4.png\n ⋮ ⋮ ⋮└──InnerCircle5.png\n ⋮ ⋮└──rare\n ⋮ ⋮ ⋮├──InnerCircle1.png\n ⋮ ⋮ ⋮└──InnerCircle2.png\n ⋮ ⋮└──super_rare\n ⋮ ⋮ ⋮└──InnerCircle1.png`;
+  return string;
+}
 
 const testRunner = new Mocha({ slow: 1000 });
 testRunner.suite.emit(
@@ -79,52 +85,57 @@ export let CollectionTest =
           );
         });
         describe(`Class TreeNode`, () => {
-          it(`dovrebbe ritronare una stringa formattata che mostra il tree`, () => {
-            console.log(
-              newCollection.folderStructure.toStringedTree()
+          it(`dovrebbe ritronare una stringa formattata che mostra il tree, con valore uguale a ${ZionRegEx.firstAndLastDyn(
+            expectedTreeStringResult(),
+            5
+          ).join('...')}`, () => {
+            let stringedTree =
+              newCollection.folderStructure.toStringedTree();
+            expect(stringedTree).to.be.equal(
+              expectedTreeStringResult()
             );
           });
         });
       });
     });
-    // describe(`COLLETION STATIC METHODS`, () => {
-    //   describe(`Method: collectionExists()`, () => {
-    //     it(`dovrebbe verificare che la directory della collezione: ${newCollection.name} non è ancora stata creata`, () => {
-    //       System.createNestedDir(BASEURI);
-    //       log(System.readDirSync(BASEURI));
-    //       expect(
-    //         Collection.collectionExists(NAME, BASEURI)
-    //       ).to.be.equal(false);
-    //       System.deleteRecursiveDir('./some');
-    //     });
-    //     it(`dovrebbe verificare che la directory della collezione: ${newCollection.name} è ancora stata creata`, () => {
-    //       System.createNestedDir(`${BASEURI}/${NAME}`);
-    //       log(System.readDirSync(BASEURI));
-    //       expect(
-    //         Collection.collectionExists(NAME, BASEURI)
-    //       ).to.be.equal(true);
-    //       System.deleteRecursiveDir('./some');
-    //     });
-    //   });
-    // });
-    // describe(`COLLECTION INSTANCE SETTERS`, () => {
-    //   const SUPPLY = 'supply';
-    //   const VALUE = 1000;
-    //   describe(`Method: set supply()`, () => {
-    //     it(`dovrebbe registrare l'attributo: ${SUPPLY} con un valore uguale a: ${VALUE}`, () => {
-    //       newCollection.supply = VALUE;
-    //       expect(newCollection.supply).to.be.equal(VALUE);
-    //     });
-    //   });
-    //   const TYPE = 'type';
-    //   const EXPECTEDVALUE = 'Edition';
-    //   describe(`Method: set type`, () => {
-    //     it(`dovrebbe registrare l'attributo: ${TYPE} con il valore: ${EXPECTEDVALUE}`, () => {
-    //       newCollection.type = 1;
-    //       expect(newCollection.type).to.be.equal(
-    //         EXPECTEDVALUE
-    //       );
-    //     });
-    //   });
-    // });
+    describe(`COLLETION STATIC METHODS`, () => {
+      describe(`Method: collectionExists()`, () => {
+        it(`dovrebbe verificare che la directory della collezione: ${newCollection.name} non è ancora stata creata`, () => {
+          System.createNestedDir(BASEURI);
+          log(System.readDirSync(BASEURI));
+          expect(
+            Collection.collectionExists(NAME, BASEURI)
+          ).to.be.equal(false);
+          System.deleteRecursiveDir('./some');
+        });
+        it(`dovrebbe verificare che la directory della collezione: ${newCollection.name} è ancora stata creata`, () => {
+          System.createNestedDir(`${BASEURI}/${NAME}`);
+          log(System.readDirSync(BASEURI));
+          expect(
+            Collection.collectionExists(NAME, BASEURI)
+          ).to.be.equal(true);
+          System.deleteRecursiveDir('./some');
+        });
+      });
+    });
+    describe(`COLLECTION INSTANCE SETTERS`, () => {
+      const SUPPLY = 'supply';
+      const VALUE = 1000;
+      describe(`Method: set supply()`, () => {
+        it(`dovrebbe registrare l'attributo: ${SUPPLY} con un valore uguale a: ${VALUE}`, () => {
+          newCollection.supply = VALUE;
+          expect(newCollection.supply).to.be.equal(VALUE);
+        });
+      });
+      const TYPE = 'type';
+      const EXPECTEDVALUE = 'Edition';
+      describe(`Method: set type`, () => {
+        it(`dovrebbe registrare l'attributo: ${TYPE} con il valore: ${EXPECTEDVALUE}`, () => {
+          newCollection.type = 1;
+          expect(newCollection.type).to.be.equal(
+            EXPECTEDVALUE
+          );
+        });
+      });
+    });
   });
