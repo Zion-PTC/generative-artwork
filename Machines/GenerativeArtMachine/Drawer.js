@@ -51,7 +51,7 @@ export class Drawer {
     this.ctx.drawImage(
       element.loadedImage,
       element.layer.position.x,
-      element.layer.position.x,
+      element.layer.position.y,
       element.layer.size.width,
       element.layer.size.heigth
     );
