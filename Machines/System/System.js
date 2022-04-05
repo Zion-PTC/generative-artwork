@@ -103,6 +103,9 @@ export class System {
       static get nodes() {
         return this.#nodes;
       }
+      static get folders() {
+        this.nodes.find((node) => node.type === _types[0]);
+      }
       /**
        *
        * @param {string} path percorso del file o cartella per la quale bisogna
@@ -220,7 +223,7 @@ export class System {
             currentNode.name
           );
           let parent = TreeNode.nodes.find(
-            (e) => e.name === childNode.parent
+            (node) => node.name === childNode.parent
           );
           let level = parent.level;
           level++;
