@@ -105,8 +105,8 @@ export class System {
       }
       /**
        *
-       * @param {*} path
-       * @param {*} type
+       * @param {string} path percorso del file o cartella per la quale bisogna
+       * @param {string} type
        * @returns
        */
       static #setName = (path, type) => {
@@ -114,7 +114,6 @@ export class System {
           return path.match(/\w+$/g)[0];
         }
         let jointSpacesPath = path.replace(/ /g, '_');
-
         let res = jointSpacesPath.match(
           /(?<=[/])\w*[.]\w*/g
         )[0];
