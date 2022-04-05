@@ -1,9 +1,13 @@
 import fs from 'fs';
 import { dirname } from 'path';
 import { fileURLToPath } from 'url';
+import { zionUtil } from '../../../telegram-bots/Classes/Utils.js';
 
 export class System {
-  #blackListFileNames = ['.DS_Store'];
+  static #blackListFileNames = ['.DS_Store'];
+  static get blackListFileNames() {
+    return this.#blackListFileNames;
+  }
   /**
    * @param {String} path percorso target
    * @returns {String[]} ritorna un array contenente la lista dei nomi delle carelle contenute nel percorso target
@@ -81,91 +85,122 @@ export class System {
   static buildTree(rootPath) {
     let _types = ['Folder', 'File'];
     class TreeNode {
-      constructor(path) {
-        let setName = (path) => {
-          if (this.type === _types[0]) {
-            return path.match(/\w+$/g)[0];
-          }
-          let jointSpacesPath = path.replace(/ /g, '_');
-
-          let res = jointSpacesPath.match(
-            /(?<=[/])\w*[.]\w*/g
-          )[0];
-          return res;
-        };
+      static #nodes = [];
+      constructor(path, parent) {
         this.root = rootPath;
         this.path = path;
+        this.level = 0;
+        this.parent = parent;
         this.children = [];
         this.type = fs.statSync(this.path).isDirectory()
           ? _types[0]
           : _types[1];
-        this.name = setName(path);
+        this.name = TreeNode.#setName(path, this.type);
         this.extension;
         this.size;
+        TreeNode.#nodes.push(this);
       }
+      static get nodes() {
+        return this.#nodes;
+      }
+      /**
+       *
+       * @param {*} path
+       * @param {*} type
+       * @returns
+       */
+      static #setName = (path, type) => {
+        if (type === _types[0]) {
+          return path.match(/\w+$/g)[0];
+        }
+        let jointSpacesPath = path.replace(/ /g, '_');
+
+        let res = jointSpacesPath.match(
+          /(?<=[/])\w*[.]\w*/g
+        )[0];
+        return res;
+      };
       isRoot() {
         if (this.path === this.root) {
           return true;
         }
         return false;
       }
+      /**
+        System
+        ├── System.js
+        └── utils
+          └── utils.js
+       */
       toStringedTree = () => {
-        /**
-          System
-          ├── System.js
-          └── utils
-            └── utils.js
-         */
-        let string = this.name;
+        let string;
         let stack = [this];
-        let levels = [];
+        let treeStrings = [];
+        let folders = [];
+        let folderId = -1;
         while (stack.length) {
-          const currentNode = stack.pop();
-          if (currentNode) {
-            let fileChildren = [];
-            let folderChildren = [];
-            if (currentNode.children.length !== 0) {
-              for (let child of currentNode.children) {
-                if (child.type === _types[1]) {
-                  fileChildren.push(child);
-                }
-                if (child.type === _types[0]) {
-                  folderChildren.push(child);
-                  stack.push(child);
-                }
-                if (stack.length === 0) {
-                  if (!currentNode.isRoot()) {
-                    levels.push('newLevel');
-                  }
-                }
-              }
-            }
-            let newChildren =
-              fileChildren.concat(folderChildren);
-            let tab = '';
-            if (levels.length !== 0) {
-              tab = levels.map(() => {
-                return '  ';
-              });
-              tab.join('');
-            }
-            if (newChildren.length === 1) {
-              string = `${string}\n${tab}└──${newChildren[0].name}`;
-            }
-            if (newChildren.length === 2) {
-              string = `${string}\n${tab}├──${newChildren[0].name}`;
-              string = `${string}\n${tab}└──${newChildren[1].name}`;
-            }
-            if (newChildren.length > 2) {
-              let lastChild = newChildren.pop();
-              for (let child of newChildren) {
-                string = `${string}\n${tab}├──${child.name}`;
-              }
-              string = `${string}\n${tab}└──${lastChild.name}`;
-            }
+          let currentNode = stack.pop();
+          if (currentNode.children.length !== 0) {
           }
+          let children = currentNode.children;
+          children.reverse();
+          let nomeDeiFileInNodeChildren = [];
+          for (let child of children) {
+            nomeDeiFileInNodeChildren.push(child.name);
+            if (child.type === _types[1]) {
+            }
+            stack.push(child);
+          }
+          function stringedName(
+            name,
+            type,
+            level,
+            folders,
+            string,
+            folderId,
+            _isLastChild
+          ) {
+            let tab = '';
+            let pattern = ' ⋮';
+            while (level) {
+              level--;
+              tab = tab + pattern;
+            }
+            if (type === _types[0]) {
+              folders.push(nomeDeiFileInNodeChildren);
+              string = `${tab}└──${name}`;
+              folderId++;
+            } else if (type === _types[1]) {
+              if (name === folders[folderId][0]) {
+                _isLastChild = true;
+                string = `${tab}└──${name}`;
+              } else {
+                string = `${tab}├──${name}`;
+              }
+            }
+            let _string = string;
+            let _folders = folders;
+            let _folderId = folderId;
+            return { _string, _folders, _folderId };
+          }
+          let { _string, _folders, _folderId } =
+            stringedName(
+              currentNode.name,
+              currentNode.type,
+              currentNode.level,
+              folders,
+              string,
+              folderId,
+              currentNode._isLastChild
+            );
+          string = _string;
+          folderId = _folderId;
+          folders = _folders;
+          currentNode.stringedDir = string;
+          treeStrings.push(string);
         }
-        return string;
+        treeStrings = treeStrings.join('\n');
+        return treeStrings;
       };
     }
     let root = new TreeNode(rootPath);
@@ -176,11 +211,21 @@ export class System {
       let currentNode = stack.pop();
       if (currentNode) {
         let children = fs.readdirSync(currentNode.path);
-
+        if (children[0] === System.blackListFileNames[0]) {
+          zionUtil.popFirst(children);
+        }
         for (let child of children) {
           let childPath = `${currentNode.path}/${child}`;
-          let childNode = new TreeNode(childPath);
-
+          let childNode = new TreeNode(
+            childPath,
+            currentNode.name
+          );
+          let parent = TreeNode.nodes.find(
+            (e) => e.name === childNode.parent
+          );
+          let level = parent.level;
+          level++;
+          childNode.level = level;
           if (fs.statSync(childNode.path).isDirectory()) {
             childNode.type = _types[0];
             stack.push(childNode);
@@ -247,11 +292,3 @@ export class System {
   get folders() {}
   get files() {}
 }
-
-// let pathOfThisFile = System.pathOfFileFromImportMetaUrl(
-//   import.meta.url
-// );
-// let foldersInThisDirectory =
-//   System.arrayOfFoldersInDirectory(pathOfThisFile);
-// console.log(pathOfThisFile);
-// console.log(foldersInThisDirectory);
