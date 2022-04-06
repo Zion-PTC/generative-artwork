@@ -29,28 +29,13 @@ const NOMEDELLAPROPRIETA = 'path';
 
 const initialPath =
   '/Users/WAW/Documents/Projects/zion-GenerativeArtMachine/Machines/System';
-const tree = System.buildTree(initialPath);
+const FILEINSIDEINITIALPATH = 'System.js';
 
 export let SystemTest = describe('System.js', () => {
   // METHODS
-  describe(`INTERNAL CLASS: TREENODE`, () => {
-    describe('TreeNode.prototype.toStringedTree()', () => {
-      it('Should return a string formatted directory tree', () => {
-        /**
-          System
-          ├── System.js
-          └── utils
-            └── utils.js
-          */
-        let expectedString = `└──System\n ⋮├──System.js\n ⋮└──utils\n ⋮ ⋮└──utils.js`;
-        expect(tree.toStringedTree()).to.be.equal(
-          expectedString
-        );
-      });
-    });
-  });
   describe(`STATIC METHODS`, () => {
     describe('System static method: buildTree()', () => {
+      const tree = System.buildTree(initialPath);
       it('Should return root node', () => {
         expect(tree).not.to.be.null;
         expect(tree).to.have.property('path', initialPath);
@@ -86,6 +71,22 @@ export let SystemTest = describe('System.js', () => {
         it('Should return the names of System root folder and of its child utils', () => {
           expect(tree.name).to.be.equal('System');
           expect(utils.name).to.be.equal('utils');
+        });
+      });
+      describe(`INTERNAL CLASS: TREENODE`, () => {
+        describe('TreeNode.prototype.toStringedTree()', () => {
+          it('Should return a string formatted directory tree', () => {
+            /**
+              └──System
+                ⋮├──System.js
+                ⋮└──utils
+                ⋮ ⋮└──utils.js
+              */
+            let expectedString = `└──System\n ⋮├──System.js\n ⋮└──utils\n ⋮ ⋮└──utils.js`;
+            expect(tree.toStringedTree()).to.be.equal(
+              expectedString
+            );
+          });
         });
       });
     });
@@ -211,6 +212,22 @@ export let SystemTest = describe('System.js', () => {
           undefined
         );
         System.deleteRecursiveDir(ROOTDIR);
+      });
+    });
+    describe(`Method isFileInFolder()`, () => {
+      it(`dovrebbe tornare true controllando che la cartella contenga un file di nome: ${FILEINSIDEINITIALPATH}`, () => {
+        let result = System.isFileInFolder(
+          FILEINSIDEINITIALPATH,
+          initialPath
+        );
+        expect(result).to.be.true;
+      });
+      it(`dovrebbe tornare false controllando che la cartella contenga un file specifico`, () => {
+        let result = System.isFileInFolder(
+          'FILEINSIDEINITIALPATH',
+          initialPath
+        );
+        expect(result).to.be.false;
       });
     });
   });

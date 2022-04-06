@@ -92,7 +92,6 @@ export class System {
       static #nodes = [];
       constructor(path, parent) {
         this.root = rootPath;
-        this.name = TreeNode.#setName(path, this.type);
         this.path = path;
         this.level = 0;
         this.parent = parent;
@@ -102,6 +101,7 @@ export class System {
           : _types[1];
         this.extension;
         this.size;
+        this.name = TreeNode.#setName(path, this.type);
         TreeNode.#nodes.push(this);
       }
       static get nodes() {
@@ -295,6 +295,10 @@ export class System {
    */
   static readDirSync(path, options) {
     return fs.readdirSync(path, options);
+  }
+  static isFileInFolder(file, folder) {
+    let array = fs.readdirSync(folder);
+    return array.includes(file);
   }
   get folders() {}
   get files() {}
