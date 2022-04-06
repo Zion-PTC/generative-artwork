@@ -1,18 +1,36 @@
-export class Element {
+import { SystemEntity } from './SystemEntity';
+
+export class Element extends SystemEntity {
+  #elements = [];
   constructor(
+    id,
     name,
     path,
-    collection,
-    rarity,
-    imageClass,
-    layer
+    level,
+    children,
+    type,
+    width,
+    height,
+    collectionName
   ) {
-    this.name = name;
-    this.path = path;
-    this.fileType;
-    this.collection = collection;
-    this.imageClass = imageClass;
-    this.layer = layer;
-    this.rarity = rarity;
+    super(
+      id,
+      name,
+      path,
+      level,
+      children,
+      type,
+      width,
+      height,
+      collectionName
+    );
+
+    this.rarityName;
+    this.collectionName;
+    this.className;
+    this.layerName;
+
+    this.extension;
+    this.#elements.push(this);
   }
 }
