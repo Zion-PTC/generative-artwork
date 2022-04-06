@@ -1,41 +1,31 @@
 import pkg from 'canvas';
 import { GeneratorMachine } from '../GeneratorMachine/GeneratorMachine.js';
+import { CanvasProperties } from './CanvasProperties.js';
 const { createCanvas, loadImage } = pkg;
-
-class Layer {
-  constructor() {
-    this.positionX;
-    this.position.x;
-    this.size.width;
-    this.size.heigth;
-  }
-}
-
-class Element {
-  constructor(width, heigth, context) {
-    this.loadedImage;
-    this.layer = new Layer();
-  }
-}
-
 export class Drawer {
+  #loadedImages = [];
   /**
-   *
    * @param {number} width : 1000; larghezza del canvas legaro al drawer
    * @param {number} heigth
    * @param {*} context
    */
   constructor(width = 1000, heigth = 1000, context = '2d') {
-    this.canvasProperties = {
-      context: context,
-      width: width,
-      heigth: heigth,
-    };
+    this.canvasProperties = new CanvasProperties(
+      context,
+      width,
+      heigth
+    );
     this.loadedElements = [];
     this.canvas = createCanvas(width, heigth);
     this.ctx = this.canvas.getContext(
       this.canvasProperties.context
     );
+  }
+  get loadedImages() {
+    return this.#loadedImages;
+  }
+  set loadedImages(image) {
+    return this.#loadedImages.push(image);
   }
   /**
    *
@@ -47,15 +37,6 @@ export class Drawer {
    * @param {buffer} element.layer.size.heigth -
    *
    */
-  drawElement = (element) => {
-    this.ctx.drawImage(
-      element.loadedImage,
-      element.layer.position.x,
-      element.layer.position.y,
-      element.layer.size.width,
-      element.layer.size.heigth
-    );
-  };
   randomBackground() {
     this.ctx.fillStyle = GeneratorMachine.color();
     this.ctx.fillRect(
@@ -72,20 +53,45 @@ export class Drawer {
     this.ctx.textAlign = 'left';
     this.ctx.fillText(sig, 40, 40);
   };
-  async loadLayerImage(layer) {
-    return new Promise(async (res, rej) => {
-      const image = await loadImage(
-        `${layer.selectedElement.path}`
-      );
-      res({ layer, loadedImage: image });
+  /**
+   *
+   * @param {string[]} imagesPaths array contenente i
+   * percorsi delle immagini da caricare
+   * @returns ritorna le promesse dell immagini caricate
+   */
+  loadImages(imagesPaths) {
+    imagesPaths.forEach(async (imagePath) => {
+      this.loadedImages = await this.loadImage(imagePath);
     });
+    return this.loadedImages;
   }
-  loadElements = async (results) => {
-    let arrayOfPromise = [];
-    results.forEach((layer) => {
-      arrayOfPromise.push(this.loadLayerImage(layer));
-    });
-    let array = await Promise.all(arrayOfPromise);
-    return array;
+  /**
+   * carica l'immagine in pkg per poi imprimerla tramite ctx.drawImage()
+   * @param {string} path percorso dell'immagine da caricare
+   * nella memoria di pkg
+   * @returns {pkg.Image} ritorna un oggetto pkg.Image
+   */
+  loadImage(path) {
+    let image = loadImage(path);
+    return image;
+  }
+  /**
+   *
+   * @param {Buffer} loadedImage immagine caricata da
+   * disegnare nel ctx.
+   * @param {number} x posizione su asse x
+   * @param {number} y posizione su asse y
+   * @param {number} width larghezza
+   * @param {number} heigth altezza
+   * @returns
+   */
+  drawImage = (loadedImage, x, y, width, heigth) => {
+    return this.ctx.drawImage(
+      loadedImage,
+      x,
+      y,
+      width,
+      heigth
+    );
   };
 }
