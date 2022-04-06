@@ -1,10 +1,26 @@
+import { Size } from './Size';
+
 export class SystemEntity {
-  constructor() {
-    this.id;
-    this.name;
-    this.path;
-    this.level;
-    this.children;
-    this.type;
+  #systemEntities = [];
+  constructor(
+    id,
+    name,
+    path,
+    level,
+    children = [],
+    type,
+    width,
+    height,
+    collectionName
+  ) {
+    this.id = id;
+    this.name = name;
+    this.path = path;
+    this.level = level;
+    this.children = children;
+    this.type = type;
+    this.collectionName = collectionName;
+    this.size = new Size(width, height);
+    this.#systemEntities.push(this);
   }
 }
