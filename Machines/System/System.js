@@ -10,7 +10,8 @@ export class System {
   }
   /**
    * @param {String} path percorso target
-   * @returns {String[]} ritorna un array contenente la lista dei nomi delle carelle contenute nel percorso target
+   * @returns {String[]} ritorna un array contenente la lista dei
+   * nomi delle carelle contenute nel percorso target
    */
   static arrayOfFoldersInDirectory = (path) => {
     return fs
@@ -41,9 +42,11 @@ export class System {
       });
   };
   /**
-   * @param {String} importMetaUrl  data which can be retrieved with in the callee file
-   * bay typing import.meta.url
-   * @returns {String}  the complete path to the file from which this function is called
+   * @param {String} importMetaUrl  data which can be
+   * retrieved with in the callee file by typing
+   * import.meta.url.
+   * @returns {String}  the complete path to the file from
+   * which this function is called.
    */
   static pathOfFileFromImportMetaUrl = (importMetaUrl) => {
     return `${dirname(fileURLToPath(importMetaUrl))}`;
@@ -78,8 +81,9 @@ export class System {
   }
   /**
    * @title buildTree()
-   * @param {String} rootPath  rootPath is the starting point from which the function will
-   * build a Directory Structure Object
+   * @param {String} rootPath  rootPath is the starting
+   * point from which the function will build a Directory
+   * Structure Object.
    * @returns {TreeNode} returns a complete Tree starting from the rootPath
    */
   static buildTree(rootPath) {
@@ -88,6 +92,7 @@ export class System {
       static #nodes = [];
       constructor(path, parent) {
         this.root = rootPath;
+        this.name = TreeNode.#setName(path, this.type);
         this.path = path;
         this.level = 0;
         this.parent = parent;
@@ -95,7 +100,6 @@ export class System {
         this.type = fs.statSync(this.path).isDirectory()
           ? _types[0]
           : _types[1];
-        this.name = TreeNode.#setName(path, this.type);
         this.extension;
         this.size;
         TreeNode.#nodes.push(this);
@@ -108,7 +112,8 @@ export class System {
       }
       /**
        *
-       * @param {string} path percorso del file o cartella per la quale bisogna
+       * @param {string} path percorso del file o cartella
+       * per la quale bisogna
        * @param {string} type
        * @returns
        */
