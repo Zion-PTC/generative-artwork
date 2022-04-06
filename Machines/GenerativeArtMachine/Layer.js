@@ -1,37 +1,35 @@
-// probabilmente basta creare i veri elementi durante lo
+import { SystemEntity } from './SystemEntity';
 
-import { Size } from '../Classes/Size';
-
-// scandaglio del folder, durante la creazione della folder structure.
-export class Layer {
-  constructor(name, path, collection) {
-    this.name = name;
-    this.path = path;
-    this.collection = collection;
-    this.class;
-    this.size = new Size();
-  }
-  // copiato da versione precedente dovrebbe servire per
-  // creare un elemento con le informazioni per il drawer:
-  // posizione e size del canvas
-  static makeLayer = (layer) => {
-    let raritiesOfLayer = System.arrayOfFoldersInDirectory(
-      `${this.sourcePath}/${layer}`
+export class Layer extends SystemEntity {
+  #layers = [];
+  constructor(
+    id,
+    name,
+    path,
+    level,
+    children,
+    type,
+    width,
+    height,
+    collectionName
+  ) {
+    super(
+      id,
+      name,
+      path,
+      level,
+      children,
+      type,
+      width,
+      height,
+      collectionName
     );
-    let elementsByRarityOfLayer = {};
-    raritiesOfLayer.forEach((folderInLayerFolder) => {
-      elementsByRarityOfLayer[folderInLayerFolder] =
-        System.arrayOfNamesOfFilesInFolder(
-          `${this.sourcePath}/${layer}/${folderInLayerFolder}`
-        );
-    });
-    return {
-      elements: elementsByRarityOfLayer,
-      position: { x: 0, y: 0 },
-      size: {
-        width: this.width,
-        heigth: this.heigth,
-      },
-    };
-  };
+
+    this.rarityName = rarityName;
+    this.collectionName = collectionName;
+    this.className = className;
+
+    this.elementsNames = elementsNames;
+    this.#layers.push(this);
+  }
 }
