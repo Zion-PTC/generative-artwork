@@ -1,10 +1,8 @@
-import { Position } from '../Classes/Position';
-import { Size } from '../Classes/Size';
+import { Size } from './Size.js';
 
 export class CanvasProperties {
-  constructor(context) {
+  constructor(context, width, height) {
     this.context = context;
-    this.position = new Position();
-    this.size = new Size();
+    this.size = new Size(width, height);
   }
 }
