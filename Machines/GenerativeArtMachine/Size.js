@@ -1,6 +1,6 @@
 export class Size {
-  constructor() {
-    this.width;
-    this.height;
+  constructor(width, height) {
+    this.width = width;
+    this.height = height;
   }
 }
