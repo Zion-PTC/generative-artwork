@@ -1,4 +1,5 @@
 import { System } from '../System/System.js';
+import { CollectionDetails } from './CollectionDetails.js';
 /**
  * Folder structure types
  * EDITION
@@ -58,10 +59,10 @@ import { System } from '../System/System.js';
  * Ogni edizione può essere composta da elementi di
  * rarità diversa.
  */
-export class Collection {
-  #count = 0;
+export class Collection extends CollectionDetails {
+  #rarities = [];
+  #path;
   #types = ['Edition', 'Element'];
-  #supply = 0;
   #type;
   /**
    *
@@ -69,78 +70,28 @@ export class Collection {
    * @param {string} path percorso della cartella contenente i dati della collezione
    * @param {string} baseUri percorso base per gli oggetti della collezione. Questo dato è quello che apparirà nei metadata degli NFT.
    */
-  constructor(name, path, baseUri) {
-    this.#count++;
-    this.id = this.#count;
-    this.name = name;
+  constructor(
+    name,
+    symbol,
+    supply,
+    baseURI,
+    descrition,
+    path
+  ) {
+    super(name, symbol, supply, baseURI, descrition);
     this.path = path;
-    this.baseUri = baseUri;
     this.folderStructure = System.buildTree(this.path);
-    this.classes = [];
   }
-  //COLLECTIONS
-  static collectionExists(name, path) {
-    let elemetsInFolder = System.readDirSync(path);
-    let response;
-    elemetsInFolder.includes(name)
-      ? (response = true)
-      : (response = false);
-    return response;
+  get rarities() {
+    return this.#rarities;
   }
-  //CLASSES
-  get arrayOfClasses() {
-    let array = [];
-    this.classes.forEach((cl) => {
-      return array.push(cl.name);
-    });
-    return array;
+  get path() {
+    return this.#path;
   }
-  get arrayOfRarities() {
-    let array = [];
-    this.classes.forEach((cl) => {
-      cl.raritySet.forEach((rarityName) => {
-        let obj = {};
-        obj.name = rarityName;
-        obj.layers = [];
-        cl.rarities
-          .filter((rarity) => {
-            return rarity.name === rarityName;
-          })
-          .forEach((rarity) => {
-            obj.layers.push(rarity.layer.name);
-          });
-        array.push(obj);
-      });
-    });
-    return array;
+  set rarities(rarity) {
+    return this.#rarities.push(rarity);
   }
-  //LAYERS
-  getCollections() {}
-  getReleasedEditions() {}
-  getUnreleasedEditions() {}
-  // GETTERS
-  get supply() {
-    return this.#supply;
-  }
-  get type() {
-    return this.#type;
-  }
-  // SETTERS
-  /**
-   * @param {number} supply
-   */
-  set supply(supply) {
-    this.#supply = supply;
-    return this;
-  }
-  /**
-   * @param {number} type Indica il tipo di collezione :
-   * • 1 - Edition : la rarità degli elementi è basata sulla singola edizione
-   * • 2 - Element : la rarità delle edizioni è basata sulla rarità di ogni singolo elemento
-   */
-  set type(type) {
-    let typesIndex = type - 1;
-    this.#type = this.#types[typesIndex];
-    return this;
+  set path(path) {
+    return (this.#path = path);
   }
 }
