@@ -1,6 +1,7 @@
-import { Size } from './Size';
+import { Size } from './Size.js';
 
 export class SystemEntity {
+  #id;
   #systemEntities = [];
   constructor(
     id,
@@ -22,5 +23,11 @@ export class SystemEntity {
     this.collectionName = collectionName;
     this.size = new Size(width, height);
     this.#systemEntities.push(this);
+  }
+  get id() {
+    return this.#id;
+  }
+  set id(id) {
+    return (this.#id = id);
   }
 }
