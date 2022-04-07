@@ -3,29 +3,57 @@ import { GeneratorMachine } from '../GeneratorMachine/GeneratorMachine.js';
 import { CanvasProperties } from './CanvasProperties.js';
 const { createCanvas, loadImage } = pkg;
 export class Drawer {
+  #canvasProperties;
+  #canvas;
+  #ctx;
+  #collection;
   #loadedImages = [];
   /**
    * @param {number} width : 1000; larghezza del canvas legaro al drawer
    * @param {number} heigth
    * @param {*} context
    */
-  constructor(width = 1000, heigth = 1000, context = '2d') {
-    this.canvasProperties = new CanvasProperties(
+  constructor(
+    width = 1000,
+    heigth = 1000,
+    context = '2d',
+    collection
+  ) {
+    this.#canvasProperties = new CanvasProperties(
       context,
       width,
       heigth
     );
+    this.#collection = collection;
     this.loadedElements = [];
-    this.canvas = createCanvas(width, heigth);
-    this.ctx = this.canvas.getContext(
+    this.#canvas = createCanvas(width, heigth);
+    this.#ctx = this.canvas.getContext(
       this.canvasProperties.context
     );
+  }
+  get canvasProperties() {
+    return this.#canvasProperties;
+  }
+  get canvas() {
+    return this.#canvas;
   }
   get loadedImages() {
     return this.#loadedImages;
   }
+  get collection() {
+    return this.#collection;
+  }
+  get ctx() {
+    return this.#ctx;
+  }
+  set canvasProperties(canvasProperties) {
+    return (this.#canvasProperties = canvasProperties);
+  }
   set loadedImages(image) {
     return this.#loadedImages.push(image);
+  }
+  set collection(collection) {
+    return (this.#collection = collection);
   }
   /**
    *

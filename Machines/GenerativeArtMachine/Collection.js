@@ -1,5 +1,6 @@
 import { System } from '../System/System.js';
 import { CollectionDetails } from './CollectionDetails.js';
+import { Drawer } from './Drawer.js';
 /**
  * Folder structure types
  * EDITION
@@ -60,10 +61,14 @@ import { CollectionDetails } from './CollectionDetails.js';
  * rarità diversa.
  */
 export class Collection extends CollectionDetails {
-  #rarities = [];
+  #collections = [];
   #path;
   #types = ['Edition', 'Element'];
   #type;
+  #outputPath;
+  #drawer;
+  #folderStructure;
+  #rarities = [];
   /**
    *
    * @param {string} name nome della collezione
@@ -76,22 +81,48 @@ export class Collection extends CollectionDetails {
     supply,
     baseURI,
     descrition,
-    path
+    path,
+    type,
+    outputPath,
+    width,
+    height
   ) {
     super(name, symbol, supply, baseURI, descrition);
-    this.path = path;
-    this.folderStructure = System.buildTree(this.path);
-  }
-  get rarities() {
-    return this.#rarities;
+    this.#path = path;
+    this.#type = type;
+    this.#outputPath = outputPath;
+    this.#drawer = new Drawer(width, height);
+    this.#folderStructure = System.buildTree(this.path);
+    this.#collections.push(this);
   }
   get path() {
     return this.#path;
   }
-  set rarities(rarity) {
-    return this.#rarities.push(rarity);
+  get type() {
+    return this.#type;
+  }
+  get outputPath() {
+    return this.#outputPath;
+  }
+  get folderStructure() {
+    return this.#folderStructure;
+  }
+  get rarities() {
+    return this.#rarities;
   }
   set path(path) {
     return (this.#path = path);
+  }
+  set outputPath(outputPath) {
+    return (this.#outputPath = outputPath);
+  }
+  set type(type) {
+    if (!this.#types.includes(type)) {
+      throw new Error('Il tipo selezionato non esiste');
+    }
+    return (this.#type = type);
+  }
+  set rarities(rarity) {
+    return this.#rarities.push(rarity);
   }
 }
