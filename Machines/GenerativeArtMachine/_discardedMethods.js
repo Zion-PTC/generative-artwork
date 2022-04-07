@@ -191,4 +191,40 @@ export class _discardedMethods {
     this.#type = this.#types[typesIndex];
     return this;
   }
+  //COLLECTIONS
+  static collectionExists(name, path) {
+    let elemetsInFolder = System.readDirSync(path);
+    let response;
+    elemetsInFolder.includes(name)
+      ? (response = true)
+      : (response = false);
+    return response;
+  }
+  //CLASSES
+  get arrayOfClasses() {
+    let array = [];
+    this.classes.forEach((cl) => {
+      return array.push(cl.name);
+    });
+    return array;
+  }
+  get arrayOfRarities() {
+    let array = [];
+    this.classes.forEach((cl) => {
+      cl.raritySet.forEach((rarityName) => {
+        let obj = {};
+        obj.name = rarityName;
+        obj.layers = [];
+        cl.rarities
+          .filter((rarity) => {
+            return rarity.name === rarityName;
+          })
+          .forEach((rarity) => {
+            obj.layers.push(rarity.layer.name);
+          });
+        array.push(obj);
+      });
+    });
+    return array;
+  }
 }
