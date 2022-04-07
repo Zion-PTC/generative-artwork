@@ -41,8 +41,8 @@ export let SystemTest = describe('System.js', () => {
         expect(tree).to.have.property('path', initialPath);
         expect(tree).to.have.property('children');
       });
-      it('Should return root node with its 4 children', () => {
-        expect(tree.children.length).to.be.equal(2);
+      it('Should return root node with its 3 children', () => {
+        expect(tree.children.length).to.be.equal(3);
         expect(tree.isRoot()).to.be.equal(true);
 
         const childrenPath = tree.children.map(
@@ -79,10 +79,11 @@ export let SystemTest = describe('System.js', () => {
             /**
               └──System
                 ⋮├──System.js
+                ⋮├──TreeNode.js
                 ⋮└──utils
                 ⋮ ⋮└──utils.js
               */
-            let expectedString = `└──System\n ⋮├──System.js\n ⋮└──utils\n ⋮ ⋮└──utils.js`;
+            let expectedString = `└──System\n ⋮├──System.js\n ⋮├──TreeNode.js\n ⋮└──utils\n ⋮ ⋮└──utils.js`;
             expect(tree.toStringedTree()).to.be.equal(
               expectedString
             );
