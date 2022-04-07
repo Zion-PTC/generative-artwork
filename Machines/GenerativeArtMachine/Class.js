@@ -2,6 +2,9 @@ import { SystemEntity } from './SystemEntity.js';
 
 export class Class extends SystemEntity {
   #classes = [];
+  #rarities = [];
+  #collection;
+  #layers = [];
   constructor(
     id,
     name,
@@ -11,7 +14,7 @@ export class Class extends SystemEntity {
     type,
     width,
     height,
-    collectionName
+    collection
   ) {
     super(
       id,
@@ -22,14 +25,26 @@ export class Class extends SystemEntity {
       type,
       width,
       height,
-      collectionName
+      collection
     );
 
-    this.rarityNames;
-    this.collectionName;
+    this.#rarities;
+    this.#collection;
 
-    this.layersNames;
+    this.#layers;
     this.elementsNames;
     this.#classes.push(this);
+  }
+  get classes() {
+    return this.#classes;
+  }
+  get rarities() {
+    return this.#rarities;
+  }
+  get collection() {
+    return this.#collection;
+  }
+  get layers() {
+    return this.#layers;
   }
 }

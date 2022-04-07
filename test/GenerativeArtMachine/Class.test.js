@@ -25,13 +25,20 @@ const CHILDREN = [
   new Class('altra', 'nuova', 'classe'),
 ];
 const TYPE = 'type';
+const WIDTH = 1000;
+const HEIGHT = 1000;
+const COLLECTION = 'collection';
+
 let newClass = new Class(
   ID,
   NAME,
   PATH,
   LEVEL,
   CHILDREN,
-  TYPE
+  TYPE,
+  WIDTH,
+  HEIGHT,
+  COLLECTION
 );
 
 describe(`CLASS CLASS`, () => {
