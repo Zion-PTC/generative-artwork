@@ -162,4 +162,33 @@ export class _discardedMethods {
       },
     };
   };
+  //LAYERS
+  getCollections() {}
+  getReleasedEditions() {}
+  getUnreleasedEditions() {}
+  // GETTERS
+  get supply() {
+    return this.#supply;
+  }
+  get type() {
+    return this.#type;
+  }
+  // SETTERS
+  /**
+   * @param {number} supply
+   */
+  set supply(supply) {
+    this.#supply = supply;
+    return this;
+  }
+  /**
+   * @param {number} type Indica il tipo di collezione :
+   * • 1 - Edition : la rarità degli elementi è basata sulla singola edizione
+   * • 2 - Element : la rarità delle edizioni è basata sulla rarità di ogni singolo elemento
+   */
+  set type(type) {
+    let typesIndex = type - 1;
+    this.#type = this.#types[typesIndex];
+    return this;
+  }
 }
