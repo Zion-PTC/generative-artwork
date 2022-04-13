@@ -1,4 +1,5 @@
 export class Nft_Metadata {
+  #nft_metadatas = [];
   #name;
   #description;
   #image;
@@ -16,6 +17,7 @@ export class Nft_Metadata {
     this.#image = image;
     this.#external_url = external_url;
     this.#attributes = attributes;
+    this.#nft_metadatas.push(this);
   }
   get name() {
     return this.#name;
