@@ -14,6 +14,16 @@ export class Picker {
       ];
     return elementoRandom;
   }
+  /**
+   *
+   * @param {number[]} risultati array contenente dei
+   * valori.
+   * @param {number} numero numero per il quale bisogna
+   * calcolare la percentuale di volte che è presente nei
+   * risultati.
+   * @returns {number} ritornare un valore percentuale
+   * espresso in decimali
+   */
   static calcolaPercentuale(risultati = [], numero) {
     let volteEstratto = [];
     risultati.forEach((risultato) => {
