@@ -1,7 +1,7 @@
-export class Nft_Metadata {
-  #nft_metadatas = [];
-  #name;
-  #description;
+import { Name } from './Name.js';
+
+export class Nft_Metadata extends Name {
+  static #nft_metadatas = [];
   #image;
   #external_url;
   #attributes = [];
@@ -12,18 +12,17 @@ export class Nft_Metadata {
     external_url,
     attributes
   ) {
-    this.#name = name;
-    this.#description = description;
+    super(name, description);
     this.#image = image;
     this.#external_url = external_url;
     this.#attributes = attributes;
-    this.#nft_metadatas.push(this);
+    Nft_Metadata.nft_metadatas = this;
   }
-  get name() {
-    return this.#name;
+  static get nft_metadatas() {
+    return this.#nft_metadatas;
   }
-  get description() {
-    return this.#description;
+  static set nft_metadatas(nft_metadata) {
+    return this.#nft_metadatas.push(nft_metadata);
   }
   get image() {
     return this.#image;
@@ -34,12 +33,6 @@ export class Nft_Metadata {
   get attributes() {
     return this.#attributes;
   }
-  set name(name) {
-    return (this.#name = name);
-  }
-  set description(description) {
-    return (this.#description = description);
-  }
   set image(image) {
     return (this.#image = image);
   }
@@ -48,5 +41,8 @@ export class Nft_Metadata {
   }
   set attributes(attributes = []) {
     return this.#attributes.push([...attributes]);
+  }
+  èConnessoA(attributo) {
+    return this.#attributes.includes(attributo);
   }
 }
