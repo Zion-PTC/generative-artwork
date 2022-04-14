@@ -14,6 +14,7 @@
     "testDrawer": "NODE_DEBUG=log nodemon test/GenerativeArtMachine/Drawer.test.js",
     "testClass": "NODE_DEBUG=log nodemon test/GenerativeArtMachine/Class.test.js",
     "testPosition": "NODE_DEBUG=log nodemon test/GenerativeArtMachine/Position.test.js",
+    "testSize": "NODE_DEBUG=log nodemon test/GenerativeArtMachine/Size.test.js",
     "testUserInterface": "NODE_DEBUG=log node test/GenerativeArtMachine/UserInterface.test.js"
   },
   "author": "",
