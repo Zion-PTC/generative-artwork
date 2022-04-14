@@ -24,6 +24,7 @@ export class Element extends SystemEntity {
       height,
       collectionName
     );
+    this.position;
 
     this.rarityName;
     this.collectionName;
