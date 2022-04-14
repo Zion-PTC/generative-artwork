@@ -1,6 +1,6 @@
 import { expect } from 'chai';
 import Mocha from 'mocha';
-import { zionUtil } from '../../../telegram-bots/Classes/Utils.js';
+import { zionUtil } from '../../../telegram-bots/Classes/Node Standard Modules/zionUtil.js';
 import { Nft_Metadata } from '../../Machines/GenerativeArtMachine/Nft_Metadata.js';
 const testRunner = new Mocha({ slow: 1000 });
 testRunner.suite.emit(

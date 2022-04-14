@@ -2,7 +2,7 @@ import fs from 'fs';
 import { dirname } from 'path';
 import { fileURLToPath } from 'url';
 
-import { zionUtil } from '../../../telegram-bots/Classes/Utils.js';
+import { zionUtil } from '../../../telegram-bots/Classes/Node Standard Modules/zionUtil.js';
 import { TreeNode } from './TreeNode.js';
 
 export class System {

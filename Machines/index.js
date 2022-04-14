@@ -1,4 +1,4 @@
-import { zionUtil } from '../../telegram-bots/Classes/Utils.js';
+import { zionUtil } from '../../telegram-bots/Classes/Node Standard Modules/zionUtil.js';
 import { GenerativeArtMachine } from './GenerativeArtMachine/GenerativeArtMachine.js';
 
 export let log = zionUtil.debuglog('log');
