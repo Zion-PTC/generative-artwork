@@ -1,4 +1,4 @@
-export class CollectionDetails {
+export class SmartContract {
   #supply;
   constructor(name, symbol, supply, baseURI, description) {
     this.name = name;

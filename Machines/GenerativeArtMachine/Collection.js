@@ -1,5 +1,5 @@
 import { System } from '../System/System.js';
-import { CollectionDetails } from './CollectionDetails.js';
+import { SmartContract } from './SmartContract.js';
 import { Drawer } from './Drawer.js';
 /**
  * Folder structure types
@@ -60,7 +60,7 @@ import { Drawer } from './Drawer.js';
  * Ogni edizione può essere composta da elementi di
  * rarità diversa.
  */
-export class Collection extends CollectionDetails {
+export class Collection extends SmartContract {
   #collections = [];
   #path;
   #types = ['Edition', 'Element'];
