@@ -1,7 +1,8 @@
+import { Position } from './Position';
 import { SystemEntity } from './SystemEntity';
 
 export class Element extends SystemEntity {
-  #elements = [];
+  static #elements = [];
   constructor(
     id,
     name,
@@ -11,7 +12,9 @@ export class Element extends SystemEntity {
     type,
     width,
     height,
-    collectionName
+    collectionName,
+    x,
+    y
   ) {
     super(
       id,
@@ -24,14 +27,17 @@ export class Element extends SystemEntity {
       height,
       collectionName
     );
-    this.position;
+    this.position = new Position(x, y);
 
     this.rarityName;
-    this.collectionName;
+    this.collectionName = collectionName;
     this.className;
     this.layerName;
 
     this.extension;
     this.#elements.push(this);
+  }
+  static get elements() {
+    return this.#elements;
   }
 }
