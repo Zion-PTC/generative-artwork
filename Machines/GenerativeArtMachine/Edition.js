@@ -1,8 +1,10 @@
+import { Dna } from './Dna';
 import { SystemEntity } from './SystemEntity';
 
 export class Edition extends SystemEntity {
   #editions = [];
   #imageFile;
+  #dna;
   constructor(
     id,
     name,
@@ -28,6 +30,7 @@ export class Edition extends SystemEntity {
     );
     this.#imageFile = imageFile;
     this.#editions.push(this);
+    this.#dna = new Dna();
   }
   get imageFile() {
     return this.#imageFile;
