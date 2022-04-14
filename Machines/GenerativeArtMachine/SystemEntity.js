@@ -1,7 +1,7 @@
 import { Size } from './Size.js';
 
 export class SystemEntity {
-  #systemEntities = [];
+  static #systemEntities = [];
   #id;
   #name;
   #path;
@@ -28,8 +28,13 @@ export class SystemEntity {
     this.#type = type;
     this.#collection = collection;
     this.size = new Size(width, height);
-    this.#systemEntities.push(this);
+    SystemEntity.#systemEntities.push(this);
   }
+  static get systemEntities() {
+    return this.#systemEntities;
+  }
+  static connections(entity) {}
+  static isConnected(entityA, entityB) {}
   get id() {
     return this.#id;
   }
