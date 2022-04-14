@@ -31,7 +31,7 @@ let valoriDegliElementi = elementi.map(
   (elemento) => elemento.valore
 );
 
-describe.only(`STATIC METHODS`, () => {
+describe(`STATIC METHODS`, () => {
   describe(`Method scegliNumeroFraNumeri()`, () => {
     let numeri = [1, 2, 3, 4, 5];
     it(`Data una lista di numeri: ${JSON.stringify(
