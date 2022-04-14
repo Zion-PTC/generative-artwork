@@ -3,7 +3,7 @@ import Mocha from 'mocha';
 import { zionUtil } from '../../../telegram-bots/Classes/Node Standard Modules/zionUtil.js';
 import { Collection } from '../../Machines/GenerativeArtMachine/Collection.js';
 import { System } from '../../Machines/System/System.js';
-import { ZionRegEx } from '../../../telegram-bots/Classes/ZionRegEx.js';
+import { ZionRegEx } from '../../../telegram-bots/Classes/Standard Classes/ZionRegEx.js';
 
 function expectedTreeStringResult() {
   let string = `└──input\n ⋮└──background\n ⋮ ⋮└──original\n ⋮ ⋮ ⋮├──Background_1.png\n ⋮ ⋮ ⋮├──Background_2.png\n ⋮ ⋮ ⋮├──Background_3.png\n ⋮ ⋮ ⋮├──Background_4.png\n ⋮ ⋮ ⋮├──Background_5.png\n ⋮ ⋮ ⋮└──asdf\n ⋮ ⋮└──rare\n ⋮ ⋮ ⋮├──Background1.png\n ⋮ ⋮ ⋮└──Background2.png\n ⋮ ⋮└──super_rare\n ⋮ ⋮ ⋮└──Background1.png\n ⋮└──circle\n ⋮ ⋮└──original\n ⋮ ⋮ ⋮├──Circle1.png\n ⋮ ⋮ ⋮├──Circle2.png\n ⋮ ⋮ ⋮├──Circle3.png\n ⋮ ⋮ ⋮├──Circle4.png\n ⋮ ⋮ ⋮└──Circle5.png\n ⋮ ⋮└──rare\n ⋮ ⋮ ⋮├──Circle1.png\n ⋮ ⋮ ⋮└──Circle2.png\n ⋮ ⋮└──super_rare\n ⋮ ⋮ ⋮└──Circle1.png\n ⋮└──innercircle\n ⋮ ⋮└──original\n ⋮ ⋮ ⋮├──InnerCircle1.png\n ⋮ ⋮ ⋮├──InnerCircle2.png\n ⋮ ⋮ ⋮├──InnerCircle3.png\n ⋮ ⋮ ⋮├──InnerCircle4.png\n ⋮ ⋮ ⋮└──InnerCircle5.png\n ⋮ ⋮└──rare\n ⋮ ⋮ ⋮├──InnerCircle1.png\n ⋮ ⋮ ⋮└──InnerCircle2.png\n ⋮ ⋮└──super_rare\n ⋮ ⋮ ⋮└──InnerCircle1.png`;
