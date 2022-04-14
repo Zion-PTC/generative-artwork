@@ -1,6 +1,25 @@
 export class Position {
-  constructor() {
-    this.x;
-    this.y;
+  static #positions = [];
+  #x;
+  #y;
+  constructor(x, y) {
+    this.#x = x;
+    this.#y = y;
+    Position.#positions.push(this);
+  }
+  static get positions() {
+    return this.#positions;
+  }
+  get x() {
+    return this.#x;
+  }
+  get y() {
+    return this.#y;
+  }
+  set x(x) {
+    return (this.#x = x);
+  }
+  set y(y) {
+    return (this.#y = y);
   }
 }
