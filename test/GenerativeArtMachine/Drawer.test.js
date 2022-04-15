@@ -2,7 +2,7 @@ import { expect } from 'chai';
 import Mocha from 'mocha';
 import { zionUtil } from '../../../telegram-bots/Classes/_Node Standard Modules/zionUtil.js';
 import { Drawer } from '../../Machines/GenerativeArtMachine/Drawer.js';
-import { System } from '../../Machines/System/System.js';
+import { System } from '../../Machines/System.js';
 
 const testRunner = new Mocha({ slow: 1000 });
 testRunner.suite.emit(

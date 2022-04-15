@@ -1,4 +1,4 @@
-import { System } from '../Machines/System/System.js';
+import { System } from '../Machines/System.js';
 
 class Element {
   constructor() {

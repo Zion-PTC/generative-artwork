@@ -1,7 +1,7 @@
 import { expect } from 'chai';
 import Mocha from 'mocha';
 import { zionUtil } from '../../../telegram-bots/Classes/_Node Standard Modules/zionUtil.js';
-import { System } from '../../Machines/System/System.js';
+import { System } from '../../Machines/System.js';
 
 const testRunner = new Mocha({ slow: 1000 });
 testRunner.suite.emit(
@@ -29,7 +29,7 @@ const NOMEDELLAPROPRIETA = 'path';
 
 const initialPath =
   '/Users/WAW/Documents/Projects/zion-GenerativeArtMachine/Machines/System';
-const FILEINSIDEINITIALPATH = 'System.js';
+const FILEINSIDEINITIALPATH = 'Tree.js';
 
 export let SystemTest = describe('System.js', () => {
   // METHODS
@@ -41,49 +41,50 @@ export let SystemTest = describe('System.js', () => {
         expect(tree).to.have.property('path', initialPath);
         expect(tree).to.have.property('children');
       });
-      it('Should return root node with its 3 children', () => {
-        expect(tree.children.length).to.be.equal(3);
+      it('Should return root node with its 2 children', () => {
+        expect(tree.children.length).to.be.equal(2);
         expect(tree.isRoot()).to.be.equal(true);
+        log(initialPath);
 
         const childrenPath = tree.children.map(
           (child) => child.path
         );
         expect(
-          childrenPath.includes(`${initialPath}/System.js`)
+          childrenPath.includes(`${initialPath}/Tree`)
         ).to.be.equal(true);
         expect(
-          childrenPath.includes(`${initialPath}/utils`)
-        ).to.be.equal(true);
-        expect(
-          childrenPath.includes(`${initialPath}/System.js`)
+          childrenPath.includes(`${initialPath}/Tree.js`)
         ).to.be.equal(true);
       });
       it('Should add utils node with its children inside root', () => {
-        const utils = tree.children.find(
-          (child) => child.path === `${initialPath}/utils`
-        );
-        expect(utils.isRoot()).to.be.equal(false);
-        expect(utils).not.to.be.null;
-        expect(utils?.children.length).to.be.equal(1);
-        expect(utils?.children[0]?.path).to.be.equal(
-          `${initialPath}/utils/utils.js`
-        );
-        it('Should return the names of System root folder and of its child utils', () => {
-          expect(tree.name).to.be.equal('System');
-          expect(utils.name).to.be.equal('utils');
-        });
+        // const treeNode = treeNode.children.find(
+        //   (child) => child.path === `${initialPath}/Tree`
+        // );
+        // expect(treeNode.isRoot()).to.be.equal(false);
+        // expect(treeNode).not.to.be.null;
+        // expect(treeNode?.children.length).to.be.equal(1);
+        // expect(treeNode?.children[0]?.path).to.be.equal(
+        //   `${initialPath}/utils/utils.js`
+        // );
+        // it('Should return the names of System root folder and of its child utils', () => {
+        //   expect(tree.name).to.be.equal('System');
+        //   expect(utils.name).to.be.equal('utils');
+        // });
       });
       describe(`INTERNAL CLASS: TREENODE`, () => {
         describe('TreeNode.prototype.toStringedTree()', () => {
           it('Should return a string formatted directory tree', () => {
             /**
               └──System
-                ⋮├──System.js
-                ⋮├──TreeNode.js
-                ⋮└──utils
-                ⋮ ⋮└──utils.js
+               ⋮└──Tree
+               ⋮ ⋮├──File.js
+               ⋮ ⋮├──Folder.js
+               ⋮ ⋮├──Root.js
+               ⋮ ⋮└──TreeNode.js
+               ⋮├──Tree.js
+              
               */
-            let expectedString = `└──System\n ⋮├──System.js\n ⋮├──TreeNode.js\n ⋮└──utils\n ⋮ ⋮└──utils.js`;
+            let expectedString = `└──System\n ⋮└──Tree\n ⋮ ⋮├──File.js\n ⋮ ⋮├──Folder.js\n ⋮ ⋮├──Root.js\n ⋮ ⋮└──TreeNode.js\n ⋮├──Tree.js`;
             expect(tree.toStringedTree()).to.be.equal(
               expectedString
             );

@@ -1,4 +1,4 @@
-import { System } from '../System/System.js';
+import { System } from '../System.js';
 import { SmartContract } from './SmartContract.js';
 import { Drawer } from './Drawer.js';
 /**

@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "mocha",
-    "testSystem": "NODE_DEBUG=log node test/System/System.test.js",
+    "testSystem": "NODE_DEBUG=log nodemon test/System/System.test.js",
     "testTerminal": "NODE_DEBUG=log node test/Terminal/Terminal.test.js",
     "testGeneratorMachine": "NODE_DEBUG=log nodemon test/GeneratorMachine/GeneratorMachine.test.js",
     "testPicker": "NODE_DEBUG=log nodemon test/GeneratorMachine/Picker.test.js",

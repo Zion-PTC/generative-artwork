@@ -1,8 +1,8 @@
 import fs from 'fs';
 let _types = ['Folder', 'File'];
 export class TreeNode {
-  static #nodes = [];
-  constructor(path, parent, rootPath) {
+  static #treenodes = [];
+  constructor(path, parent, rootPath, type) {
     this.root = rootPath;
     this.path = path;
     this.level = 0;
@@ -14,13 +14,13 @@ export class TreeNode {
     this.extension;
     this.size;
     this.name = TreeNode.#setName(path, this.type);
-    TreeNode.#nodes.push(this);
+    TreeNode.#treenodes.push(this);
   }
-  static get nodes() {
-    return this.#nodes;
+  static get treenodes() {
+    return this.#treenodes;
   }
   static get folders() {
-    this.nodes.find((node) => node.type === _types[0]);
+    this.treenodes.find((node) => node.type === _types[0]);
   }
   /**
    *

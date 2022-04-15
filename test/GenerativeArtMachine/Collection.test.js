@@ -2,7 +2,7 @@ import { expect } from 'chai';
 import Mocha from 'mocha';
 import { zionUtil } from '../../../telegram-bots/Classes/_Node Standard Modules/zionUtil.js';
 import { Collection } from '../../Machines/GenerativeArtMachine/Collection.js';
-import { System } from '../../Machines/System/System.js';
+import { System } from '../../Machines/System.js';
 import { ZionRegEx } from '../../../telegram-bots/Classes/_Standard Classes/ZionRegEx.js';
 import { Drawer } from '../../Machines/GenerativeArtMachine/Drawer.js';
 
@@ -173,6 +173,9 @@ export let CollectionTest =
           ).to.be.equal(
             `${PATH}/${arrayConIlContenutoDellaDirectory[0]}`
           );
+        });
+        it(`dovrebbe effettuare una ricerca DFS`, () => {
+          //
         });
         describe(`Class TreeNode`, () => {
           it(`dovrebbe ritronare una stringa formattata che mostra il tree, con valore uguale a ${ZionRegEx.firstAndLastDyn(

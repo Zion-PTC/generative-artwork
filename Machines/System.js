@@ -2,8 +2,8 @@ import fs from 'fs';
 import { dirname } from 'path';
 import { fileURLToPath } from 'url';
 
-import { zionUtil } from '../../../telegram-bots/Classes/_Node Standard Modules/zionUtil.js';
-import { TreeNode } from './TreeNode.js';
+import { zionUtil } from '../../telegram-bots/Classes/_Node Standard Modules/zionUtil.js';
+import { TreeNode } from './System/Tree/TreeNode.js';
 
 export class System {
   static #blackListFileNames = ['.DS_Store'];
@@ -108,7 +108,7 @@ export class System {
             childPath,
             currentNode.name
           );
-          let parent = TreeNode.nodes.find(
+          let parent = TreeNode.treenodes.find(
             (node) => node.name === childNode.parent
           );
           let level = parent.level;
@@ -180,6 +180,13 @@ export class System {
   static isFileInFolder(file, folder) {
     let array = fs.readdirSync(folder);
     return array.includes(file);
+  }
+  static isDirectory(path) {
+    let result;
+    fs.statSync(path).isDirectory()
+      ? (result = 0)
+      : (result = 1);
+    return result;
   }
   static get folders() {}
   static get files() {}
