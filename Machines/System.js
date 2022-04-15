@@ -96,7 +96,12 @@ export class System {
   buildTree(rootPath) {
     let _types = ['Folder', 'File'];
     let type = system.getTreeNodeType(rootPath);
-    let root = new Root(rootPath, undefined, type);
+    let name = this.setNameForTreeNode(
+      rootPath,
+      TreeNode.types[type]
+    );
+    console.log(name);
+    let root = new Root(name, rootPath, undefined, type);
     const stack = [root];
     // https://en.wikipedia.org/wiki/Depth-first_search
     // Depth-first search aka DFS
@@ -110,9 +115,14 @@ export class System {
         for (let child of children) {
           let childPath = `${currentNode.path}/${child}`;
           let type = system.getTreeNodeType(childPath);
+          let name = this.setNameForTreeNode(
+            childPath,
+            TreeNode.types[type]
+          );
           let childNode;
           if (_types[type] === _types[0]) {
             childNode = new Folder(
+              name,
               childPath,
               currentNode.name,
               type
@@ -120,6 +130,7 @@ export class System {
           }
           if (_types[type] === _types[1]) {
             childNode = new File(
+              name,
               childPath,
               currentNode.name,
               type
@@ -199,6 +210,19 @@ export class System {
       : (result = 1);
     return result;
   }
+  setNameForTreeNode = (path, type) => {
+    if (type === 'root') {
+      return path.match(/\w+$/g)[0];
+    }
+    if (type === TreeNode.types[0]) {
+      return path.match(/\w+$/g)[0];
+    }
+    let jointSpacesPath = path.replace(/ /g, '_');
+    let res = jointSpacesPath.match(
+      /(?<=[/])\w*[.]\w*/g
+    )[0];
+    return res;
+  };
   get folders() {}
   get files() {}
 }

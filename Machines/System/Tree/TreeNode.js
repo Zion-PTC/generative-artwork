@@ -1,11 +1,8 @@
 export class TreeNode {
   static #types = ['Folder', 'File'];
   static #treeNodes = [];
-  constructor(path, parent, type) {
-    this.name = TreeNode.#setName(
-      path,
-      TreeNode.#types[type]
-    );
+  constructor(name, path, parent, type) {
+    this.name = name;
     this.path = path;
     this.parent = parent;
     this.type = TreeNode.#types[type];
@@ -16,41 +13,15 @@ export class TreeNode {
   static get treeNodes() {
     return TreeNode.#treeNodes;
   }
-  static get folders() {
-    this.treeNodes.find(
-      (node) => node.type === TreeNode.#types[0]
-    );
+  static get types() {
+    return this.#types;
   }
-  static #setName = (path, type) => {
-    if (type === 'root') {
-      return path.match(/\w+$/g)[0];
-    }
-    if (type === TreeNode.#types[0]) {
-      return path.match(/\w+$/g)[0];
-    }
-    let jointSpacesPath = path.replace(/ /g, '_');
-    let res = jointSpacesPath.match(
-      /(?<=[/])\w*[.]\w*/g
-    )[0];
-    return res;
-  };
-  /**
-   * @name isRoot()
-   * @returns true se il nodo è il nodo root, falso se non è
-   * il nodo root.
-   */
   isRoot() {
     if (this.path === this.root) {
       return true;
     }
     return false;
   }
-  /**
-    System
-    ├── System.js
-    └── utils
-      └── utils.js
-   */
   toStringedTree = () => {
     let string;
     let stack = [this];

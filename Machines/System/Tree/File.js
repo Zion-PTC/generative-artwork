@@ -1,8 +1,8 @@
 import { TreeNode } from './TreeNode.js';
 
 export class File extends TreeNode {
-  constructor(path, parent, type) {
-    super(path, parent, type);
+  constructor(name, path, parent, type) {
+    super(name, path, parent, type);
     this.extension;
     this.size;
   }
