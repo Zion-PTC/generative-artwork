@@ -61,14 +61,19 @@ import { Drawer } from './Drawer.js';
  * rarità diversa.
  */
 export class Collection extends SmartContract {
-  #collections = [];
+  static #collections = [];
+  #id;
   #path;
   #types = ['Edition', 'Element'];
   #type;
   #outputPath;
   #drawer;
   #folderStructure;
+  // GRAPH
+  #classes = [];
+  #layers = [];
   #rarities = [];
+  #elements = [];
   /**
    *
    * @param {string} name nome della collezione
@@ -80,20 +85,34 @@ export class Collection extends SmartContract {
     symbol,
     supply,
     baseURI,
-    descrition,
+    description,
     path,
     type,
     outputPath,
     width,
     height
   ) {
-    super(name, symbol, supply, baseURI, descrition);
+    if (!Collection.collectionExists(name))
+      super(name, symbol, supply, baseURI, description);
     this.#path = path;
     this.#type = type;
     this.#outputPath = outputPath;
-    this.#drawer = new Drawer(width, height);
+    this.#drawer = new Drawer(width, height, '2d', name);
     this.#folderStructure = System.buildTree(this.path);
-    this.#collections.push(this);
+    Collection.#collections.push(this);
+    this.id = Collection.#collections.length;
+  }
+  // STATIC \\
+  // PROPERTIES \\
+  // METHODS \\
+  static collectionExists(name) {
+    return Collection.#collections.some(
+      (collection) => collection.name === name
+    );
+  }
+  // GETTERS
+  get id() {
+    return this.#id;
   }
   get path() {
     return this.#path;
@@ -107,8 +126,18 @@ export class Collection extends SmartContract {
   get folderStructure() {
     return this.#folderStructure;
   }
+  get drawer() {
+    return this.#drawer;
+  }
   get rarities() {
     return this.#rarities;
+  }
+  get collectionPath() {
+    return `${this.outputPath}/${this.name}`;
+  }
+  // SETTERS
+  set id(id) {
+    return (this.#id = id);
   }
   set path(path) {
     return (this.#path = path);
@@ -125,4 +154,21 @@ export class Collection extends SmartContract {
   set rarities(rarity) {
     return this.#rarities.push(rarity);
   }
+  hasDir() {
+    // controllare nel path se esiste una cartella
+    const folders = System.arrayOfFoldersInDirectory(
+      this.outputPath
+    );
+
+    return folders.some((element) => element === this.name);
+  }
+  creaDirectory() {
+    // controllo che la directory non esista di già
+    if (this.hasDir()) throw Error('Non è stato possibile');
+    if (!this.hasDir()) {
+      System.createNestedDir(this.collectionPath);
+      return this;
+    }
+  }
+  aggiungiVertice() {}
 }
