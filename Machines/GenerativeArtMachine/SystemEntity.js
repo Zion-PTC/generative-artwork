@@ -59,4 +59,7 @@ export class SystemEntity {
   set id(id) {
     return (this.#id = id);
   }
+  connettiA(){}
+  trovaLatiAdiacenti(){}
+  èConnessoA()
 }
