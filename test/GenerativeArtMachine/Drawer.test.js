@@ -2,7 +2,7 @@ import { expect } from 'chai';
 import Mocha from 'mocha';
 import { zionUtil } from '../../../telegram-bots/Classes/_Node Standard Modules/zionUtil.js';
 import { Drawer } from '../../Machines/GenerativeArtMachine/Drawer.js';
-import { System } from '../../Machines/System.js';
+import { system } from '../../Machines/System.js';
 
 const testRunner = new Mocha({ slow: 1000 });
 testRunner.suite.emit(
@@ -114,16 +114,16 @@ export let DrawerTest = describe(`DRAWER CLASS`, () => {
           height
         );
         log(newDefaultDrawer.canvas);
-        System.writePng(
+        system.writePng(
           PATH,
           newDefaultDrawer.canvas.toBuffer()
         );
-        expect(System.isFileInFolder(FILENAME, OUTPUTPATH))
+        expect(system.isFileInFolder(FILENAME, OUTPUTPATH))
           .to.be.true;
         let logger = (thisIs) => {
           log(thisIs);
         };
-        System.deleteFile(PATH, logger);
+        system.deleteFile(PATH, logger);
       });
     });
     describe(`Method loadImages()`, () => {

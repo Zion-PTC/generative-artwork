@@ -1,4 +1,4 @@
-import { System } from '../System.js';
+import { System, system } from '../System.js';
 import { SmartContract } from './SmartContract.js';
 import { Drawer } from './Drawer.js';
 /**
@@ -98,7 +98,7 @@ export class Collection extends SmartContract {
     this.#type = type;
     this.#outputPath = outputPath;
     this.#drawer = new Drawer(width, height, '2d', name);
-    this.#folderStructure = System.buildTree(this.path);
+    this.#folderStructure = system.buildTree(path);
     Collection.#collections.push(this);
     this.id = Collection.#collections.length;
   }
@@ -156,7 +156,7 @@ export class Collection extends SmartContract {
   }
   hasDir() {
     // controllare nel path se esiste una cartella
-    const folders = System.arrayOfFoldersInDirectory(
+    const folders = system.arrayOfFoldersInDirectory(
       this.outputPath
     );
 

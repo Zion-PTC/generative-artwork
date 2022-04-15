@@ -3,11 +3,15 @@ import { dirname } from 'path';
 import { fileURLToPath } from 'url';
 
 import { zionUtil } from '../../telegram-bots/Classes/_Node Standard Modules/zionUtil.js';
+import { Tree } from './System/Tree.js';
+import { File } from './System/Tree/File.js';
+import { Folder } from './System/Tree/Folder.js';
+import { Root } from './System/Tree/Root.js';
 import { TreeNode } from './System/Tree/TreeNode.js';
 
 export class System {
-  static #blackListFileNames = ['.DS_Store'];
-  static get blackListFileNames() {
+  #blackListFileNames = ['.DS_Store'];
+  get blackListFileNames() {
     return this.#blackListFileNames;
   }
   /**
@@ -16,7 +20,7 @@ export class System {
    * lista dei nomi delle carelle contenute nel percorso
    * target.
    */
-  static arrayOfFoldersInDirectory = (path) => {
+  arrayOfFoldersInDirectory = (path) => {
     return fs
       .readdirSync(path, {
         withFile_Types: true,
@@ -33,7 +37,7 @@ export class System {
    * @returns {}  an array of name of the files contained in
    * the target path
    */
-  static arrayOfNamesOfFilesInFolder = (path) => {
+  arrayOfNamesOfFilesInFolder = (path) => {
     return fs
       .readdirSync(path)
       .filter((item) => !/(^|\/)\.['\/\.]/g.test(item))
@@ -51,7 +55,7 @@ export class System {
    * @returns {String}  the complete path to the file from
    * which this function is called.
    */
-  static pathOfFileFromImportMetaUrl = (importMetaUrl) => {
+  pathOfFileFromImportMetaUrl = (importMetaUrl) => {
     return `${dirname(fileURLToPath(importMetaUrl))}`;
   };
   /**
@@ -60,7 +64,7 @@ export class System {
    * @param {String} data data to be written in the file
    * @returns
    */
-  static writeJson(targetPath, data) {
+  writeJson(targetPath, data) {
     return fs.writeFileSync(targetPath, data, () => {});
   }
   /**
@@ -68,7 +72,7 @@ export class System {
    * @param {String} data data to insert in the file
    * @returns
    */
-  static writePng(path, data) {
+  writePng(path, data) {
     return fs.writeFileSync(path, data);
   }
   /**
@@ -76,7 +80,7 @@ export class System {
    * @note funzione per creare una serie di cartelle
    * @param {String} dir
    */
-  static createNestedDir(dir) {
+  createNestedDir(dir) {
     //example './tmp/but/then/nested';
     if (!fs.existsSync(dir)) {
       fs.mkdirSync(dir, { recursive: true });
@@ -89,9 +93,10 @@ export class System {
    * Structure Object.
    * @returns {TreeNode} returns a complete Tree starting from the rootPath
    */
-  static buildTree(rootPath) {
+  buildTree(rootPath) {
     let _types = ['Folder', 'File'];
-    let root = new TreeNode(rootPath, undefined, rootPath);
+    let type = system.getTreeNodeType(rootPath);
+    let root = new Root(rootPath, undefined, type);
     const stack = [root];
     // https://en.wikipedia.org/wiki/Depth-first_search
     // Depth-first search aka DFS
@@ -99,22 +104,36 @@ export class System {
       let currentNode = stack.pop();
       if (currentNode) {
         let children = fs.readdirSync(currentNode.path);
-        if (children[0] === System.blackListFileNames[0]) {
+        if (children[0] === system.blackListFileNames[0]) {
           zionUtil.popFirst(children);
         }
         for (let child of children) {
           let childPath = `${currentNode.path}/${child}`;
-          let childNode = new TreeNode(
-            childPath,
-            currentNode.name
-          );
-          let parent = TreeNode.treenodes.find(
+          let type = system.getTreeNodeType(childPath);
+          let childNode;
+          if (_types[type] === _types[0]) {
+            childNode = new Folder(
+              childPath,
+              currentNode.name,
+              type
+            );
+          }
+          if (_types[type] === _types[1]) {
+            childNode = new File(
+              childPath,
+              currentNode.name,
+              type
+            );
+          }
+          let parent = TreeNode.treeNodes.find(
             (node) => node.name === childNode.parent
           );
           let level = parent.level;
           level++;
           childNode.level = level;
-          if (fs.statSync(childNode.path).isDirectory()) {
+          if (
+            system.getTreeNodeType(childNode.path) === 0
+          ) {
             childNode.type = _types[0];
             stack.push(childNode);
           } else {
@@ -124,14 +143,15 @@ export class System {
         }
       }
     }
-    return root;
+    let newTree = new Tree(TreeNode.treeNodes);
+    return newTree;
   }
   /**
    *
    * @param {String} path percorso target
    * @param {*} callback funzione callback senza parametri
    */
-  static deleteFile(path, callback) {
+  deleteFile(path, callback) {
     return fs.rm(path, callback);
   }
   /**
@@ -140,7 +160,7 @@ export class System {
    * @param {Object} options oggetto con opzioni
    * @returns fs.rmdirSync
    */
-  static deleteFolder(path, options) {
+  deleteFolder(path, options) {
     return fs.rmdirSync(path, options);
   }
   /**
@@ -148,7 +168,7 @@ export class System {
    * @param {String} dir directory target
    * @returns fs.rmSync()
    */
-  static deleteRecursiveDir(dir) {
+  deleteRecursiveDir(dir) {
     return fs.rmSync(dir, { recursive: true, force: true });
   }
   /**
@@ -156,7 +176,7 @@ export class System {
    * @param {String} path percorso target
    * @returns fm.existsSync()
    */
-  static existsSync(path) {
+  existsSync(path) {
     return fs.existsSync(path);
   }
   /**
@@ -165,29 +185,23 @@ export class System {
    * @param {Object} options oggetto opzioni
    * @returns fs.StatSync()
    */
-  static statSync(path, options) {
+  statSync(path, options) {
     return fs.statSync(path, options);
   }
-  /**
-   *
-   * @param {String} path percorso target
-   * @param {String[]} options oggetto con opzioni
-   * @returns {String[]} lista dei nomi degli oggetti contenuti nella directory target
-   */
-  static readDirSync(path, options) {
-    return fs.readdirSync(path, options);
-  }
-  static isFileInFolder(file, folder) {
+  isFileInFolder(file, folder) {
     let array = fs.readdirSync(folder);
     return array.includes(file);
   }
-  static isDirectory(path) {
+  getTreeNodeType(path) {
     let result;
     fs.statSync(path).isDirectory()
       ? (result = 0)
       : (result = 1);
     return result;
   }
-  static get folders() {}
-  static get files() {}
+  get folders() {}
+  get files() {}
 }
+
+export let system = new System();
+Object.assign(system, fs);

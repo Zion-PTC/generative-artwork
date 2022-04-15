@@ -1,7 +1,7 @@
 import { expect } from 'chai';
 import Mocha from 'mocha';
 import { zionUtil } from '../../../telegram-bots/Classes/_Node Standard Modules/zionUtil.js';
-import { System } from '../../Machines/System.js';
+import { system } from '../../Machines/System.js';
 import { GenerativeArtMachine } from '../../Machines/GenerativeArtMachine/GenerativeArtMachine.js';
 
 const testRunner = new Mocha({ slow: 1000 });
@@ -75,9 +75,9 @@ export let GenerativeArtMachineTest =
             await gotekMachine.createMachineDirectoryAndJson();
             log(gotekMachine.path);
             expect(
-              System.arrayOfFoldersInDirectory(
-                PATH
-              ).includes(NAME)
+              system
+                .arrayOfFoldersInDirectory(PATH)
+                .includes(NAME)
             ).to.be.equal(true);
             await gotekMachine.deleteMachineDirectoryAndJson();
           }

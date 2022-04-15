@@ -1,4 +1,4 @@
-import { TreeNode } from './TreeNode';
+import { TreeNode } from './TreeNode.js';
 
 export class Root extends TreeNode {
   static #roots = [];

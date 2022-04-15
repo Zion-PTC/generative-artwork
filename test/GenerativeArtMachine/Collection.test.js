@@ -2,9 +2,10 @@ import { expect } from 'chai';
 import Mocha from 'mocha';
 import { zionUtil } from '../../../telegram-bots/Classes/_Node Standard Modules/zionUtil.js';
 import { Collection } from '../../Machines/GenerativeArtMachine/Collection.js';
-import { System } from '../../Machines/System.js';
+import { system } from '../../Machines/system.js';
 import { ZionRegEx } from '../../../telegram-bots/Classes/_Standard Classes/ZionRegEx.js';
 import { Drawer } from '../../Machines/GenerativeArtMachine/Drawer.js';
+import { TreeNode } from '../../Machines/System/Tree/TreeNode.js';
 
 function expectedTreeStringResult() {
   let string = `└──input\n ⋮└──background\n ⋮ ⋮└──original\n ⋮ ⋮ ⋮├──Background_1.png\n ⋮ ⋮ ⋮├──Background_2.png\n ⋮ ⋮ ⋮├──Background_3.png\n ⋮ ⋮ ⋮├──Background_4.png\n ⋮ ⋮ ⋮├──Background_5.png\n ⋮ ⋮ ⋮└──asdf\n ⋮ ⋮└──rare\n ⋮ ⋮ ⋮├──Background1.png\n ⋮ ⋮ ⋮└──Background2.png\n ⋮ ⋮└──super_rare\n ⋮ ⋮ ⋮└──Background1.png\n ⋮└──circle\n ⋮ ⋮└──original\n ⋮ ⋮ ⋮├──Circle1.png\n ⋮ ⋮ ⋮├──Circle2.png\n ⋮ ⋮ ⋮├──Circle3.png\n ⋮ ⋮ ⋮├──Circle4.png\n ⋮ ⋮ ⋮└──Circle5.png\n ⋮ ⋮└──rare\n ⋮ ⋮ ⋮├──Circle1.png\n ⋮ ⋮ ⋮└──Circle2.png\n ⋮ ⋮└──super_rare\n ⋮ ⋮ ⋮└──Circle1.png\n ⋮└──innercircle\n ⋮ ⋮└──original\n ⋮ ⋮ ⋮├──InnerCircle1.png\n ⋮ ⋮ ⋮├──InnerCircle2.png\n ⋮ ⋮ ⋮├──InnerCircle3.png\n ⋮ ⋮ ⋮├──InnerCircle4.png\n ⋮ ⋮ ⋮└──InnerCircle5.png\n ⋮ ⋮└──rare\n ⋮ ⋮ ⋮├──InnerCircle1.png\n ⋮ ⋮ ⋮└──InnerCircle2.png\n ⋮ ⋮└──super_rare\n ⋮ ⋮ ⋮└──InnerCircle1.png`;
@@ -88,7 +89,7 @@ let newCollection = new Collection(
   height
 );
 let arrayConIlContenutoDellaDirectory =
-  System.readDirSync(PATH);
+  system.readdirSync(PATH);
 // nel caso in cui la lista contenga il file .DS_Store
 if (
   arrayConIlContenutoDellaDirectory.includes('.DS_Store')
@@ -162,14 +163,17 @@ export let CollectionTest =
         });
         it(`l'oggetto: ${_FOLDERSTRUCTURE} dovrebbe contenere un nodo con attributo: ${_ROOT}, con valore: '${PATH}'`, () => {
           expect(
-            newCollection.folderStructure[_ROOT]
+            newCollection.folderStructure.nodes[0].path
           ).to.be.equal(PATH);
         });
         it(`l'oggetto: ${_FOLDERSTRUCTURE} dovrebbe contenere un child con attributo: ${_PATH}, con valore: '${arrayConIlContenutoDellaDirectory[0]}`, () => {
-          expect(newCollection.folderStructure.children[0])
-            .not.to.be.null;
           expect(
-            newCollection.folderStructure.children[0].path
+            newCollection.folderStructure.nodes[0]
+              .children[0]
+          ).not.to.be.null;
+          expect(
+            newCollection.folderStructure.nodes[0]
+              .children[0].path
           ).to.be.equal(
             `${PATH}/${arrayConIlContenutoDellaDirectory[0]}`
           );
@@ -183,7 +187,7 @@ export let CollectionTest =
             5
           ).join('...')}`, () => {
             let stringedTree =
-              newCollection.folderStructure.toStringedTree();
+              newCollection.folderStructure.nodes[0].toStringedTree();
             expect(stringedTree).to.be.equal(
               expectedTreeStringResult()
             );
@@ -200,24 +204,24 @@ export let CollectionTest =
     describe(`COLLETION STATIC METHODS`, () => {
       describe(`Method: collectionExists()`, () => {
         it(`dovrebbe verificare che la directory della collezione: ${newCollection.name} non è ancora stata creata`, () => {
-          // System.createNestedDir(BASEURI);
-          // // log(System.readDirSync(BASEURI));
+          // system.createNestedDir(BASEURI);
+          // // log(system.readdirSync(BASEURI));
           // expect(
           //   Collection.collectionExists(NAME, BASEURI)
           // ).to.be.equal(false);
-          // System.deleteRecursiveDir('./some');
+          // system.deleteRecursiveDir('./some');
           expect(Collection.collectionExists(NAME)).to.be
             .true;
           expect(Collection.collectionExists('pio')).to.be
             .false;
         });
         // it(`dovrebbe verificare che la directory della collezione: ${newCollection.name} sia stata creata`, () => {
-        //   // System.createNestedDir(`${BASEURI}/${NAME}`);
-        //   // log(System.readDirSync(BASEURI));
+        //   // system.createNestedDir(`${BASEURI}/${NAME}`);
+        //   // log(system.readdirSync(BASEURI));
         //   // expect(
         //   //   Collection.collectionExists(NAME, BASEURI)
         //   // ).to.be.equal(true);
-        //   // System.deleteRecursiveDir('./some');
+        //   // system.deleteRecursiveDir('./some');
         // });
       });
     });
@@ -227,9 +231,9 @@ export let CollectionTest =
           expect(newCollection.hasDir()).to.be.false;
         });
         it(`creiamo la cartella nell'output path, e la funzione dovrebbe tornare true.`, () => {
-          System.createNestedDir(`${OUTPUTPATH}/${NAME}`);
+          system.createNestedDir(`${OUTPUTPATH}/${NAME}`);
           expect(newCollection.hasDir()).to.be.true;
-          System.deleteRecursiveDir(
+          system.deleteRecursiveDir(
             `${OUTPUTPATH}/${NAME}`
           );
         });
@@ -237,15 +241,15 @@ export let CollectionTest =
       describe(`Method creaDirectory()`, () => {
         it(`dovrebbe creare una cartella con nome: ${NAME}`, () => {
           const PATHDELLACOLLEZIONE = `${OUTPUTPATH}/${NAME}`;
-          System.deleteRecursiveDir(PATHDELLACOLLEZIONE);
+          system.deleteRecursiveDir(PATHDELLACOLLEZIONE);
         });
         it(`dovrebbe lanciare un errore in quanto la cartella esiste già`, () => {
           const PATHDELLACOLLEZIONE = `${OUTPUTPATH}/${NAME}`;
-          System.createNestedDir(PATHDELLACOLLEZIONE);
+          system.createNestedDir(PATHDELLACOLLEZIONE);
           expect(() =>
             newCollection.creaDirectory()
           ).to.throw('Non è stato possibile');
-          System.deleteRecursiveDir(PATHDELLACOLLEZIONE);
+          system.deleteRecursiveDir(PATHDELLACOLLEZIONE);
         });
       });
     });

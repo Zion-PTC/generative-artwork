@@ -1,36 +1,31 @@
-import fs from 'fs';
-let _types = ['Folder', 'File'];
 export class TreeNode {
-  static #treenodes = [];
-  constructor(path, parent, rootPath, type) {
-    this.root = rootPath;
+  static #types = ['Folder', 'File'];
+  static #treeNodes = [];
+  constructor(path, parent, type) {
+    this.name = TreeNode.#setName(
+      path,
+      TreeNode.#types[type]
+    );
     this.path = path;
-    this.level = 0;
     this.parent = parent;
+    this.type = TreeNode.#types[type];
+    this.level = 0;
     this.children = [];
-    this.type = fs.statSync(this.path).isDirectory()
-      ? _types[0]
-      : _types[1];
-    this.extension;
-    this.size;
-    this.name = TreeNode.#setName(path, this.type);
-    TreeNode.#treenodes.push(this);
+    TreeNode.#treeNodes.push(this);
   }
-  static get treenodes() {
-    return this.#treenodes;
+  static get treeNodes() {
+    return TreeNode.#treeNodes;
   }
   static get folders() {
-    this.treenodes.find((node) => node.type === _types[0]);
+    this.treeNodes.find(
+      (node) => node.type === TreeNode.#types[0]
+    );
   }
-  /**
-   *
-   * @param {string} path percorso del file o cartella
-   * per la quale bisogna
-   * @param {string} type
-   * @returns
-   */
   static #setName = (path, type) => {
-    if (type === _types[0]) {
+    if (type === 'root') {
+      return path.match(/\w+$/g)[0];
+    }
+    if (type === TreeNode.#types[0]) {
       return path.match(/\w+$/g)[0];
     }
     let jointSpacesPath = path.replace(/ /g, '_');
@@ -71,51 +66,21 @@ export class TreeNode {
       let nomeDeiFileInNodeChildren = [];
       for (let child of children) {
         nomeDeiFileInNodeChildren.push(child.name);
-        if (child.type === _types[1]) {
+        if (child.type === TreeNode.#types[1]) {
         }
         stack.push(child);
       }
-      function stringedName(
-        name,
-        type,
-        level,
-        folders,
-        string,
-        folderId,
-        _isLastChild
-      ) {
-        let tab = '';
-        let pattern = ' ⋮';
-        while (level) {
-          level--;
-          tab = tab + pattern;
-        }
-        if (type === _types[0]) {
-          folders.push(nomeDeiFileInNodeChildren);
-          string = `${tab}└──${name}`;
-          folderId++;
-        } else if (type === _types[1]) {
-          if (name === folders[folderId][0]) {
-            _isLastChild = true;
-            string = `${tab}└──${name}`;
-          } else {
-            string = `${tab}├──${name}`;
-          }
-        }
-        let _string = string;
-        let _folders = folders;
-        let _folderId = folderId;
-        return { _string, _folders, _folderId };
-      }
-      let { _string, _folders, _folderId } = stringedName(
-        currentNode.name,
-        currentNode.type,
-        currentNode.level,
-        folders,
-        string,
-        folderId,
-        currentNode._isLastChild
-      );
+      let { _string, _folders, _folderId } =
+        this.stringedName(
+          currentNode.name,
+          currentNode.type,
+          currentNode.level,
+          folders,
+          string,
+          folderId,
+          currentNode._isLastChild,
+          nomeDeiFileInNodeChildren
+        );
       string = _string;
       folderId = _folderId;
       folders = _folders;
@@ -124,5 +89,38 @@ export class TreeNode {
     }
     treeStrings = treeStrings.join('\n');
     return treeStrings;
+  };
+  stringedName = (
+    name,
+    type,
+    level,
+    folders,
+    string,
+    folderId,
+    _isLastChild,
+    nomeDeiFileInNodeChildren
+  ) => {
+    let tab = '';
+    let pattern = ' ⋮';
+    while (level) {
+      level--;
+      tab = tab + pattern;
+    }
+    if (type === TreeNode.#types[0]) {
+      folders.push(nomeDeiFileInNodeChildren);
+      string = `${tab}└──${name}`;
+      folderId++;
+    } else if (type === TreeNode.#types[1]) {
+      if (name === folders[folderId][0]) {
+        _isLastChild = true;
+        string = `${tab}└──${name}`;
+      } else {
+        string = `${tab}├──${name}`;
+      }
+    }
+    let _string = string;
+    let _folders = folders;
+    let _folderId = folderId;
+    return { _string, _folders, _folderId };
   };
 }

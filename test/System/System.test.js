@@ -1,7 +1,8 @@
 import { expect } from 'chai';
 import Mocha from 'mocha';
 import { zionUtil } from '../../../telegram-bots/Classes/_Node Standard Modules/zionUtil.js';
-import { System } from '../../Machines/System.js';
+import { system } from '../../Machines/System.js';
+import { Tree } from '../../Machines/System/Tree.js';
 
 const testRunner = new Mocha({ slow: 1000 });
 testRunner.suite.emit(
@@ -16,7 +17,7 @@ process.on('exit', (code) => {
 });
 let log = zionUtil.debuglog('log');
 
-const BASE = System.pathOfFileFromImportMetaUrl(
+const BASE = system.pathOfFileFromImportMetaUrl(
   import.meta.url
 );
 const NEST1 = `nested`;
@@ -35,18 +36,20 @@ export let SystemTest = describe('System.js', () => {
   // METHODS
   describe(`STATIC METHODS`, () => {
     describe('System static method: buildTree()', () => {
-      const tree = System.buildTree(initialPath);
+      const tree = system.buildTree(initialPath);
+      let root = tree.nodes[0];
+
       it('Should return root node', () => {
-        expect(tree).not.to.be.null;
-        expect(tree).to.have.property('path', initialPath);
-        expect(tree).to.have.property('children');
+        expect(root).not.to.be.null;
+        expect(root).to.have.property('path', initialPath);
+        expect(root).to.have.property('children');
       });
       it('Should return root node with its 2 children', () => {
-        expect(tree.children.length).to.be.equal(2);
-        expect(tree.isRoot()).to.be.equal(true);
+        expect(root.children.length).to.be.equal(2);
+        expect(root.isRoot()).to.be.equal(true);
         log(initialPath);
 
-        const childrenPath = tree.children.map(
+        const childrenPath = root.children.map(
           (child) => child.path
         );
         expect(
@@ -71,6 +74,11 @@ export let SystemTest = describe('System.js', () => {
         //   expect(utils.name).to.be.equal('utils');
         // });
       });
+      describe(`TREE`, () => {
+        it(``, () => {
+          log(tree.nodes);
+        });
+      });
       describe(`INTERNAL CLASS: TREENODE`, () => {
         describe('TreeNode.prototype.toStringedTree()', () => {
           it('Should return a string formatted directory tree', () => {
@@ -85,10 +93,11 @@ export let SystemTest = describe('System.js', () => {
               
               */
             let expectedString = `└──System\n ⋮└──Tree\n ⋮ ⋮├──File.js\n ⋮ ⋮├──Folder.js\n ⋮ ⋮├──Root.js\n ⋮ ⋮└──TreeNode.js\n ⋮├──Tree.js`;
-            expect(tree.toStringedTree()).to.be.equal(
+            expect(root.toStringedTree()).to.be.equal(
               expectedString
             );
           });
+          it(``, () => {});
         });
       });
     });
@@ -98,26 +107,26 @@ export let SystemTest = describe('System.js', () => {
       const NEST2 = `url`;
       const PATH = `${BASE}${NEST1}/${NEST2}`;
       it('dovrebbe ritornare un array contenente i folder contenuti nel percorso fornito', () => {
-        System.createNestedDir(PATH);
+        system.createNestedDir(PATH);
         // System.writeJson(
         //   `${BASE}${NEST1}/newFile.json`,
         //   'new file'
         // );
-        let array1 = System.arrayOfFoldersInDirectory(
+        let array1 = system.arrayOfFoldersInDirectory(
           `${BASE}${NEST1}`
         );
         log(`${BASE}${NEST1}`);
         log(array1);
         // log(System.statSync(array1[0]));
         expect(array1[0]).to.be.equal(NEST2);
-        System.deleteRecursiveDir(`${BASE}${NEST1}`);
+        system.deleteRecursiveDir(`${BASE}${NEST1}`);
       });
     });
     describe('System static method: arrayOfNamesOfFilesInFolder()', () => {
-      System.createNestedDir(PATH);
-      System.writeJson(`${PATH}/${FILENAME1}`, DATA);
+      system.createNestedDir(PATH);
+      system.writeJson(`${PATH}/${FILENAME1}`, DATA);
       const array =
-        System.arrayOfNamesOfFilesInFolder(PATH);
+        system.arrayOfNamesOfFilesInFolder(PATH);
       it('dovrebbe creare un array con i nomi dei file contenuti nella cartella', () => {
         expect(array.length).not.to.be.null;
       });
@@ -133,25 +142,25 @@ export let SystemTest = describe('System.js', () => {
           `${PATH}/${FILENAME1}`
         );
       });
-      System.deleteRecursiveDir(`${BASE}/${NEST1}`);
+      system.deleteRecursiveDir(`${BASE}/${NEST1}`);
     });
     describe('System static method: pathOfFileFromImportMetaUrl()', () => {
       const EXPECTEDPATH =
         '/Users/WAW/Documents/Projects/zion-GenerativeArtMachine/test/System';
       const importMetaUrl = import.meta.url;
       const path =
-        System.pathOfFileFromImportMetaUrl(importMetaUrl);
+        system.pathOfFileFromImportMetaUrl(importMetaUrl);
       it('dovrebbe ritornare il percorso del file da cui si manda il import.meta.url', () => {
         expect(path).to.be.equal(EXPECTEDPATH);
       });
     });
     describe('System static method: writeJson()', () => {
       it(`dovrebbe scrivere un file JSON di nome: ${FILENAME1} nel Test Path`, () => {
-        System.writeJson(`${BASE}/${FILENAME1}`, DATA);
+        system.writeJson(`${BASE}/${FILENAME1}`, DATA);
         expect(
-          System.arrayOfNamesOfFilesInFolder(BASE)[1].name
+          system.arrayOfNamesOfFilesInFolder(BASE)[1].name
         ).to.be.equal(FILENAME1);
-        System.deleteFile(`${BASE}/${FILENAME1}`, () => {});
+        system.deleteFile(`${BASE}/${FILENAME1}`, () => {});
       });
     });
     describe('System static method: createNestedDir()', () => {
@@ -161,7 +170,7 @@ export let SystemTest = describe('System.js', () => {
       const PROVAPATH1 = 'prova';
       const PROVAPATH2 = 'ricursiva';
       it('dovrebbe creare una cartella ricursivamente', () => {
-        System.createNestedDir(
+        system.createNestedDir(
           BASEPATH +
             '/' +
             PROVAPATHTARGET +
@@ -171,31 +180,31 @@ export let SystemTest = describe('System.js', () => {
             PROVAPATH2
         );
         expect(
-          System.existsSync(
+          system.existsSync(
             `${BASEPATH}/${PROVAPATHTARGET}/`
           )
         ).to.be.true;
         expect(
-          System.existsSync(
+          system.existsSync(
             `${BASEPATH}/${PROVAPATHTARGET}` +
               `/${PROVAPATH1}`
           )
         ).to.be.true;
         expect(
-          System.existsSync(
+          system.existsSync(
             `${BASEPATH}/${PROVAPATHTARGET}` +
               `/${PROVAPATH1}/${PROVAPATH2}`
           )
         ).to.be.true;
-        System.deleteFolder(
+        system.deleteFolder(
           `${BASEPATH}/${PROVAPATHTARGET}` +
             `/${PROVAPATH1}/${PROVAPATH2}`
         );
-        System.deleteFolder(
+        system.deleteFolder(
           `${BASEPATH}/${PROVAPATHTARGET}` +
             `/${PROVAPATH1}`
         );
-        System.deleteFolder(
+        system.deleteFolder(
           `${BASEPATH}/${PROVAPATHTARGET}`
         );
       });
@@ -205,27 +214,27 @@ export let SystemTest = describe('System.js', () => {
       const ROOTDIR = './sono';
       const SECONDLEVDIR = './sono/una/';
       it(`dovrebbe cancellare il contenuto di una nested directory`, () => {
-        System.createNestedDir(NESTEDDIR);
-        expect(System.readDirSync(ROOTDIR)[0]).to.be.equal(
+        system.createNestedDir(NESTEDDIR);
+        expect(system.readdirSync(ROOTDIR)[0]).to.be.equal(
           'una'
         );
-        System.deleteRecursiveDir(SECONDLEVDIR);
-        expect(System.readDirSync(ROOTDIR)[0]).to.be.equal(
+        system.deleteRecursiveDir(SECONDLEVDIR);
+        expect(system.readdirSync(ROOTDIR)[0]).to.be.equal(
           undefined
         );
-        System.deleteRecursiveDir(ROOTDIR);
+        system.deleteRecursiveDir(ROOTDIR);
       });
     });
     describe(`Method isFileInFolder()`, () => {
       it(`dovrebbe tornare true controllando che la cartella contenga un file di nome: ${FILEINSIDEINITIALPATH}`, () => {
-        let result = System.isFileInFolder(
+        let result = system.isFileInFolder(
           FILEINSIDEINITIALPATH,
           initialPath
         );
         expect(result).to.be.true;
       });
       it(`dovrebbe tornare false controllando che la cartella contenga un file specifico`, () => {
-        let result = System.isFileInFolder(
+        let result = system.isFileInFolder(
           'FILEINSIDEINITIALPATH',
           initialPath
         );

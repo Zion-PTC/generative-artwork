@@ -1,7 +1,7 @@
 import { Generator } from './Generator.js';
 import { LayerManager } from './LayerManager.js';
 import { RarityWeight } from './RarityWeight.js';
-import { System } from '../Machines/System.js';
+import { system } from '../Machines/System.js';
 
 export class Dna {
   constructor({
@@ -105,7 +105,7 @@ export class Dna {
     return mappedDnaToLayers;
   };
   writeMetadata = (data) => {
-    return System.writeJson(this.outputPath, data);
+    return system.writeJson(this.outputPath, data);
   };
   saveCanvasToPng = (canvas, editionCount) => {
     const bufferTypes = [
@@ -114,7 +114,7 @@ export class Dna {
       'image/png',
       'raw',
     ];
-    return System.writePng(
+    return system.writePng(
       `./output/${editionCount}.png`,
       canvas.toBuffer('image/png')
     );
