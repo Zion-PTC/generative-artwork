@@ -1,4 +1,4 @@
-import { Media } from '/Users/WAW/Documents/Projects/telegram-botsClasses/Node Standard Modules/zionUtils/Media.js';
+import { Media } from '../../../telegram-bots/Classes/_Node Standard Modules/zionUtil/Media.js';
 
 export class Picker {
   /**
