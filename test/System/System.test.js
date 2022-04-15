@@ -1,6 +1,6 @@
 import { expect } from 'chai';
 import Mocha from 'mocha';
-import { zionUtil } from '../../../telegram-bots/Classes/Node Standard Modules/zionUtil.js';
+import { zionUtil } from '../../../telegram-bots/Classes/_Node Standard Modules/zionUtil.js';
 import { System } from '../../Machines/System/System.js';
 
 const testRunner = new Mocha({ slow: 1000 });

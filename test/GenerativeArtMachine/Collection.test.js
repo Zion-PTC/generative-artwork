@@ -1,6 +1,6 @@
 import { expect } from 'chai';
 import Mocha from 'mocha';
-import { zionUtil } from '../../../telegram-bots/Classes/Node Standard Modules/zionUtil.js';
+import { zionUtil } from '../../../telegram-bots/Classes/_Node Standard Modules/zionUtil.js';
 import { Collection } from '../../Machines/GenerativeArtMachine/Collection.js';
 import { System } from '../../Machines/System/System.js';
 import { ZionRegEx } from '../../../telegram-bots/Classes/Standard Classes/ZionRegEx.js';

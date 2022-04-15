@@ -1,4 +1,4 @@
-import { zionUtil } from '../../../telegram-bots/Classes/Node Standard Modules/zionUtil.js';
+import { zionUtil } from '../../../telegram-bots/Classes/_Node Standard Modules/zionUtil.js';
 
 export class Size {
   static #sizes = [];
