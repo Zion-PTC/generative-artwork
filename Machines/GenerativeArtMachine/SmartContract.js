@@ -1,5 +1,6 @@
 export class SmartContract {
   #supply;
+  #type;
   constructor(name, symbol, supply, baseURI, description) {
     this.name = name;
     this.symbol = symbol;
