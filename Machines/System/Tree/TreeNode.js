@@ -4,6 +4,7 @@ export class TreeNode {
   constructor(name, path, parent, type) {
     this.name = name;
     this.path = path;
+    // parent deve essere al massimo 1
     this.parent = parent;
     this.type = TreeNode.#types[type];
     this.level = 0;
@@ -94,4 +95,13 @@ export class TreeNode {
     let _folderId = folderId;
     return { _string, _folders, _folderId };
   };
+  trovaSiblings() {
+    // se è root lancia errore
+  }
+  trovaFigli() {
+    // se è file lancia errore
+  }
+  trovaGenitore() {
+    // se è root lancia errore
+  }
 }

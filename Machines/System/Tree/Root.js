@@ -6,6 +6,7 @@ export class Root extends TreeNode {
   constructor(name, path, parent, type) {
     super(name, path, parent, type);
     this.root = path;
+    this.parent = undefined;
     Root.#roots.push(this);
   }
 }
