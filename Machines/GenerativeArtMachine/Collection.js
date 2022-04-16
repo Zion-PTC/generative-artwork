@@ -1,6 +1,7 @@
-import { System, system } from '../System.js';
+import { system } from '../System.js';
 import { SmartContract } from './SmartContract.js';
 import { Drawer } from './Drawer.js';
+import { zionUtil } from '../../../telegram-bots/Classes/_Node Standard Modules/zionUtil.js';
 /**
  * Folder structure types
  * EDITION
@@ -81,16 +82,16 @@ export class Collection extends SmartContract {
    * @param {string} baseUri percorso base per gli oggetti della collezione. Questo dato è quello che apparirà nei metadata degli NFT.
    */
   constructor(
-    name,
-    symbol,
-    supply,
-    baseURI,
-    description,
-    path,
-    type,
-    outputPath,
-    width,
-    height
+    name = 'Default Name',
+    symbol = 'DFS',
+    supply = 1000,
+    baseURI = 'http',
+    description = 'description',
+    path = '/Users/WAW/Documents/Projects/zion-GenerativeArtMachine/input',
+    type = 'Edition',
+    outputPath = '/Users/WAW/Documents/Projects/zion-GenerativeArtMachine/Machines/GenerativeArtMachine/Machines',
+    width = 1000,
+    height = 1000
   ) {
     if (!Collection.collectionExists(name))
       super(name, symbol, supply, baseURI, description);
@@ -102,15 +103,15 @@ export class Collection extends SmartContract {
     Collection.#collections.push(this);
     this.id = Collection.#collections.length;
   }
-  // STATIC \\
-  // PROPERTIES \\
-  // METHODS \\
-  static collectionExists(name) {
-    return Collection.#collections.some(
-      (collection) => collection.name === name
-    );
-  }
   // GETTERS
+  static get collections() {
+    let servedArray = [];
+    Collection.#collections.forEach((el) =>
+      servedArray.push(el)
+    );
+    Object.freeze(servedArray);
+    return servedArray;
+  }
   get id() {
     return this.#id;
   }
@@ -154,6 +155,51 @@ export class Collection extends SmartContract {
   set rarities(rarity) {
     return this.#rarities.push(rarity);
   }
+  // STATIC \\
+  // PROPERTIES \\
+  // METHODS \\
+  static collectionExists(name) {
+    return Collection.#collections.some(
+      (collection) => collection.name === name
+    );
+  }
+  static deleteCollection(name) {
+    // cerca l'indice della collezione tramite il nome
+    const indiceDellaCollezione =
+      Collection.#collections.findIndex(
+        (element) => element.name === name
+      );
+    // se non c'è lancia errore
+    if (indiceDellaCollezione <= -1) {
+      throw new Error(
+        'non esiste una collezione con quel nome'
+      );
+    }
+    // se c'è cancella l'elemento
+    // zionUtil.changePosition(Collection.#collections, 0, 1);
+    if (
+      indiceDellaCollezione + 1 !==
+      Collection.#collections.length
+    ) {
+      zionUtil.changePosition(
+        Collection.#collections,
+        indiceDellaCollezione,
+        Collection.#collections.length - 1
+      );
+    }
+    Collection.#collections.pop();
+
+    // const discardedElement = Collection.collections.pop();
+    // controlla che l'elemento scarcato si quello
+    // desiderato
+    // if (!discardedElement.name === name) {
+    //   throw new Error(
+    //     'c`è stato un errore nella scelta dell`elemento da eliminare'
+    //   );
+    // }
+    // se è lo stesso ritorna this
+    return Collection.#collections;
+  }
   hasDir() {
     // controllare nel path se esiste una cartella
     const folders = system.arrayOfFoldersInDirectory(
@@ -166,7 +212,7 @@ export class Collection extends SmartContract {
     // controllo che la directory non esista di già
     if (this.hasDir()) throw Error('Non è stato possibile');
     if (!this.hasDir()) {
-      System.createNestedDir(this.collectionPath);
+      system.createNestedDir(this.collectionPath);
       return this;
     }
   }

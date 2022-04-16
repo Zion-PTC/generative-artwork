@@ -3,6 +3,7 @@ import Mocha from 'mocha';
 import { zionUtil } from '../../../telegram-bots/Classes/_Node Standard Modules/zionUtil.js';
 import { system } from '../../Machines/System.js';
 import { Tree } from '../../Machines/System/Tree.js';
+import { TreeNode } from '../../Machines/System/Tree/TreeNode.js';
 
 const testRunner = new Mocha({ slow: 1000 });
 testRunner.suite.emit(
@@ -75,12 +76,234 @@ export let SystemTest = describe('System.js', () => {
         // });
       });
       describe(`TREE`, () => {
-        it(``, () => {
-          log(tree.nodes);
+        describe(`Property nodes`, () => {
+          it(`dovrebbe tornare un lista dei nodi contenuti nel tree`, () => {
+            expect(Array.isArray(tree.nodes)).to.be.true;
+          });
+          it(`non dovrebbe permettere di aggiungegere un elemento all'array`, () => {
+            expect(() =>
+              tree.nodes.push('something')
+            ).to.throw(
+              'Cannot add property 8, object is not extensible'
+            );
+          });
+        });
+        describe(`Property 'size'`, () => {
+          it(`dovrebbe tornare dimensione del tree`, () => {
+            expect(tree.size).to.be.equal(8);
+          });
+        });
+        const NAME = 'giorno';
+        const PATH = 'nessunPath';
+        const PARENT = 'non ho parenti';
+        const TYPE = 1;
+        const TYPE1 = 'File';
+        const giorgio = new TreeNode(
+          NAME,
+          PATH,
+          PARENT,
+          TYPE
+        );
+        describe(`Method add()`, () => {
+          it(`dovrebbe lanciare un errore perché non è stato fornito un nodo da aggiungere`, () => {
+            const ERRORMESSAGE =
+              'non è stato fornito alcun nodo da aggiungere';
+            expect(() => tree.add()).to.throw(ERRORMESSAGE);
+          });
+          it(`dovrebbe lanciare un errore perché gli è stato fornito un argomento ma non del tipo giusto`, () => {
+            const ERRORMESSAGE =
+              'Non è stato fornito un oggetto di tipo TreeNode';
+            expect(() => {
+              tree.add('pooo');
+            }).to.throw(ERRORMESSAGE);
+          });
+          it(`devrebbe lanciare un errore perché è stato fornito un array`, () => {
+            const ERRORMESSAGE =
+              'È stato fornito un array.';
+            const ARGOMENTOSBAGLIATO = ['blue'];
+            expect(() =>
+              tree.add(ARGOMENTOSBAGLIATO)
+            ).to.throw(ERRORMESSAGE);
+          });
+          it(`dovrebbe aggiungere un nodo al tree`, () => {
+            tree.add(giorgio);
+            expect(
+              tree.nodes[tree.size - 1].name
+            ).to.be.equal(NAME);
+            expect(
+              tree.nodes[tree.size - 1].path
+            ).to.be.equal(PATH);
+            expect(
+              tree.nodes[tree.size - 1].parent
+            ).to.be.equal(PARENT);
+            expect(
+              tree.nodes[tree.size - 1].type
+            ).to.be.equal(TYPE1);
+          });
+        });
+        describe(`Method remove()`, () => {
+          it(`dovrebbe lanciare un errore perché non è stato fornito un nodo da rimuovere`, () => {
+            const ERRORMESSAGE =
+              'Non è stato fornito alcun nodo da rimuovere';
+            expect(() => tree.remove()).to.throw(
+              ERRORMESSAGE
+            );
+          });
+          it(`dovrebbe lanciare un errore perché gli è stato fornito un array`, () => {
+            const ARGOMENTOSBAGLIATO = ['no array'];
+            const ERRORMESSAGE =
+              'È stato fornito un array.';
+            expect(() =>
+              tree.remove(ARGOMENTOSBAGLIATO)
+            ).to.throw(ERRORMESSAGE);
+          });
+          it(`devrebbe lanciare un errore perché è stato fornito un array`, () => {
+            const ARGOMENTOSBAGLIATO =
+              'argomento sbagliato';
+            const ERRORMESSAGE =
+              'Non è stato fornito un oggetto di tipo TreeNode';
+            expect(() =>
+              tree.remove(ARGOMENTOSBAGLIATO)
+            ).to.throw(ERRORMESSAGE);
+          });
+          it(`dovrebbe eliminare il nodo con nome 'giorgio'`, () => {
+            log(tree.size);
+            log(tree.remove(giorgio));
+            log(tree.size);
+          });
+        });
+        describe(`Method isPresent()`, () => {
+          it(`dovrebbe lanciare un errore perchè non è stato fornito nessuno nodo da controllare`, () => {
+            const ERRORMESSAGE =
+              'Non è stato fornito alcun nodo da controllare';
+            expect(() => tree.isPresent()).to.throw(
+              ERRORMESSAGE
+            );
+          });
+          it(`dovrebbe lanciare un errore perché gli stiamo fornendo un array`, () => {
+            const ERRORMESSAGE =
+              'È stato fornito un array.';
+            const ARGOMENTOSBAGLIATO = ['sbagliato'];
+            expect(() =>
+              tree.isPresent(ARGOMENTOSBAGLIATO)
+            ).to.throw(ERRORMESSAGE);
+          });
+          it(`dovrebbe lanciare un errore perchè gli abbiamo fornito un argomento sbagliato`, () => {
+            const ERRORMESSAGE =
+              'Non è stato fornito un oggetto di tipo TreeNode';
+            const ARGOMENTOSBAGLIATO = 'sono sbagliato';
+            expect(() =>
+              tree.isPresent(ARGOMENTOSBAGLIATO)
+            ).to.throw(ERRORMESSAGE);
+          });
+          it(`dovrebbe ritornare vero`, () => {
+            tree.add(giorgio);
+            expect(tree.isPresent(giorgio)).to.be.true;
+            tree.remove(giorgio);
+          });
+          it(`dovrebbe ritornare falso perchè si sta cercando un nodo inesistente.`, () => {
+            expect(tree.isPresent(giorgio)).to.be.false;
+          });
+        });
+        describe(`Method find()`, () => {
+          it(`dovrebbe lanciare un errore perché non gli abbiamo fornito un argomento`, () => {
+            const ERRORMESSAGE =
+              'Non è stato fornito alcun nodo da cercare';
+            expect(() => tree.find()).to.throw(
+              ERRORMESSAGE
+            );
+          });
+          it(`dovrebbe lanciare un errore perche gli abbiamo mandato un array come argomento`, () => {
+            const ERRORMESSAGE =
+              'È stato fornito un array.';
+            const ARGOMENTOSBAGLIATO = ['array'];
+            expect(() =>
+              tree.find(ARGOMENTOSBAGLIATO)
+            ).to.throw(ERRORMESSAGE);
+          });
+          it(`dovrebbe lanciare un errore perché gli abbiamo fornito l'argomento sbagliato `, () => {
+            const ERRORMESSAGE =
+              'Non è stato fornito un oggetto di tipo TreeNode';
+            const ARGOMENTOSBAGLIATO = 'errrrrr';
+            expect(() =>
+              tree.find(ARGOMENTOSBAGLIATO)
+            ).to.throw(ERRORMESSAGE);
+          });
+          it(`dovrebbe tornare il nodo cercandolo con il suo nome`, () => {
+            tree.add(giorgio);
+            expect(tree.find(giorgio).name).to.be.equal(
+              giorgio.name
+            );
+            tree.remove(giorgio);
+          });
+        });
+        describe(`Method findByLevel()`, () => {
+          it(`dovrebbe tornare piu nodi??`, () => {
+            const folderContenutoNelLivello1 = 'Tree';
+            expect(tree.findByLevel(1)[0].name).to.be.equal(
+              folderContenutoNelLivello1
+            );
+          });
         });
       });
-      describe(`INTERNAL CLASS: TREENODE`, () => {
-        describe('TreeNode.prototype.toStringedTree()', () => {
+      describe.only(`INTERNAL CLASS: TREENODE`, () => {
+        describe(`Method trovaSiblings()`, () => {
+          it(`dovrebbe lanciare un errore perchè si stanno cercando i siblings del nodo root`, () => {
+            const ERRORMESSAGE =
+              'Il nodo root non ha Siblings';
+            expect(() =>
+              tree.nodes[0].trovaSiblings()
+            ).to.throw(ERRORMESSAGE);
+          });
+          it(`dovrebbe tornare la lista di Siblinigs del nodo dal quale si è chiamato il metodo`, () => {
+            const NOMEFOLDER = 'Tree';
+            const NOMEFILE = 'Tree.js';
+            const PERCORSOTREEJS =
+              '/Users/WAW/Documents/Projects/zion-GenerativeArtMachine/Machines/System/Tree.js';
+            expect(
+              tree.nodes[1].trovaSiblings()[0].name
+            ).to.be.equal(NOMEFOLDER);
+            expect(
+              tree.nodes[1].trovaSiblings()[1].path
+            ).to.be.equal(PERCORSOTREEJS);
+            expect(
+              tree.nodes[1].trovaSiblings()[1].name
+            ).to.be.equal(NOMEFILE);
+          });
+        });
+        describe(`Method trovaFigli`, () => {
+          it(`dovrebbe lanciare un errore perchè i nodi di tipo file non hanno figli`, () => {
+            const fileNode = tree.nodes[2];
+            const ERRORMESSAGE = 'I file non hanno figli';
+            expect(() => fileNode.trovaFigli()).to.throw(
+              ERRORMESSAGE
+            );
+          });
+          it(`dovrebbe tornare la lista di 5 figli del nodo 'Tree`, () => {
+            const folderNode = tree.nodes[1];
+            expect(
+              folderNode.trovaFigli().length
+            ).to.be.equal(5);
+          });
+        });
+        describe(`Method trovaGenitore`, () => {
+          it(`dovrebbe lanciare un errore perchè il root node non ha parenti`, () => {
+            const root = tree.nodes[0];
+            const ERRORMESSAGE =
+              'Il nodo root non ha genitori';
+            expect(() => root.trovaGenitore()).to.throw(
+              ERRORMESSAGE
+            );
+          });
+          it(`dovrebbe tornare il nodo genitore del folder Tree`, () => {
+            const treeFolder = tree.nodes[1];
+            const NOMEGENITORE = 'System';
+            expect(
+              treeFolder.trovaGenitore().name
+            ).to.be.equal(NOMEGENITORE);
+          });
+        });
+        describe('Method toStringedTree()', () => {
           it('Should return a string formatted directory tree', () => {
             /**
               └──System
@@ -92,12 +315,17 @@ export let SystemTest = describe('System.js', () => {
                ⋮├──Tree.js
               
               */
-            let expectedString = `└──System\n ⋮└──Tree\n ⋮ ⋮├──File.js\n ⋮ ⋮├──Folder.js\n ⋮ ⋮├──Root.js\n ⋮ ⋮└──TreeNode.js\n ⋮├──Tree.js`;
+            let expectedString = `└──System\n ⋮└──Tree\n ⋮ ⋮├──File.js\n ⋮ ⋮├──Folder.js\n ⋮ ⋮├──LeafNode.js\n ⋮ ⋮├──Root.js\n ⋮ ⋮└──TreeNode.js\n ⋮├──Tree.js`;
             expect(root.toStringedTree()).to.be.equal(
               expectedString
             );
           });
-          it(``, () => {});
+        });
+        describe(`Property root`, () => {
+          it(``, () => {
+            const root = tree.nodes[0];
+            log(root);
+          });
         });
       });
     });

@@ -1,27 +1,11 @@
 export class TreeNode {
   static #types = ['Folder', 'File'];
   static #treeNodes = [];
-  constructor(name, path, parent, type) {
-    this.name = name;
-    this.path = path;
-    // parent deve essere al massimo 1
-    this.parent = parent;
-    this.type = TreeNode.#types[type];
-    this.level = 0;
-    this.children = [];
-    TreeNode.#treeNodes.push(this);
-  }
   static get treeNodes() {
     return TreeNode.#treeNodes;
   }
   static get types() {
     return this.#types;
-  }
-  isRoot() {
-    if (this.path === this.root) {
-      return true;
-    }
-    return false;
   }
   toStringedTree = () => {
     let string;
@@ -95,13 +79,52 @@ export class TreeNode {
     let _folderId = folderId;
     return { _string, _folders, _folderId };
   };
+  constructor(name, path, parent, type) {
+    this.name = name;
+    this.path = path;
+    // parent deve essere al massimo 1
+    this.parent = parent;
+    this.type = TreeNode.#types[type];
+    this.level = 0;
+    this.children = [];
+    TreeNode.#treeNodes.push(this);
+  }
+  isRoot() {
+    if (this.root) {
+      return true;
+    }
+    return false;
+  }
   trovaSiblings() {
     // se è root lancia errore
+    if (this.isRoot())
+      throw new Error('Il nodo root non ha Siblings');
+    // se non è root cerca e metti in un array tutti i nodi
+    // che hanno lo stesso parent
+    let servedArray = [];
+    TreeNode.#treeNodes.forEach((treeNode) => {
+      if (treeNode.parent === this.parent) {
+        servedArray.push(treeNode);
+      }
+    });
+    return servedArray;
   }
   trovaFigli() {
     // se è file lancia errore
+    if (this.type === TreeNode.#types[1])
+      throw new Error('I file non hanno figli');
+    let servedArray = [];
+    this.children.forEach((child) =>
+      servedArray.push(child)
+    );
+    Object.freeze(servedArray);
+    return servedArray;
   }
   trovaGenitore() {
-    // se è root lancia errore
+    if (this.isRoot())
+      throw new Error('Il nodo root non ha genitori');
+    return TreeNode.#treeNodes.find(
+      (treeNode) => treeNode.name === this.parent
+    );
   }
 }

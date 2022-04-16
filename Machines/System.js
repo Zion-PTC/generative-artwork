@@ -14,6 +14,21 @@ export class System {
   get blackListFileNames() {
     return this.#blackListFileNames;
   }
+  get folders() {}
+  get files() {}
+  setNameForTreeNode = (path, type) => {
+    if (type === 'root') {
+      return path.match(/\w+$/g)[0];
+    }
+    if (type === TreeNode.types[0]) {
+      return path.match(/\w+$/g)[0];
+    }
+    let jointSpacesPath = path.replace(/ /g, '_');
+    let res = jointSpacesPath.match(
+      /(?<=[/])\w*[.]\w*/g
+    )[0];
+    return res;
+  };
   /**
    * @param {String} path percorso target
    * @returns {String[]} ritorna un array contenente la
@@ -91,7 +106,7 @@ export class System {
    * @param {String} rootPath  rootPath is the starting
    * point from which the function will build a Directory
    * Structure Object.
-   * @returns {TreeNode} returns a complete Tree starting from the rootPath
+   * @returns {Tree} returns a complete Tree starting from the rootPath
    */
   buildTree(rootPath) {
     let _types = ['Folder', 'File'];
@@ -101,7 +116,7 @@ export class System {
       TreeNode.types[type]
     );
     console.log(name);
-    let root = new Root(name, rootPath, undefined, type);
+    let root = new Root(name, rootPath, type);
     const stack = [root];
     // https://en.wikipedia.org/wiki/Depth-first_search
     // Depth-first search aka DFS
@@ -154,6 +169,8 @@ export class System {
         }
       }
     }
+    // creando un tree con l'array di TreeNodes si crea un
+    // legame per il quale aggiungendo un elemento al
     let newTree = new Tree(TreeNode.treeNodes);
     return newTree;
   }
@@ -210,21 +227,6 @@ export class System {
       : (result = 1);
     return result;
   }
-  setNameForTreeNode = (path, type) => {
-    if (type === 'root') {
-      return path.match(/\w+$/g)[0];
-    }
-    if (type === TreeNode.types[0]) {
-      return path.match(/\w+$/g)[0];
-    }
-    let jointSpacesPath = path.replace(/ /g, '_');
-    let res = jointSpacesPath.match(
-      /(?<=[/])\w*[.]\w*/g
-    )[0];
-    return res;
-  };
-  get folders() {}
-  get files() {}
 }
 
 export let system = new System();

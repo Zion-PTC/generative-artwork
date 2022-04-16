@@ -88,6 +88,18 @@ let newCollection = new Collection(
   width,
   height
 );
+let newCollection2 = new Collection(
+  'bla',
+  'sym',
+  1000,
+  'baseURi',
+  'ma che figata',
+  '/Users/WAW/Documents/Projects/zion-GenerativeArtMachine/input',
+  'Edition',
+  '/path',
+  1000,
+  1000
+);
 let arrayConIlContenutoDellaDirectory =
   system.readdirSync(PATH);
 // nel caso in cui la lista contenga il file .DS_Store
@@ -201,7 +213,28 @@ export let CollectionTest =
         );
       });
     });
-    describe(`COLLETION STATIC METHODS`, () => {
+    describe(`COLLECTION STATIC PROPERTIES`, () => {
+      describe(`Property 'collections'`, () => {
+        it(`dovrebbe tornare una lista di collezioni create tramite la funzione`, () => {
+          expect(Collection.collections.length).to.be.equal(
+            2
+          );
+        });
+        it(`non dovrebbe permettere l'aggiunta di un elemento`, () => {
+          expect(Collection.collections.length).to.be.equal(
+            2
+          );
+          let array = Collection.collections;
+          expect(() => {
+            array.push('iiiiiiiiiiii');
+          }).to.throw();
+          expect(Collection.collections.length).to.be.equal(
+            2
+          );
+        });
+      });
+    });
+    describe(`COLLECTION STATIC METHODS`, () => {
       describe(`Method: collectionExists()`, () => {
         it(`dovrebbe verificare che la directory della collezione: ${newCollection.name} non è ancora stata creata`, () => {
           // system.createNestedDir(BASEURI);
@@ -223,6 +256,35 @@ export let CollectionTest =
         //   // ).to.be.equal(true);
         //   // system.deleteRecursiveDir('./some');
         // });
+      });
+      describe(`Method deleteCollection()`, () => {
+        it(`dovrebbe cancellare la collezione selezionata passandogli il nome della stessa`, () => {
+          const nomeDellaCollezioneDaCancellare =
+            newCollection2.name;
+          log(
+            Collection.deleteCollection(
+              nomeDellaCollezioneDaCancellare
+            )
+          );
+          expect(Collection.collections.length).to.be.equal(
+            1
+          );
+          expect(
+            Collection.collections.findIndex(
+              (collection) =>
+                collection.name ===
+                nomeDellaCollezioneDaCancellare
+            )
+          ).to.be.equal(-1);
+        });
+        it(`dovrebbe lanciare un errore perché la collezione non esiste.`, () => {
+          const nomeDellaCollezioneCheNonEsiste = 'ucci';
+          expect(() => {
+            Collection.deleteCollection(
+              nomeDellaCollezioneCheNonEsiste
+            );
+          }).to.throw();
+        });
       });
     });
     describe(`COLLECTION INSTANCE METHODS`, () => {
@@ -253,7 +315,7 @@ export let CollectionTest =
         });
       });
     });
-    describe(`COLLECTION INSTANCE SETTERS`, () => {
+    describe(`COLLECTION SETTERS`, () => {
       const SUPPLY = 'supply';
       const VALUE = 1000;
       describe(`Method: set supply()`, () => {
