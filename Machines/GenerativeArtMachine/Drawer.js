@@ -1,5 +1,5 @@
 import pkg from 'canvas';
-import { GeneratorMachine } from '../GeneratorMachine/GeneratorMachine.js';
+import { GeneratorMachine } from '../GeneratorMachine.js';
 import { CanvasProperties } from './CanvasProperties.js';
 const { createCanvas, loadImage } = pkg;
 export class Drawer {

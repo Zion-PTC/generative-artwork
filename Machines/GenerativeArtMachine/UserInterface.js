@@ -1,4 +1,4 @@
-import { Terminal } from '../Terminal/Terminal.js';
+import { Terminal } from '../Terminal.js';
 
 export class UserInterface {
   constructor(name) {

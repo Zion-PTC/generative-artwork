@@ -1,7 +1,7 @@
 import { expect } from 'chai';
 import Mocha from 'mocha';
 import { zionUtil } from '../../../telegram-bots/Classes/_Node Standard Modules/zionUtil.js';
-import { GeneratorMachine } from '../../Machines/GeneratorMachine/GeneratorMachine.js';
+import { GeneratorMachine } from '../../Machines/GeneratorMachine.js';
 
 const testRunner = new Mocha({ slow: 1000 });
 testRunner.suite.emit(

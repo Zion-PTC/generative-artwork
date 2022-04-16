@@ -1,5 +1,5 @@
-import { Combinator } from './Combinator.js';
-import { Picker } from './Picker.js';
+import { Combinator } from './GeneratorMachine/Combinator.js';
+import { Picker } from './GeneratorMachine/Picker.js';
 
 export class GeneratorMachine {
   constructor() {}
