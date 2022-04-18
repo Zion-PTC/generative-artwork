@@ -1,7 +1,8 @@
-import { GeneratorMachine } from '../GeneratorMachine/GeneratorMachine';
-
 export class Dna {
   static #dnas = [];
-  constructor() {}
-  static Generator = GeneratorMachine;
+  constructor() {
+    this.dna = [];
+    Dna.#dnas.push(this);
+    this.id = Dna.#dnas.length;
+  }
 }

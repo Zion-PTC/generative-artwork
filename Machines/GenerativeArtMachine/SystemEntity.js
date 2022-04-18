@@ -2,6 +2,16 @@ import { Size } from './Size.js';
 
 export class SystemEntity {
   static #systemEntities = [];
+  static get systemEntities() {
+    return this.#systemEntities;
+  }
+  static systemEntitiesNames() {
+    let servedArray = [];
+    this.#systemEntities.forEach((entity) => {
+      servedArray.push(entity.name);
+    });
+    return servedArray;
+  }
   constructor(name, path, type, width, height) {
     this.name = name;
     this.path = path;
@@ -10,9 +20,6 @@ export class SystemEntity {
     this.listaDiLati = [];
     SystemEntity.#systemEntities.push(this);
     this.id = SystemEntity.#systemEntities.length;
-  }
-  static get systemEntities() {
-    return this.#systemEntities;
   }
   connettiA(entity) {
     // if (this.èConnessoA(entity)) {
@@ -38,12 +45,5 @@ export class SystemEntity {
     const condizione =
       this.èConnessoA(entity1) && this.èConnessoA(entity2);
     return condizione;
-  }
-  static getEntitiesNames() {
-    let servedArray = [];
-    this.#systemEntities.forEach((entity) => {
-      servedArray.push(entity.name);
-    });
-    return servedArray;
   }
 }

@@ -20,6 +20,7 @@ export class Element extends SystemEntity {
     super(name, path, type, width, height);
     this.position = new Position(0, 0);
 
+    this.loadedImageIndex;
     this.extension = extension;
     this.fileSize = fileSize;
   }

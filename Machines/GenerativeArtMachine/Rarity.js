@@ -10,7 +10,6 @@ export class Rarity extends SystemEntity {
     delete this.size;
     delete this.path;
     delete this.parent;
-    this.name;
     this.from;
     this.to;
     this.percentage = percentage;

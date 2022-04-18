@@ -46,6 +46,7 @@ let newSystemEntity = new SystemEntity(
 );
 
 describe(`SYSTEM ENTITY Class`, () => {
+  describe(`GETTERS & SETTERS`, () => {});
   describe(`STATIC PROPERTIES`, () => {
     describe(`Property systemEntities`, () => {
       it(`Dovrebbe tornare un array`, () => {
@@ -65,7 +66,16 @@ describe(`SYSTEM ENTITY Class`, () => {
     });
   });
   describe(`STATIC METHODS`, () => {
-    it(`task description`, () => {});
+    describe(`Method systemEntitiesNames()`, () => {
+      it(`dovrebbe tornare un array contenente i nomi delle enità create con questa classe`, () => {
+        expect(
+          Array.isArray(SystemEntity.systemEntitiesNames())
+        ).to.be.true;
+        expect(
+          SystemEntity.systemEntitiesNames().length
+        ).to.be.equal(1);
+      });
+    });
   });
   describe(`CONSTRUCTOR`, () => {
     it(`Dovrebbe creare`, () => {});
