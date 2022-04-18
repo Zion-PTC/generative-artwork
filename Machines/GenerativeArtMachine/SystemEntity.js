@@ -22,12 +22,22 @@ export class SystemEntity {
     entity.listaDiLati.push(this);
   }
   trovaLatiAdiacenti() {
-    return this.listaDiLati.map((lato) => lato.id);
+    return this.listaDiLati.map((lato) => lato);
   }
   èConnessoA(entity) {
     return this.listaDiLati.some(
-      (lato) => (lato.id = entity.id)
+      (lato) => lato.id === entity.id
     );
+  }
+  /**
+   *
+   * @param {SystemEntity} entity1
+   * @param {SystemEntity} entity2
+   */
+  èConnessoAeA(entity1, entity2) {
+    const condizione =
+      this.èConnessoA(entity1) && this.èConnessoA(entity2);
+    return condizione;
   }
   static getEntitiesNames() {
     let servedArray = [];

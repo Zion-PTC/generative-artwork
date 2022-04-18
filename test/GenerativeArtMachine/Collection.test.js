@@ -2,15 +2,13 @@ import { expect } from 'chai';
 import Mocha from 'mocha';
 import { zionUtil } from '../../../telegram-bots/Classes/_Node Standard Modules/zionUtil.js';
 import { Collection } from '../../Machines/GenerativeArtMachine/Collection.js';
-import { System, system } from '../../Machines/system.js';
+import { system } from '../../Machines/system.js';
 import { ZionRegEx } from '../../../telegram-bots/Classes/_Standard Classes/ZionRegEx.js';
 import { Drawer } from '../../Machines/GenerativeArtMachine/Drawer.js';
-import { TreeNode } from '../../Machines/System/Tree/TreeNode.js';
 import { Rarity } from '../../Machines/GenerativeArtMachine/Rarity.js';
 import { Layer } from '../../Machines/GenerativeArtMachine/Layer.js';
 import { Element } from '../../Machines/GenerativeArtMachine/Element.js';
 import { Class } from '../../Machines/GenerativeArtMachine/Class.js';
-import { SystemEntity } from '../../Machines/GenerativeArtMachine/SystemEntity.js';
 
 function expectedTreeStringResult() {
   let string = `└──input\n ⋮└──classe1\n ⋮ ⋮└──background\n ⋮ ⋮ ⋮└──original\n ⋮ ⋮ ⋮ ⋮├──Background_1.png\n ⋮ ⋮ ⋮ ⋮├──Background_2.png\n ⋮ ⋮ ⋮ ⋮├──Background_3.png\n ⋮ ⋮ ⋮ ⋮├──Background_4.png\n ⋮ ⋮ ⋮ ⋮└──Background_5.png\n ⋮ ⋮ ⋮└──rare\n ⋮ ⋮ ⋮ ⋮├──Background1.png\n ⋮ ⋮ ⋮ ⋮└──Background2.png\n ⋮ ⋮ ⋮└──super_rare\n ⋮ ⋮ ⋮ ⋮└──Background1.png\n ⋮ ⋮└──circle\n ⋮ ⋮ ⋮└──original\n ⋮ ⋮ ⋮ ⋮├──Circle1.png\n ⋮ ⋮ ⋮ ⋮├──Circle2.png\n ⋮ ⋮ ⋮ ⋮├──Circle3.png\n ⋮ ⋮ ⋮ ⋮├──Circle4.png\n ⋮ ⋮ ⋮ ⋮└──Circle5.png\n ⋮ ⋮ ⋮└──rare\n ⋮ ⋮ ⋮ ⋮├──Circle1.png\n ⋮ ⋮ ⋮ ⋮└──Circle2.png\n ⋮ ⋮ ⋮└──super_rare\n ⋮ ⋮ ⋮ ⋮└──Circle1.png\n ⋮ ⋮└──innercircle\n ⋮ ⋮ ⋮└──original\n ⋮ ⋮ ⋮ ⋮├──InnerCircle1.png\n ⋮ ⋮ ⋮ ⋮├──InnerCircle2.png\n ⋮ ⋮ ⋮ ⋮├──InnerCircle3.png\n ⋮ ⋮ ⋮ ⋮├──InnerCircle4.png\n ⋮ ⋮ ⋮ ⋮└──InnerCircle5.png\n ⋮ ⋮ ⋮└──rare\n ⋮ ⋮ ⋮ ⋮├──InnerCircle1.png\n ⋮ ⋮ ⋮ ⋮└──InnerCircle2.png\n ⋮ ⋮ ⋮└──super_rare\n ⋮ ⋮ ⋮ ⋮└──InnerCircle1.png`;
@@ -25,7 +23,7 @@ testRunner.suite.emit(
   testRunner
 );
 var suiteRun = testRunner.run();
-process.on('exit', (code) => {
+process.on('exit', () => {
   process.exit(suiteRun.stats.failures > 0);
 });
 let log = zionUtil.debuglog('log');
@@ -113,8 +111,6 @@ if (
 ) {
   zionUtil.popFirst(arrayConIlContenutoDellaDirectory);
 }
-// log(newCollection);
-// log(newCollection.folderTree.children[0].children[0]);
 
 const checkElementsInArrayConstructor = function (
   elements = [],
@@ -204,22 +200,6 @@ export let CollectionTest =
         it(`dovrebbe avere una proprietà: ${_FOLDERTREE}, con un valore`, () => {
           expect(newCollection[_FOLDERTREE]).to.be.not.null;
         });
-        // it(`l'oggetto: ${_FOLDERTREE} dovrebbe contenere un nodo con attributo: ${_ROOT}, con valore: '${PATH}'`, () => {
-        //   expect(
-        //     newCollection.folderTree.nodes[0].path
-        //   ).to.be.equal(PATH);
-        // });
-        // it(`l'oggetto: ${_FOLDERTREE} dovrebbe contenere un child con attributo: ${_PATH}, con valore: '${arrayConIlContenutoDellaDirectory[0]}`, () => {
-        //   expect(
-        //     newCollection.folderTree.nodes[0].children[0]
-        //   ).not.to.be.null;
-        //   expect(
-        //     newCollection.folderTree.nodes[0].children[0]
-        //       .path
-        //   ).to.be.equal(
-        //     `${PATH}/${arrayConIlContenutoDellaDirectory[0]}`
-        //   );
-        // });
         describe(`Class TreeNode`, () => {
           it(`dovrebbe ritronare una stringa formattata che mostra il tree, con valore uguale a ${ZionRegEx.firstAndLastDyn(
             expectedTreeStringResult(),
@@ -270,12 +250,6 @@ export let CollectionTest =
           );
           expect(result).to.be.true;
         });
-        // it(`dovrebbe avere una proprietà classe`, () => {
-        //   const RISULTATOATTESO = 'classe1';
-        //   expect(
-        //     newCollection.layers[0].className
-        //   ).to.be.equal(RISULTATOATTESO);
-        // });
       });
       describe(`Getter property 'elements'`, () => {
         it(`dovrebbe tornare una lista di oggetti di tipo Element`, () => {
@@ -300,6 +274,40 @@ export let CollectionTest =
           expect(
             checkElementsInArrayConstructor(classes, Class)
           ).to.be.true;
+        });
+      });
+      describe(`Getter property 'nodeNames'`, () => {
+        it(`dovrebbe tornare la lista di nomi di elementi presenti nella collezione`, () => {
+          const listaDeiNomiDeiNodi =
+            newCollection.nodeNames;
+          expect(Array.isArray(listaDeiNomiDeiNodi)).to.be
+            .true;
+        });
+      });
+      describe(`Getter property 'elementsByLayer'`, () => {
+        it(`dovrebbe ritornare un array contente una lista di elementi per ogni layer della classe`, () => {
+          const listaDiElementiPerLayer =
+            newCollection.elementsByLayer;
+          expect(Array.isArray(listaDiElementiPerLayer)).to
+            .be.true;
+          expect(
+            listaDiElementiPerLayer.length
+          ).to.be.equal(newCollection.layers.length);
+        });
+      });
+      describe(`Getter property 'elementsByLayerByRarity'`, () => {
+        it(`dovrebbe tornare gli elementi divisi prima per rarità e in seguito in base al loro layer.`, () => {
+          let listaDiELementiPerRaritàPerLayer =
+            newCollection.elementsByLayerByRarity;
+          expect(
+            Array.isArray(listaDiELementiPerRaritàPerLayer)
+          ).to.be.true;
+          expect(
+            listaDiELementiPerRaritàPerLayer.length
+          ).to.be.equal(newCollection.rarities.length);
+          expect(
+            listaDiELementiPerRaritàPerLayer[0].length
+          ).to.be.equal(newCollection.layers.length);
         });
       });
     });
@@ -327,25 +335,11 @@ export let CollectionTest =
     describe(`COLLECTION STATIC METHODS`, () => {
       describe(`Method: collectionExists()`, () => {
         it(`dovrebbe verificare che la directory della collezione: ${newCollection.name} non è ancora stata creata`, () => {
-          // system.createNestedDir(BASEURI);
-          // // log(system.readdirSync(BASEURI));
-          // expect(
-          //   Collection.collectionExists(NAME, BASEURI)
-          // ).to.be.equal(false);
-          // system.deleteRecursiveDir('./some');
           expect(Collection.collectionExists(NAME)).to.be
             .true;
           expect(Collection.collectionExists('pio')).to.be
             .false;
         });
-        // it(`dovrebbe verificare che la directory della collezione: ${newCollection.name} sia stata creata`, () => {
-        //   // system.createNestedDir(`${BASEURI}/${NAME}`);
-        //   // log(system.readdirSync(BASEURI));
-        //   // expect(
-        //   //   Collection.collectionExists(NAME, BASEURI)
-        //   // ).to.be.equal(true);
-        //   // system.deleteRecursiveDir('./some');
-        // });
       });
       describe(`Method deleteCollection()`, () => {
         it(`dovrebbe cancellare la collezione selezionata passandogli il nome della stessa`, () => {
@@ -364,9 +358,6 @@ export let CollectionTest =
                 nomeDellaCollezioneDaCancellare
             )
           ).to.be.equal(-1);
-        });
-        it(``, () => {
-          log(newCollection.layers);
         });
         it(`dovrebbe lanciare un errore perché la collezione non esiste.`, () => {
           const nomeDellaCollezioneCheNonEsiste = 'ucci';
@@ -403,6 +394,21 @@ export let CollectionTest =
             newCollection.creaDirectory()
           ).to.throw('Non è stato possibile');
           system.deleteRecursiveDir(PATHDELLACOLLEZIONE);
+        });
+      });
+      describe(`Method creaPossibilità()`, () => {
+        it(`dovrebbe creare una lista con tutte le combinazioni possibili`, () => {
+          let result = newCollection.creaPossibilità();
+          expect(result.length).to.be.equal(512);
+        });
+      });
+      describe(`Method creaPossilitàPerRarità()`, () => {
+        it(`dovrebbe tornare un lista di possibilità divise per rarità.`, () => {
+          let result =
+            newCollection.creaPossilitàPerRarità();
+          expect(result[0].length).to.be.equal(125);
+          expect(result[1].length).to.be.equal(8);
+          expect(result[2].length).to.be.equal(1);
         });
       });
     });

@@ -137,6 +137,16 @@ describe(`STATIC METHODS`, () => {
         expect(risultati[0][0]).to.be.equal(valori[0]);
       }
     );
+    it(`Dovrebbe lanciare un errore perché il contenuto dell'array non sono numeri.`, () => {
+      let ARGOMENTOSBAGLIATO1 = ['1', 'b', 'occa', 12];
+      const ERRORMESSAGE =
+        'La lista contiene elementi che non sono numeri';
+      expect(() =>
+        Picker.scegliACasoNumeroFraNumeri(
+          ARGOMENTOSBAGLIATO1
+        )
+      ).to.throw(ERRORMESSAGE);
+    });
   });
   describe(`Method creaObjWithKeysEMedie()`, () => {
     let tuple1,

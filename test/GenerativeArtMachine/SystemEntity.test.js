@@ -25,7 +25,6 @@ let id,
   height,
   collection;
 
-id = 'new entity';
 name = 'entity';
 path = 'User/';
 level = '';
@@ -36,7 +35,6 @@ height = 1000;
 collection = 'yeah';
 
 let newSystemEntity = new SystemEntity(
-  id,
   name,
   path,
   level,

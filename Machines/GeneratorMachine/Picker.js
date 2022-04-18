@@ -1,3 +1,4 @@
+import { zionUtil } from '../../../telegram-bots/Classes/_Node Standard Modules/zionUtil.js';
 import { Media } from '../../../telegram-bots/Classes/_Node Standard Modules/zionUtil/Media.js';
 
 export class Picker {
@@ -8,9 +9,25 @@ export class Picker {
    * @returns {number} ritorna un numero a caso.
    */
   static scegliACasoNumeroFraNumeri(listaDiNumeri = []) {
+    let condizione = zionUtil.checkArrayElementsConstructor(
+      listaDiNumeri,
+      Number
+    );
+    if (condizione) {
+      throw new Error(
+        `La lista contiene elementi che non sono numeri`
+      );
+    }
     const elementoRandom =
-      listaDiNumeri[
-        Math.floor(Math.random() * listaDiNumeri.length)
+      Picker.scegliACasoNumeroFraElementi(listaDiNumeri);
+    return elementoRandom;
+  }
+  static scegliACasoNumeroFraElementi(
+    listaDiElementi = []
+  ) {
+    const elementoRandom =
+      listaDiElementi[
+        Math.floor(Math.random() * listaDiElementi.length)
       ];
     return elementoRandom;
   }

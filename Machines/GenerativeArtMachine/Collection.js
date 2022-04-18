@@ -6,66 +6,7 @@ import { Rarity } from './Rarity.js';
 import { Layer } from './Layer.js';
 import { Element } from './Element.js';
 import { Class } from './Class.js';
-import { SystemEntity } from './SystemEntity.js';
-/**
- * Folder structure types
- * EDITION
- * Ogni edizione è composta da elementi facenti parte
- * della stessa rarità.
- * Il dna manager conta quanti elementi sono presenti
- * per ogni livello, in base alla rarità.
- * 
-  I   Classe
-  II  └── Layers
-  III   └── Rarità
-  IV      └── Elementi
- *
- * La rarità è il III livello nella struttura
- * delle directories.
- * es :
- * ci sono 3 livelli
- * con 3 rarità:
- * •comune: contenente 5 elementi
- * •raro: contenente 2 elementi
- * •super_raro: contente 1 elemento
- * Il dna manager calcola tutte le combinazioni
- * possibili fancendo
- * n°elementiRarita1Livello1 = A = 5
- * n°elementiRarita1Livello2 = B = 5
- * n°elementiRarita1Livello3 = C = 5
- * possibilitàComuni = A x B x C = 125
- * n°elementiRarita2Livello1 = A = 2
- * n°elementiRarita2Livello2 = B = 2
- * n°elementiRarita2Livello3 = C = 2
- * possibilitàComuni = A x B x C = 8
- * n°elementiRarita1Livello1 = A = 1
- * n°elementiRarita1Livello2 = B = 1
- * n°elementiRarita1Livello3 = C = 1
- * possibilitàComuni = A x B x C = 1
- * totale = 125 + 8 + 1 = 134
- * 
- * ELEMENT
- * Il dna Manager calcola tutte le possibili combinazioni
- * di tutti gli elementi presenti
- * elementiRari = 5 + 2 + 1 = 8
- * ogni livello può avere 12 elementi
- * Layer1Elementi = A = 8
- * Layer2Elementi = B = 8
- * Layer3Elementi = C = 8
- * per calcolare le possibilità bisogna fare
- * A x B x C = 512 Possibilità
- * in queste possibilità tutti gli elementi compaiono
- * con la stessa probabilità. Anche gli elementi rari
- * compaiono nella stessa quantità ovvero ogni elemento
- * appare 8 volte.
- * Fra queste 512 combinazioni ce nè solo una che contiene
- * tutti e 3 elementi piu rari.
- * Se teniamo solo due livelli con elementi super rari
- * rimane un solo liver
- * 
- * Ogni edizione può essere composta da elementi di
- * rarità diversa.
- */
+import { GeneratorMachine } from '../GeneratorMachine.js';
 export class Collection extends SmartContract {
   static #collections = [];
   #id;
@@ -102,9 +43,6 @@ export class Collection extends SmartContract {
   get outputPath() {
     return this.#outputPath;
   }
-  // get folderTree() {
-  //   return this.#folderTree;
-  // }
   get drawer() {
     return this.#drawer;
   }
@@ -125,6 +63,66 @@ export class Collection extends SmartContract {
   }
   get collectionPath() {
     return `${this.outputPath}/${this.name}`;
+  }
+  get nodeNames() {
+    let servedArray = [];
+    this.nodes.forEach((node) =>
+      servedArray.push(node.name)
+    );
+    return servedArray;
+  }
+  get nodesIds() {
+    let servedArray = [];
+    this.nodes.forEach((node) => servedArray.push(node.id));
+    return servedArray;
+  }
+  /**
+   * Ritorna un array con degli array contenenti gli
+   * elementi di ogni layer. Dovrebbe contenere un numero di
+   * array uguale al numero di layer della collezione.
+   */
+  get elementsByLayer() {
+    let result = [];
+    let layersStack = [];
+    const aggiungiALayersStack = function (element) {
+      layersStack.push(element);
+    };
+    this.layers.forEach(aggiungiALayersStack);
+    while (layersStack.length) {
+      let elementsOfArray = [];
+      const currentLayer = layersStack.shift();
+      for (let element of this.elements) {
+        if (element.èConnessoA(currentLayer)) {
+          elementsOfArray.push(element);
+        }
+      }
+      result.push(elementsOfArray);
+    }
+    return result;
+  }
+  /**
+   * Ritorna un array contenente un array per ogni rarità.
+   * Ogni array a sua volta contiene un array per ogni
+   * layer. Ognuno di questi array contiene gli elementi del
+   * layer raggruppati in sostanza per rarità.
+   */
+  get elementsByLayerByRarity() {
+    let result = [];
+    for (let rarity of this.rarities) {
+      let array = this.elementsByLayer;
+      let rarityLayers = [];
+      for (let layer of array) {
+        let elementsOfLayerByRarity = [];
+        for (let element of layer) {
+          if (element.èConnessoA(rarity)) {
+            elementsOfLayerByRarity.push(element.name);
+          }
+        }
+        rarityLayers.push(elementsOfLayerByRarity);
+      }
+      result.push(rarityLayers);
+    }
+    return result;
   }
   // SETTERS
   set id(id) {
@@ -221,6 +219,37 @@ export class Collection extends SmartContract {
       return this;
     }
   }
+  creaPossibilità() {
+    let servedArray =
+      GeneratorMachine.Combinator.generateCombinations(
+        this.elementsByLayer
+      );
+    return servedArray;
+  }
+  creaPossilitàPerRarità() {
+    let result = [];
+    const creaEAggiungi = function (possibilità) {
+      let servedArray =
+        GeneratorMachine.Combinator.generateCombinations(
+          possibilità
+        );
+      result.push(servedArray);
+    };
+    this.elementsByLayerByRarity.forEach(creaEAggiungi);
+    return result;
+  }
+  scegliFraDna(listaDiElementi) {
+    return GeneratorMachine.Picker.scegliACasoNumeroFraElementi(
+      listaDiElementi
+    );
+  }
+  scegliFraDnaNVolte(elementiFraIQualiEstrarre, volte) {
+    Picker.estraiConCallbacknVolte(
+      elementiFraIQualiEstrarre,
+      volte,
+      this.scegliFraDna
+    );
+  }
   #buildSistemEntities() {
     let tree = this.folderTree;
     let nodes = tree.nodes;
@@ -244,6 +273,7 @@ export class Collection extends SmartContract {
           currentClass.path,
           this.type
         );
+        this.#nodes.push(newClass);
         for (let layer of currentClass.figlio) {
           let newLayer = new Layer(
             layer.name,
@@ -252,6 +282,7 @@ export class Collection extends SmartContract {
             undefined,
             undefined
           );
+          this.#nodes.push(newLayer);
           for (let rarity of layer.figlio) {
             for (let element of rarity.figlio) {
               layerServedObj[layer.name].push(element.name);
@@ -265,6 +296,7 @@ export class Collection extends SmartContract {
                 element.extension,
                 element.fileSize
               );
+              this.#nodes.push(newElement);
               newElement.connettiA(newLayer);
               newElement.connettiA(newClass);
               rarityServObj[rarity.name].push(newElement);
@@ -279,6 +311,7 @@ export class Collection extends SmartContract {
     });
     for (let key in rarityServObj) {
       let newRarity = new Rarity(key, this.type, undefined);
+      this.#nodes.push(newRarity);
       const connectToRarity = function (_class) {
         newRarity.connettiA(_class);
       };
@@ -293,7 +326,6 @@ export class Collection extends SmartContract {
     this.#elements = elements;
     this.#rarities = rarities;
     this.#layers = layers;
-    // this.#nodes = SystemEntity.systemEntities;
   }
   #loadElements() {
     let count = 0;
