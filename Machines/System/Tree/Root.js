@@ -6,7 +6,6 @@ export class Root extends TreeNode {
   constructor(name, path, type, treeId) {
     super(name, path, type, treeId);
     this.root = true;
-    delete this.parent;
     Root.#roots.push(this);
   }
 }

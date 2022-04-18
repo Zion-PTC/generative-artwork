@@ -82,9 +82,7 @@ export class TreeNode {
   constructor(name, path, type, treeId) {
     this.name = name;
     this.path = path;
-    // parent deve essere al massimo 1
-    // this.parent;
-    this.genitore = [1];
+    this.genitore = [];
     this.figlio = [];
     this.type = TreeNode.#types[type];
     this.depth = 0;
@@ -95,7 +93,6 @@ export class TreeNode {
   }
   connettiAGenitore(node) {
     this.genitore.push(node);
-    // node.connettiAFiglio(this);
   }
   connettiAFiglio(node) {
     this.figlio.push(node);
@@ -108,12 +105,10 @@ export class TreeNode {
     return false;
   }
   trovaSiblings() {
-    // se è root lancia errore
     if (this.isRoot())
       throw new Error('Il nodo root non ha Siblings');
-    // se non è root cerca e metti in un array tutti i nodi
-    // che hanno lo stesso parent
     let servedArray = [];
+    // this.genitore[0].figlio;
     TreeNode.#treeNodes.forEach((treeNode) => {
       if (treeNode.genitore.name === this.genitore.name) {
         servedArray.push(treeNode);
@@ -122,7 +117,6 @@ export class TreeNode {
     return servedArray;
   }
   trovaFigli() {
-    // se è file lancia errore
     if (this.type === TreeNode.#types[1])
       throw new Error('I file non hanno figli');
     let servedArray = [];
@@ -133,8 +127,6 @@ export class TreeNode {
   trovaGenitore() {
     if (this.isRoot())
       throw new Error('Il nodo root non ha genitori');
-    return TreeNode.#treeNodes.find(
-      (treeNode) => treeNode.name === this.genitore.name
-    );
+    return this.genitore[0];
   }
 }

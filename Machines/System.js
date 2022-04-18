@@ -141,7 +141,7 @@ export class System {
             childNode = new Folder(
               name,
               childPath,
-              currentNode.name,
+              // currentNode.name,
               type,
               newTree.id
             );
@@ -152,7 +152,7 @@ export class System {
             childNode = new File(
               name,
               childPath,
-              currentNode.name,
+              // currentNode.name,
               type,
               newTree.id,
               this.getFileExtension(childPath),

@@ -5,7 +5,6 @@ export class File extends TreeNode {
   constructor(
     name,
     path,
-    parent,
     type,
     treeId,
     extension,
@@ -13,14 +12,13 @@ export class File extends TreeNode {
   ) {
     super(name, path, type, treeId);
     delete this.children;
-    // this.level = this.parent.level++;
     this.extension = extension;
     this.fileSize = fileSize; // MB size of file
   }
 }
 class Image extends File {
-  constructor(name, path, parent, type, width, height) {
-    super(name, path, parent, type);
+  constructor(name, path, type, width, height) {
+    super(name, path, type);
     this.size = new Size(width, height);
   }
 }

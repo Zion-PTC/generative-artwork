@@ -94,15 +94,9 @@ export let SystemTest = describe('System.js', () => {
         });
         const NAME = 'giorno';
         const PATH = 'nessunPath';
-        const PARENT = 'non ho parenti';
         const TYPE = 1;
         const TYPE1 = 'File';
-        const giorgio = new TreeNode(
-          NAME,
-          PATH,
-          PARENT,
-          TYPE
-        );
+        const giorgio = new TreeNode(NAME, PATH, TYPE);
         describe(`Method add()`, () => {
           it(`dovrebbe lanciare un errore perché non è stato fornito un nodo da aggiungere`, () => {
             const ERRORMESSAGE =
@@ -115,6 +109,7 @@ export let SystemTest = describe('System.js', () => {
             expect(() => {
               tree.add('pooo');
             }).to.throw(ERRORMESSAGE);
+            // log(tree.add('pooo'));
           });
           it(`devrebbe lanciare un errore perché è stato fornito un array`, () => {
             const ERRORMESSAGE =
@@ -132,9 +127,6 @@ export let SystemTest = describe('System.js', () => {
             expect(
               tree.nodes[tree.size - 1].path
             ).to.be.equal(PATH);
-            expect(
-              tree.nodes[tree.size - 1].parent
-            ).to.be.equal(PARENT);
             expect(
               tree.nodes[tree.size - 1].type
             ).to.be.equal(TYPE1);
@@ -255,10 +247,10 @@ export let SystemTest = describe('System.js', () => {
             ).to.throw(ERRORMESSAGE);
           });
           it(`dovrebbe tornare la lista di Siblinigs del nodo dal quale si è chiamato il metodo`, () => {
-            const NOMEFOLDER = 'Tree';
-            const NOMEFILE = 'Tree.js';
+            const NOMEFOLDER = 'System';
+            const NOMEFILE = 'Tree';
             const PERCORSOTREEJS =
-              '/Users/WAW/Documents/Projects/zion-GenerativeArtMachine/Machines/System/Tree.js';
+              '/Users/WAW/Documents/Projects/zion-GenerativeArtMachine/Machines/System/Tree';
             expect(
               tree.nodes[1].trovaSiblings()[0].name
             ).to.be.equal(NOMEFOLDER);
@@ -286,7 +278,7 @@ export let SystemTest = describe('System.js', () => {
           });
         });
         describe(`Method trovaGenitore`, () => {
-          it(`dovrebbe lanciare un errore perchè il root node non ha parenti`, () => {
+          it(`dovrebbe lanciare un errore perchè il root node non ha genitore`, () => {
             const root = tree.nodes[0];
             const ERRORMESSAGE =
               'Il nodo root non ha genitori';
@@ -300,6 +292,7 @@ export let SystemTest = describe('System.js', () => {
             expect(
               treeFolder.trovaGenitore().name
             ).to.be.equal(NOMEGENITORE);
+            // log(treeFolder.trovaGenitore().name);
           });
         });
         describe('Method toStringedTree()', () => {
