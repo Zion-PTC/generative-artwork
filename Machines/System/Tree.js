@@ -1,4 +1,6 @@
 import { zionUtil } from '../../../telegram-bots/Classes/_Node Standard Modules/zionUtil.js';
+import { File } from './Tree/File.js';
+import { Folder } from './Tree/Folder.js';
 import { TreeNode } from './Tree/TreeNode.js';
 
 export class Tree {
@@ -17,6 +19,7 @@ export class Tree {
     nodes.forEach((node) => this.#nodes.push(node));
     // this.#nodes = nodes;
     Tree.#trees.push(this);
+    this.id = Tree.#trees.length;
   }
   add(node) {
     if (!node) {
@@ -27,7 +30,12 @@ export class Tree {
     if (Array.isArray(node)) {
       throw new Error('È stato fornito un array.');
     }
-    if (node.constructor !== TreeNode) {
+    if (
+      !(
+        node.constructor !== File ||
+        node.constructor !== Folder
+      )
+    ) {
       throw new Error(
         'Non è stato fornito un oggetto di tipo TreeNode'
       );

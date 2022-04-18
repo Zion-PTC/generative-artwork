@@ -1,35 +1,7 @@
-import { SystemEntity } from './SystemEntity';
+import { SystemEntity } from './SystemEntity.js';
 
 export class Layer extends SystemEntity {
-  #layers = [];
-  constructor(
-    id,
-    name,
-    path,
-    level,
-    children,
-    type,
-    width,
-    height,
-    collectionName
-  ) {
-    super(
-      id,
-      name,
-      path,
-      level,
-      children,
-      type,
-      width,
-      height,
-      collectionName
-    );
-
-    this.rarityName = rarityName;
-    this.collectionName = collectionName;
-    this.className = className;
-
-    this.elementsNames = elementsNames;
-    this.#layers.push(this);
+  constructor(name, path, type, width, height) {
+    super(name, path, type, width, height);
   }
 }

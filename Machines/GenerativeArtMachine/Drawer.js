@@ -1,6 +1,7 @@
 import pkg from 'canvas';
 import { GeneratorMachine } from '../GeneratorMachine.js';
 import { CanvasProperties } from './CanvasProperties.js';
+import { Size } from './Size.js';
 const { createCanvas, loadImage } = pkg;
 export class Drawer {
   #canvasProperties;
@@ -8,29 +9,6 @@ export class Drawer {
   #ctx;
   #collection;
   #loadedImages = [];
-  /**
-   * @param {number} width : 1000; larghezza del canvas legaro al drawer
-   * @param {number} heigth
-   * @param {*} context
-   */
-  constructor(
-    width = 1000,
-    heigth = 1000,
-    context = '2d',
-    collection
-  ) {
-    this.#canvasProperties = new CanvasProperties(
-      context,
-      width,
-      heigth
-    );
-    this.#collection = collection;
-    this.loadedElements = [];
-    this.#canvas = createCanvas(width, heigth);
-    this.#ctx = this.canvas.getContext(
-      this.canvasProperties.context
-    );
-  }
   get canvasProperties() {
     return this.#canvasProperties;
   }
@@ -54,6 +32,29 @@ export class Drawer {
   }
   set collection(collection) {
     return (this.#collection = collection);
+  }
+  /**
+   * @param {number} width : 1000; larghezza del canvas legaro al drawer
+   * @param {number} heigth
+   * @param {*} context
+   */
+  constructor(
+    width = 1000,
+    heigth = 1000,
+    context = '2d',
+    collection
+  ) {
+    this.#canvasProperties = new CanvasProperties(
+      context,
+      width,
+      heigth
+    );
+    this.#collection = collection;
+    // this.loadedElements = [];
+    this.#canvas = createCanvas(width, heigth);
+    this.#ctx = this.canvas.getContext(
+      this.canvasProperties.context
+    );
   }
   /**
    *
@@ -82,24 +83,12 @@ export class Drawer {
     this.ctx.fillText(sig, 40, 40);
   };
   /**
-   *
-   * @param {string[]} imagesPaths array contenente i
-   * percorsi delle immagini da caricare
-   * @returns ritorna le promesse dell immagini caricate
-   */
-  loadImages(imagesPaths) {
-    imagesPaths.forEach(async (imagePath) => {
-      this.loadedImages = await this.loadImage(imagePath);
-    });
-    return this.loadedImages;
-  }
-  /**
    * carica l'immagine in pkg per poi imprimerla tramite ctx.drawImage()
    * @param {string} path percorso dell'immagine da caricare
    * nella memoria di pkg
    * @returns {pkg.Image} ritorna un oggetto pkg.Image
    */
-  loadImage(path) {
+  async loadImage(path) {
     let image = loadImage(path);
     return image;
   }
@@ -122,4 +111,11 @@ export class Drawer {
       heigth
     );
   };
+  async getImageSize(path) {
+    let size = new Size();
+    let image = await loadImage(path);
+    size.width = image.width;
+    size.height = image.height;
+    return size;
+  }
 }

@@ -39,7 +39,6 @@ export let SystemTest = describe('System.js', () => {
     describe('System static method: buildTree()', () => {
       const tree = system.buildTree(initialPath);
       let root = tree.nodes[0];
-
       it('Should return root node', () => {
         expect(root).not.to.be.null;
         expect(root).to.have.property('path', initialPath);
@@ -75,7 +74,7 @@ export let SystemTest = describe('System.js', () => {
         //   expect(utils.name).to.be.equal('utils');
         // });
       });
-      describe(`TREE`, () => {
+      describe(`CLASS: TREE`, () => {
         describe(`Property nodes`, () => {
           it(`dovrebbe tornare un lista dei nodi contenuti nel tree`, () => {
             expect(Array.isArray(tree.nodes)).to.be.true;
@@ -246,7 +245,7 @@ export let SystemTest = describe('System.js', () => {
           });
         });
       });
-      describe.only(`INTERNAL CLASS: TREENODE`, () => {
+      describe(`CLASS: TREENODE`, () => {
         describe(`Method trovaSiblings()`, () => {
           it(`dovrebbe lanciare un errore perchè si stanno cercando i siblings del nodo root`, () => {
             const ERRORMESSAGE =
@@ -321,10 +320,14 @@ export let SystemTest = describe('System.js', () => {
             );
           });
         });
-        describe(`Property root`, () => {
-          it(``, () => {
+        describe(`Property 'root'`, () => {
+          it(`dovrebbe essere true perchè il nodo interrogato è il nodo root`, () => {
             const root = tree.nodes[0];
-            log(root);
+            expect(root.root).to.be.true;
+          });
+          it(`dovrebbe dornare undefined perché solo il nodo root ha la proprietà 'root'`, () => {
+            const folderNode = tree.nodes[1];
+            expect(folderNode.root).to.be.undefined;
           });
         });
       });

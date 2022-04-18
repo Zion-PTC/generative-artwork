@@ -2,64 +2,38 @@ import { Size } from './Size.js';
 
 export class SystemEntity {
   static #systemEntities = [];
-  #id;
-  #name;
-  #path;
-  #level;
-  #children = [];
-  #type;
-  #collection;
-  constructor(
-    id,
-    name,
-    path,
-    level,
-    children = [],
-    type,
-    width,
-    height,
-    collection
-  ) {
-    this.#id = id;
-    this.#name = name;
-    this.#path = path;
-    this.#level = level;
-    this.#children = children;
-    this.#type = type;
-    this.#collection = collection;
+  constructor(name, path, type, width, height) {
+    this.name = name;
+    this.path = path;
+    this.type = type;
     this.size = new Size(width, height);
+    this.listaDiLati = [];
     SystemEntity.#systemEntities.push(this);
+    this.id = SystemEntity.#systemEntities.length;
   }
   static get systemEntities() {
     return this.#systemEntities;
   }
-  static connections(entity) {}
-  static isConnected(entityA, entityB) {}
-  get id() {
-    return this.#id;
+  connettiA(entity) {
+    // if (this.èConnessoA(entity)) {
+    //   return;
+    // }
+    this.listaDiLati.push(entity);
+    entity.listaDiLati.push(this);
   }
-  get name() {
-    return this.#name;
+  trovaLatiAdiacenti() {
+    return this.listaDiLati.map((lato) => lato.id);
   }
-  get path() {
-    return this.#path;
+  èConnessoA(entity) {
+    return this.listaDiLati.some(
+      (lato) => (lato.id = entity.id)
+    );
   }
-  get level() {
-    return this.#level;
+  static getEntitiesNames() {
+    let servedArray = [];
+    this.#systemEntities.forEach((entity) => {
+      servedArray.push(entity.name);
+    });
+    return servedArray;
   }
-  get children() {
-    return this.#children;
-  }
-  get type() {
-    return this.#type;
-  }
-  get collection() {
-    return this.#collection;
-  }
-  set id(id) {
-    return (this.#id = id);
-  }
-  connettiA(){}
-  trovaLatiAdiacenti(){}
-  èConnessoA()
 }

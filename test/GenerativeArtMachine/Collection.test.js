@@ -2,13 +2,18 @@ import { expect } from 'chai';
 import Mocha from 'mocha';
 import { zionUtil } from '../../../telegram-bots/Classes/_Node Standard Modules/zionUtil.js';
 import { Collection } from '../../Machines/GenerativeArtMachine/Collection.js';
-import { system } from '../../Machines/system.js';
+import { System, system } from '../../Machines/system.js';
 import { ZionRegEx } from '../../../telegram-bots/Classes/_Standard Classes/ZionRegEx.js';
 import { Drawer } from '../../Machines/GenerativeArtMachine/Drawer.js';
 import { TreeNode } from '../../Machines/System/Tree/TreeNode.js';
+import { Rarity } from '../../Machines/GenerativeArtMachine/Rarity.js';
+import { Layer } from '../../Machines/GenerativeArtMachine/Layer.js';
+import { Element } from '../../Machines/GenerativeArtMachine/Element.js';
+import { Class } from '../../Machines/GenerativeArtMachine/Class.js';
+import { SystemEntity } from '../../Machines/GenerativeArtMachine/SystemEntity.js';
 
 function expectedTreeStringResult() {
-  let string = `└──input\n ⋮└──background\n ⋮ ⋮└──original\n ⋮ ⋮ ⋮├──Background_1.png\n ⋮ ⋮ ⋮├──Background_2.png\n ⋮ ⋮ ⋮├──Background_3.png\n ⋮ ⋮ ⋮├──Background_4.png\n ⋮ ⋮ ⋮├──Background_5.png\n ⋮ ⋮ ⋮└──asdf\n ⋮ ⋮└──rare\n ⋮ ⋮ ⋮├──Background1.png\n ⋮ ⋮ ⋮└──Background2.png\n ⋮ ⋮└──super_rare\n ⋮ ⋮ ⋮└──Background1.png\n ⋮└──circle\n ⋮ ⋮└──original\n ⋮ ⋮ ⋮├──Circle1.png\n ⋮ ⋮ ⋮├──Circle2.png\n ⋮ ⋮ ⋮├──Circle3.png\n ⋮ ⋮ ⋮├──Circle4.png\n ⋮ ⋮ ⋮└──Circle5.png\n ⋮ ⋮└──rare\n ⋮ ⋮ ⋮├──Circle1.png\n ⋮ ⋮ ⋮└──Circle2.png\n ⋮ ⋮└──super_rare\n ⋮ ⋮ ⋮└──Circle1.png\n ⋮└──innercircle\n ⋮ ⋮└──original\n ⋮ ⋮ ⋮├──InnerCircle1.png\n ⋮ ⋮ ⋮├──InnerCircle2.png\n ⋮ ⋮ ⋮├──InnerCircle3.png\n ⋮ ⋮ ⋮├──InnerCircle4.png\n ⋮ ⋮ ⋮└──InnerCircle5.png\n ⋮ ⋮└──rare\n ⋮ ⋮ ⋮├──InnerCircle1.png\n ⋮ ⋮ ⋮└──InnerCircle2.png\n ⋮ ⋮└──super_rare\n ⋮ ⋮ ⋮└──InnerCircle1.png`;
+  let string = `└──input\n ⋮└──classe1\n ⋮ ⋮└──background\n ⋮ ⋮ ⋮└──original\n ⋮ ⋮ ⋮ ⋮├──Background_1.png\n ⋮ ⋮ ⋮ ⋮├──Background_2.png\n ⋮ ⋮ ⋮ ⋮├──Background_3.png\n ⋮ ⋮ ⋮ ⋮├──Background_4.png\n ⋮ ⋮ ⋮ ⋮└──Background_5.png\n ⋮ ⋮ ⋮└──rare\n ⋮ ⋮ ⋮ ⋮├──Background1.png\n ⋮ ⋮ ⋮ ⋮└──Background2.png\n ⋮ ⋮ ⋮└──super_rare\n ⋮ ⋮ ⋮ ⋮└──Background1.png\n ⋮ ⋮└──circle\n ⋮ ⋮ ⋮└──original\n ⋮ ⋮ ⋮ ⋮├──Circle1.png\n ⋮ ⋮ ⋮ ⋮├──Circle2.png\n ⋮ ⋮ ⋮ ⋮├──Circle3.png\n ⋮ ⋮ ⋮ ⋮├──Circle4.png\n ⋮ ⋮ ⋮ ⋮└──Circle5.png\n ⋮ ⋮ ⋮└──rare\n ⋮ ⋮ ⋮ ⋮├──Circle1.png\n ⋮ ⋮ ⋮ ⋮└──Circle2.png\n ⋮ ⋮ ⋮└──super_rare\n ⋮ ⋮ ⋮ ⋮└──Circle1.png\n ⋮ ⋮└──innercircle\n ⋮ ⋮ ⋮└──original\n ⋮ ⋮ ⋮ ⋮├──InnerCircle1.png\n ⋮ ⋮ ⋮ ⋮├──InnerCircle2.png\n ⋮ ⋮ ⋮ ⋮├──InnerCircle3.png\n ⋮ ⋮ ⋮ ⋮├──InnerCircle4.png\n ⋮ ⋮ ⋮ ⋮└──InnerCircle5.png\n ⋮ ⋮ ⋮└──rare\n ⋮ ⋮ ⋮ ⋮├──InnerCircle1.png\n ⋮ ⋮ ⋮ ⋮└──InnerCircle2.png\n ⋮ ⋮ ⋮└──super_rare\n ⋮ ⋮ ⋮ ⋮└──InnerCircle1.png`;
   return string;
 }
 
@@ -49,7 +54,7 @@ const _OUTPUTPATH = 'outputPath';
 const _DRAWER = 'drawer';
 const _WIDTH = 'width';
 const _HEIGHT = 'height';
-const _FOLDERSTRUCTURE = 'folderStructure';
+const _FOLDERTREE = 'folderTree';
 const _ROOT = 'root';
 
 const NAME = 'Collezione';
@@ -109,7 +114,23 @@ if (
   zionUtil.popFirst(arrayConIlContenutoDellaDirectory);
 }
 // log(newCollection);
-// log(newCollection.folderStructure.children[0].children[0]);
+// log(newCollection.folderTree.children[0].children[0]);
+
+const checkElementsInArrayConstructor = function (
+  elements = [],
+  constructor
+) {
+  let results = [];
+  elements.forEach((element) => {
+    if (element.constructor !== constructor) {
+      results.push(false);
+    }
+    results.push(true);
+  });
+  return results.some((res) => res === false)
+    ? false
+    : true;
+};
 
 export let CollectionTest =
   describe('COLLECTION CLASS', () => {
@@ -167,39 +188,45 @@ export let CollectionTest =
             ]
           ).to.be.equal(HEIGHT);
         });
-      });
-      describe(`Collection constructor attribute: ${_FOLDERSTRUCTURE}`, () => {
-        it(`dovrebbe avere una proprietà: ${_FOLDERSTRUCTURE}, con un valore`, () => {
-          expect(newCollection[_FOLDERSTRUCTURE]).to.be.not
-            .null;
+        it(`dovrebbe aver caricato tutti gli elementi`, () => {
+          expect(
+            newCollection.drawer.loadedImages.length
+          ).to.be.equal(newCollection.elements.length);
         });
-        it(`l'oggetto: ${_FOLDERSTRUCTURE} dovrebbe contenere un nodo con attributo: ${_ROOT}, con valore: '${PATH}'`, () => {
-          expect(
-            newCollection.folderStructure.nodes[0].path
-          ).to.be.equal(PATH);
-        });
-        it(`l'oggetto: ${_FOLDERSTRUCTURE} dovrebbe contenere un child con attributo: ${_PATH}, con valore: '${arrayConIlContenutoDellaDirectory[0]}`, () => {
-          expect(
-            newCollection.folderStructure.nodes[0]
-              .children[0]
-          ).not.to.be.null;
-          expect(
-            newCollection.folderStructure.nodes[0]
-              .children[0].path
-          ).to.be.equal(
-            `${PATH}/${arrayConIlContenutoDellaDirectory[0]}`
+        it(`dovrebbe caricare un'immagine`, async () => {
+          let size = await newCollection.drawer.loadImage(
+            newCollection.elements[0].path
           );
+          expect(size.height).to.be.equal(1000);
         });
-        it(`dovrebbe effettuare una ricerca DFS`, () => {
-          //
+      });
+      describe(`Collection constructor attribute: ${_FOLDERTREE}`, () => {
+        it(`dovrebbe avere una proprietà: ${_FOLDERTREE}, con un valore`, () => {
+          expect(newCollection[_FOLDERTREE]).to.be.not.null;
         });
+        // it(`l'oggetto: ${_FOLDERTREE} dovrebbe contenere un nodo con attributo: ${_ROOT}, con valore: '${PATH}'`, () => {
+        //   expect(
+        //     newCollection.folderTree.nodes[0].path
+        //   ).to.be.equal(PATH);
+        // });
+        // it(`l'oggetto: ${_FOLDERTREE} dovrebbe contenere un child con attributo: ${_PATH}, con valore: '${arrayConIlContenutoDellaDirectory[0]}`, () => {
+        //   expect(
+        //     newCollection.folderTree.nodes[0].children[0]
+        //   ).not.to.be.null;
+        //   expect(
+        //     newCollection.folderTree.nodes[0].children[0]
+        //       .path
+        //   ).to.be.equal(
+        //     `${PATH}/${arrayConIlContenutoDellaDirectory[0]}`
+        //   );
+        // });
         describe(`Class TreeNode`, () => {
           it(`dovrebbe ritronare una stringa formattata che mostra il tree, con valore uguale a ${ZionRegEx.firstAndLastDyn(
             expectedTreeStringResult(),
             5
           ).join('...')}`, () => {
             let stringedTree =
-              newCollection.folderStructure.nodes[0].toStringedTree();
+              newCollection.folderTree.nodes[0].toStringedTree();
             expect(stringedTree).to.be.equal(
               expectedTreeStringResult()
             );
@@ -211,6 +238,69 @@ export let CollectionTest =
         expect(newCollection.collectionPath).to.be.equal(
           EXPECTEDRESULT
         );
+      });
+    });
+    describe(`COLLECTION getters`, () => {
+      describe(`Getter property 'rarities'`, () => {
+        it(`dovrebbe tornare una lista di oggetti di tipo 'Rarity'`, () => {
+          let rarities = newCollection.rarities;
+          expect(Array.isArray(rarities)).to.be.true;
+          let results = [];
+          rarities.forEach((rarity) => {
+            if (rarity.constructor === Rarity) {
+              results.push(true);
+            } else {
+              results.push(false);
+            }
+          });
+          expect(results.some((res) => res === false)).to.be
+            .false;
+        });
+        it(`dovrebbe avere una proprietà type`, () => {
+          log(newCollection.rarities[0].type);
+        });
+      });
+      describe(`Getter property 'layers'`, () => {
+        it(`dovrebbe ritornare la lista di ogetti di tipo layer della collezione`, () => {
+          let layers = newCollection.layers;
+          expect(Array.isArray(layers)).to.be.true;
+          let result = checkElementsInArrayConstructor(
+            layers,
+            Layer
+          );
+          expect(result).to.be.true;
+        });
+        // it(`dovrebbe avere una proprietà classe`, () => {
+        //   const RISULTATOATTESO = 'classe1';
+        //   expect(
+        //     newCollection.layers[0].className
+        //   ).to.be.equal(RISULTATOATTESO);
+        // });
+      });
+      describe(`Getter property 'elements'`, () => {
+        it(`dovrebbe tornare una lista di oggetti di tipo Element`, () => {
+          expect(Array.isArray(newCollection.elements)).to
+            .be.true;
+          let res = checkElementsInArrayConstructor(
+            newCollection.elements,
+            Element
+          );
+          expect(res).to.be.true;
+        });
+        it(`dovrebbe ritornare la dimensione del file dell'elemento`, () => {
+          let elements = newCollection.elements;
+          let element = elements[0];
+          expect(element.fileSize).to.be.not.null;
+        });
+      });
+      describe(`Getter property 'classes'`, () => {
+        it(`dovrebbe tornare una lista di oggetti di tipo classe`, () => {
+          let classes = newCollection.classes;
+          expect(Array.isArray(classes)).to.be.true;
+          expect(
+            checkElementsInArrayConstructor(classes, Class)
+          ).to.be.true;
+        });
       });
     });
     describe(`COLLECTION STATIC PROPERTIES`, () => {
@@ -261,10 +351,8 @@ export let CollectionTest =
         it(`dovrebbe cancellare la collezione selezionata passandogli il nome della stessa`, () => {
           const nomeDellaCollezioneDaCancellare =
             newCollection2.name;
-          log(
-            Collection.deleteCollection(
-              nomeDellaCollezioneDaCancellare
-            )
+          Collection.deleteCollection(
+            nomeDellaCollezioneDaCancellare
           );
           expect(Collection.collections.length).to.be.equal(
             1
@@ -276,6 +364,9 @@ export let CollectionTest =
                 nomeDellaCollezioneDaCancellare
             )
           ).to.be.equal(-1);
+        });
+        it(``, () => {
+          log(newCollection.layers);
         });
         it(`dovrebbe lanciare un errore perché la collezione non esiste.`, () => {
           const nomeDellaCollezioneCheNonEsiste = 'ucci';

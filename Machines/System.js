@@ -1,5 +1,5 @@
 import fs from 'fs';
-import { dirname } from 'path';
+import { dirname, extname } from 'path';
 import { fileURLToPath } from 'url';
 
 import { zionUtil } from '../../telegram-bots/Classes/_Node Standard Modules/zionUtil.js';
@@ -109,14 +109,16 @@ export class System {
    * @returns {Tree} returns a complete Tree starting from the rootPath
    */
   buildTree(rootPath) {
+    let newTree = new Tree();
     let _types = ['Folder', 'File'];
+    let nodes = [];
     let type = system.getTreeNodeType(rootPath);
     let name = this.setNameForTreeNode(
       rootPath,
       TreeNode.types[type]
     );
-    console.log(name);
     let root = new Root(name, rootPath, type);
+    newTree.add(root);
     const stack = [root];
     // https://en.wikipedia.org/wiki/Depth-first_search
     // Depth-first search aka DFS
@@ -140,23 +142,27 @@ export class System {
               name,
               childPath,
               currentNode.name,
-              type
+              type,
+              newTree.id
             );
+            childNode.depth = currentNode.depth + 1;
+            nodes.push(childNode);
           }
           if (_types[type] === _types[1]) {
             childNode = new File(
               name,
               childPath,
               currentNode.name,
-              type
+              type,
+              newTree.id,
+              this.getFileExtension(childPath),
+              this.getFileSize(childPath)
+              // extension
             );
+            childNode.depth = currentNode.depth + 1;
+            nodes.push(childNode);
           }
-          let parent = TreeNode.treeNodes.find(
-            (node) => node.name === childNode.parent
-          );
-          let level = parent.level;
-          level++;
-          childNode.level = level;
+          currentNode.connettiAFiglio(childNode);
           if (
             system.getTreeNodeType(childNode.path) === 0
           ) {
@@ -171,7 +177,10 @@ export class System {
     }
     // creando un tree con l'array di TreeNodes si crea un
     // legame per il quale aggiungendo un elemento al
-    let newTree = new Tree(TreeNode.treeNodes);
+    const addNode = function (node) {
+      newTree.add(node);
+    };
+    nodes.forEach(addNode);
     return newTree;
   }
   /**
@@ -226,6 +235,15 @@ export class System {
       ? (result = 0)
       : (result = 1);
     return result;
+  }
+  // work on files
+  getFileSize(path) {
+    let size = fs.statSync(path).size;
+    return size;
+  }
+  getFileExtension(path) {
+    let extension = extname(path);
+    return extension;
   }
 }
 

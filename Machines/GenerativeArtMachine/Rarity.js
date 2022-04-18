@@ -1,56 +1,29 @@
-import { System } from '../System/System.js';
 import { SystemEntity } from './SystemEntity.js';
 
 export class Rarity extends SystemEntity {
-  #classes = [];
-  #layers = [];
-  #elements = [];
   constructor(
-    id,
-    name,
-    path,
-    level,
-    children,
-    type,
-    width,
-    height,
-    collectionName
+    name = 'name',
+    type = 'type',
+    percentage = 0.2
   ) {
-    super(
-      id,
-      name,
-      path,
-      level,
-      children,
-      type,
-      width,
-      height,
-      collectionName
-    );
-    this.from = from;
-    this.to = to;
+    super(name, undefined, type, undefined, undefined);
+    delete this.size;
+    delete this.path;
+    delete this.parent;
+    this.name;
+    this.from;
+    this.to;
     this.percentage = percentage;
   }
-  get classes() {
-    return this.#classes;
+}
+export class RarityByEdition extends Rarity {
+  constructor() {
+    this.from;
+    this.to;
   }
-  set classes(classes) {
-    return this.#classes.push(classes);
-  }
-  get layers() {
-    return this.#layers;
-  }
-  set layers(layers) {
-    return this.#layers.push(layers);
-  }
-  get elements() {
-    return this.#elements;
-  }
-  set elements(elements) {
-    return this.#elements.push(elements);
-  }
-  countElements() {
-    return (this.elementCounts =
-      System.arrayOfNamesOfFilesInFolder(this.path).length);
+}
+export class RarityByElement extends Rarity {
+  constructor() {
+    this.percentage;
   }
 }

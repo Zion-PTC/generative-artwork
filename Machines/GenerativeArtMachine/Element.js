@@ -1,43 +1,26 @@
-import { Position } from './Position';
-import { SystemEntity } from './SystemEntity';
+import { Position } from './Position.js';
+import { SystemEntity } from './SystemEntity.js';
 
+// se il tipo di collezion ha tipologia di posizionamento ad
+// elemento vuol dire che ogni elemento puo avere una sua
+// posizione nel canvas.
+// se il tipo di collezione ha tipologia di posizionamento a
+// layer, vuol dire che il posizionamento dell'elemento è
+// uguale a quello del layer.
 export class Element extends SystemEntity {
-  static #elements = [];
   constructor(
-    id,
     name,
     path,
-    level,
-    children,
     type,
     width,
     height,
-    collectionName,
-    x,
-    y
+    extension,
+    fileSize
   ) {
-    super(
-      id,
-      name,
-      path,
-      level,
-      children,
-      type,
-      width,
-      height,
-      collectionName
-    );
-    this.position = new Position(x, y);
+    super(name, path, type, width, height);
+    this.position = new Position(0, 0);
 
-    this.rarityName;
-    this.collectionName = collectionName;
-    this.className;
-    this.layerName;
-
-    this.extension;
-    this.#elements.push(this);
-  }
-  static get elements() {
-    return this.#elements;
+    this.extension = extension;
+    this.fileSize = fileSize;
   }
 }

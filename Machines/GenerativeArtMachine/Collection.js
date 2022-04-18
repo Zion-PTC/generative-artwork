@@ -2,6 +2,11 @@ import { system } from '../System.js';
 import { SmartContract } from './SmartContract.js';
 import { Drawer } from './Drawer.js';
 import { zionUtil } from '../../../telegram-bots/Classes/_Node Standard Modules/zionUtil.js';
+import { Rarity } from './Rarity.js';
+import { Layer } from './Layer.js';
+import { Element } from './Element.js';
+import { Class } from './Class.js';
+import { SystemEntity } from './SystemEntity.js';
 /**
  * Folder structure types
  * EDITION
@@ -69,40 +74,13 @@ export class Collection extends SmartContract {
   #type;
   #outputPath;
   #drawer;
-  #folderStructure;
+  #folderTree;
   // GRAPH
+  #nodes = [];
   #classes = [];
   #layers = [];
   #rarities = [];
   #elements = [];
-  /**
-   *
-   * @param {string} name nome della collezione
-   * @param {string} path percorso della cartella contenente i dati della collezione
-   * @param {string} baseUri percorso base per gli oggetti della collezione. Questo dato è quello che apparirà nei metadata degli NFT.
-   */
-  constructor(
-    name = 'Default Name',
-    symbol = 'DFS',
-    supply = 1000,
-    baseURI = 'http',
-    description = 'description',
-    path = '/Users/WAW/Documents/Projects/zion-GenerativeArtMachine/input',
-    type = 'Edition',
-    outputPath = '/Users/WAW/Documents/Projects/zion-GenerativeArtMachine/Machines/GenerativeArtMachine/Machines',
-    width = 1000,
-    height = 1000
-  ) {
-    if (!Collection.collectionExists(name))
-      super(name, symbol, supply, baseURI, description);
-    this.#path = path;
-    this.#type = type;
-    this.#outputPath = outputPath;
-    this.#drawer = new Drawer(width, height, '2d', name);
-    this.#folderStructure = system.buildTree(path);
-    Collection.#collections.push(this);
-    this.id = Collection.#collections.length;
-  }
   // GETTERS
   static get collections() {
     let servedArray = [];
@@ -124,14 +102,26 @@ export class Collection extends SmartContract {
   get outputPath() {
     return this.#outputPath;
   }
-  get folderStructure() {
-    return this.#folderStructure;
-  }
+  // get folderTree() {
+  //   return this.#folderTree;
+  // }
   get drawer() {
     return this.#drawer;
   }
   get rarities() {
     return this.#rarities;
+  }
+  get layers() {
+    return this.#layers;
+  }
+  get elements() {
+    return this.#elements;
+  }
+  get classes() {
+    return this.#classes;
+  }
+  get nodes() {
+    return this.#nodes;
   }
   get collectionPath() {
     return `${this.outputPath}/${this.name}`;
@@ -152,8 +142,34 @@ export class Collection extends SmartContract {
     }
     return (this.#type = type);
   }
-  set rarities(rarity) {
-    return this.#rarities.push(rarity);
+  /**
+   * @param {string} name nome della collezione
+   * @param {string} path percorso della cartella contenente i dati della collezione
+   * @param {string} baseUri percorso base per gli oggetti della collezione. Questo dato è quello che apparirà nei metadata degli NFT.
+   */
+  constructor(
+    name = 'Default Name',
+    symbol = 'DFS',
+    supply = 1000,
+    baseURI = 'http',
+    description = 'description',
+    path,
+    type = 'Edition',
+    outputPath = '/Users/WAW/Documents/Projects/zion-GenerativeArtMachine/Machines/GenerativeArtMachine/Machines',
+    width = 1000,
+    height = 1000
+  ) {
+    if (!Collection.collectionExists(name))
+      super(name, symbol, supply, baseURI, description);
+    this.#path = path;
+    this.#type = type;
+    this.#outputPath = outputPath;
+    this.#drawer = new Drawer(width, height, '2d', name);
+    this.folderTree = system.buildTree(path);
+    Collection.#collections.push(this);
+    this.id = Collection.#collections.length;
+    this.#buildSistemEntities();
+    this.#loadElements();
   }
   // STATIC \\
   // PROPERTIES \\
@@ -176,7 +192,6 @@ export class Collection extends SmartContract {
       );
     }
     // se c'è cancella l'elemento
-    // zionUtil.changePosition(Collection.#collections, 0, 1);
     if (
       indiceDellaCollezione + 1 !==
       Collection.#collections.length
@@ -188,16 +203,6 @@ export class Collection extends SmartContract {
       );
     }
     Collection.#collections.pop();
-
-    // const discardedElement = Collection.collections.pop();
-    // controlla che l'elemento scarcato si quello
-    // desiderato
-    // if (!discardedElement.name === name) {
-    //   throw new Error(
-    //     'c`è stato un errore nella scelta dell`elemento da eliminare'
-    //   );
-    // }
-    // se è lo stesso ritorna this
     return Collection.#collections;
   }
   hasDir() {
@@ -216,5 +221,101 @@ export class Collection extends SmartContract {
       return this;
     }
   }
-  aggiungiVertice() {}
+  #buildSistemEntities() {
+    let tree = this.folderTree;
+    let nodes = tree.nodes;
+    let classes = [];
+    let layers = [];
+    let rarities = [];
+    let elements = [];
+    let classServedObj = {};
+    let layerServedObj = {};
+    let rarityServObj = {};
+    nodes.forEach((node) => {
+      if (node.depth === 3) rarityServObj[node.name] = [];
+      if (node.depth === 2) layerServedObj[node.name] = [];
+      if (node.depth === 1) classServedObj[node.name] = [];
+    });
+    nodes.forEach((node) => {
+      if (node.depth === 1) {
+        let currentClass = node;
+        let newClass = new Class(
+          currentClass.name,
+          currentClass.path,
+          this.type
+        );
+        for (let layer of currentClass.figlio) {
+          let newLayer = new Layer(
+            layer.name,
+            layer.path,
+            this.type,
+            undefined,
+            undefined
+          );
+          for (let rarity of layer.figlio) {
+            for (let element of rarity.figlio) {
+              layerServedObj[layer.name].push(element.name);
+              // qui potrei creare gli elementi
+              let newElement = new Element(
+                element.name,
+                element.path,
+                this.type,
+                undefined, // width
+                undefined,
+                element.extension,
+                element.fileSize
+              );
+              newElement.connettiA(newLayer);
+              newElement.connettiA(newClass);
+              rarityServObj[rarity.name].push(newElement);
+              elements.push(newElement);
+            }
+          }
+          newLayer.connettiA(newClass);
+          layers.push(newLayer);
+        }
+        classes.push(newClass);
+      }
+    });
+    for (let key in rarityServObj) {
+      let newRarity = new Rarity(key, this.type, undefined);
+      const connectToRarity = function (_class) {
+        newRarity.connettiA(_class);
+      };
+      const connectToElement = function (element) {
+        element.connettiA(newRarity);
+      };
+      classes.forEach(connectToRarity);
+      rarityServObj[key].forEach(connectToElement);
+      rarities.push(newRarity);
+    }
+    this.#classes = classes;
+    this.#elements = elements;
+    this.#rarities = rarities;
+    this.#layers = layers;
+    // this.#nodes = SystemEntity.systemEntities;
+  }
+  #loadElements() {
+    let count = 0;
+    this.elements.forEach(async (element) => {
+      class LoadedImage {
+        constructor(elementName, image) {
+          this.elementName = elementName;
+          this.canvasLoadImage = image;
+        }
+      }
+      let loadedImage = new LoadedImage();
+      loadedImage.canvasLoadImage =
+        await this.drawer.loadImage(element.path);
+      loadedImage.elementName = element.name;
+      element.loadedImageIndex = count;
+      count++;
+      this.#drawer.loadedImages = loadedImage;
+      element.size.width =
+        loadedImage.canvasLoadImage.width;
+      element.size.height =
+        loadedImage.canvasLoadImage.height;
+    });
+    return this.drawer.loadedImages;
+  }
 }

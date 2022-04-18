@@ -15,22 +15,22 @@ export class TreeNode {
     let folderId = -1;
     while (stack.length) {
       let currentNode = stack.pop();
-      if (currentNode.children.length !== 0) {
-      }
-      let children = currentNode.children;
-      children.reverse();
       let nomeDeiFileInNodeChildren = [];
-      for (let child of children) {
-        nomeDeiFileInNodeChildren.push(child.name);
-        if (child.type === TreeNode.#types[1]) {
+      if (currentNode.children) {
+        let children = currentNode.children;
+        children.reverse();
+        for (let child of children) {
+          nomeDeiFileInNodeChildren.push(child.name);
+          if (child.type === TreeNode.#types[1]) {
+          }
+          stack.push(child);
         }
-        stack.push(child);
       }
       let { _string, _folders, _folderId } =
         this.stringedName(
           currentNode.name,
           currentNode.type,
-          currentNode.level,
+          currentNode.depth,
           folders,
           string,
           folderId,
@@ -49,7 +49,7 @@ export class TreeNode {
   stringedName = (
     name,
     type,
-    level,
+    depth,
     folders,
     string,
     folderId,
@@ -58,8 +58,8 @@ export class TreeNode {
   ) => {
     let tab = '';
     let pattern = ' ⋮';
-    while (level) {
-      level--;
+    while (depth) {
+      depth--;
       tab = tab + pattern;
     }
     if (type === TreeNode.#types[0]) {
@@ -79,15 +79,27 @@ export class TreeNode {
     let _folderId = folderId;
     return { _string, _folders, _folderId };
   };
-  constructor(name, path, parent, type) {
+  constructor(name, path, type, treeId) {
     this.name = name;
     this.path = path;
     // parent deve essere al massimo 1
-    this.parent = parent;
+    // this.parent;
+    this.genitore = [1];
+    this.figlio = [];
     this.type = TreeNode.#types[type];
-    this.level = 0;
+    this.depth = 0;
     this.children = [];
     TreeNode.#treeNodes.push(this);
+    this.id = TreeNode.length;
+    this.treeId = treeId;
+  }
+  connettiAGenitore(node) {
+    this.genitore.push(node);
+    // node.connettiAFiglio(this);
+  }
+  connettiAFiglio(node) {
+    this.figlio.push(node);
+    node.connettiAGenitore(this);
   }
   isRoot() {
     if (this.root) {
@@ -103,7 +115,7 @@ export class TreeNode {
     // che hanno lo stesso parent
     let servedArray = [];
     TreeNode.#treeNodes.forEach((treeNode) => {
-      if (treeNode.parent === this.parent) {
+      if (treeNode.genitore.name === this.genitore.name) {
         servedArray.push(treeNode);
       }
     });
@@ -114,9 +126,7 @@ export class TreeNode {
     if (this.type === TreeNode.#types[1])
       throw new Error('I file non hanno figli');
     let servedArray = [];
-    this.children.forEach((child) =>
-      servedArray.push(child)
-    );
+    this.figlio.forEach((child) => servedArray.push(child));
     Object.freeze(servedArray);
     return servedArray;
   }
@@ -124,7 +134,7 @@ export class TreeNode {
     if (this.isRoot())
       throw new Error('Il nodo root non ha genitori');
     return TreeNode.#treeNodes.find(
-      (treeNode) => treeNode.name === this.parent
+      (treeNode) => treeNode.name === this.genitore.name
     );
   }
 }
