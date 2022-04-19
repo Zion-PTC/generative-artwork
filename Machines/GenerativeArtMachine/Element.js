@@ -23,5 +23,7 @@ export class Element extends SystemEntity {
     this.loadedImageIndex;
     this.extension = extension;
     this.fileSize = fileSize;
+
+    this.description;
   }
 }
