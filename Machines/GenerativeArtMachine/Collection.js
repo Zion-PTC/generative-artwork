@@ -7,8 +7,18 @@ import { Layer } from './Layer.js';
 import { Element } from './Element.js';
 import { Class } from './Class.js';
 import { GeneratorMachine } from '../GeneratorMachine.js';
+import { Dna } from './Dna.js';
+
+const Combinator = GeneratorMachine.Combinator;
+const Picker = GeneratorMachine.Picker;
+const Estrazione = GeneratorMachine.Picker.Estrazione;
+
 export class Collection extends SmartContract {
   static #collections = [];
+  // DNA
+  #dnaScelti;
+  #dnaScartati;
+  // INFOS
   #id;
   #path;
   #types = ['Edition', 'Element'];
@@ -124,6 +134,22 @@ export class Collection extends SmartContract {
     }
     return result;
   }
+  get possibiliDna() {
+    let servedArray = Combinator.generateCombinations(
+      this.elementsByLayer
+    );
+    return servedArray;
+  }
+  get possibiliDnaPerRarità() {
+    let result = [];
+    const creaEAggiungi = function (possibilità) {
+      let servedArray =
+        Combinator.generateCombinations(possibilità);
+      result.push(servedArray);
+    };
+    this.elementsByLayerByRarity.forEach(creaEAggiungi);
+    return result;
+  }
   // SETTERS
   set id(id) {
     return (this.#id = id);
@@ -139,35 +165,6 @@ export class Collection extends SmartContract {
       throw new Error('Il tipo selezionato non esiste');
     }
     return (this.#type = type);
-  }
-  /**
-   * @param {string} name nome della collezione
-   * @param {string} path percorso della cartella contenente i dati della collezione
-   * @param {string} baseUri percorso base per gli oggetti della collezione. Questo dato è quello che apparirà nei metadata degli NFT.
-   */
-  constructor(
-    name = 'Default Name',
-    symbol = 'DFS',
-    supply = 1000,
-    baseURI = 'http',
-    description = 'description',
-    path,
-    type = 'Edition',
-    outputPath = '/Users/WAW/Documents/Projects/zion-GenerativeArtMachine/Machines/GenerativeArtMachine/Machines',
-    width = 1000,
-    height = 1000
-  ) {
-    if (!Collection.collectionExists(name))
-      super(name, symbol, supply, baseURI, description);
-    this.#path = path;
-    this.#type = type;
-    this.#outputPath = outputPath;
-    this.#drawer = new Drawer(width, height, '2d', name);
-    this.folderTree = system.buildTree(path);
-    Collection.#collections.push(this);
-    this.id = Collection.#collections.length;
-    this.#buildSistemEntities();
-    this.#loadElements();
   }
   // STATIC \\
   // PROPERTIES \\
@@ -203,6 +200,36 @@ export class Collection extends SmartContract {
     Collection.#collections.pop();
     return Collection.#collections;
   }
+  /**
+   * @param {string} name nome della collezione
+   * @param {string} path percorso della cartella contenente i dati della collezione
+   * @param {string} baseUri percorso base per gli oggetti della collezione. Questo dato è quello che apparirà nei metadata degli NFT.
+   */
+  constructor(
+    name = 'Default Name',
+    symbol = 'DFS',
+    supply = 1000,
+    baseURI = 'http',
+    description = 'description',
+    path,
+    type = 'Edition',
+    outputPath = '/Users/WAW/Documents/Projects/zion-GenerativeArtMachine/Machines/GenerativeArtMachine/Machines',
+    width = 1000,
+    height = 1000
+  ) {
+    if (!Collection.collectionExists(name))
+      super(name, symbol, supply, baseURI, description);
+    this.#path = path;
+    this.#type = type;
+    this.#outputPath = outputPath;
+    this.#drawer = new Drawer(width, height, '2d', name);
+    this.folderTree = system.buildTree(path);
+    Collection.#collections.push(this);
+    this.id = Collection.#collections.length;
+    this.#buildSistemEntities();
+    this.#loadElements();
+    this.picker = new Picker(this.possibiliDna);
+  }
   hasDir() {
     // controllare nel path se esiste una cartella
     const folders = system.arrayOfFoldersInDirectory(
@@ -219,36 +246,30 @@ export class Collection extends SmartContract {
       return this;
     }
   }
-  creaPossibilità() {
-    let servedArray =
-      GeneratorMachine.Combinator.generateCombinations(
-        this.elementsByLayer
-      );
+  /**
+   * Accetta un lista di array, che corrisponde ai layer
+   * dell'immagine. Ogni arrai contiene gli elementi da combinare.
+   * @param {array[][]} listaDiElementi
+   * @returns {Dna}
+   */
+  scegliFraPossibiliDna() {
+    let dna =
+      this.picker.scegliACasoETogliElementoDaArray();
+    let newDna = new Dna(dna.elementoEstratto);
+    return newDna;
+  }
+  scegliFraPossibiliDnaNVolte(volte) {
+    let servedArray = [];
+    while (volte) {
+      volte--;
+      let newDna = this.scegliFraPossibiliDna();
+      servedArray.push(newDna);
+    }
     return servedArray;
-  }
-  creaPossilitàPerRarità() {
-    let result = [];
-    const creaEAggiungi = function (possibilità) {
-      let servedArray =
-        GeneratorMachine.Combinator.generateCombinations(
-          possibilità
-        );
-      result.push(servedArray);
-    };
-    this.elementsByLayerByRarity.forEach(creaEAggiungi);
-    return result;
-  }
-  scegliFraDna(listaDiElementi) {
-    return GeneratorMachine.Picker.scegliACasoNumeroFraElementi(
-      listaDiElementi
-    );
-  }
-  scegliFraDnaNVolte(elementiFraIQualiEstrarre, volte) {
-    Picker.estraiConCallbacknVolte(
-      elementiFraIQualiEstrarre,
-      volte,
-      this.scegliFraDna
-    );
+    // return this.picker.estraiConCallbacknVolte(
+    //   volte,
+    //   this.scegliFraPossibiliDna
+    // );
   }
   #buildSistemEntities() {
     let tree = this.folderTree;

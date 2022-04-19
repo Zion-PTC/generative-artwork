@@ -9,6 +9,7 @@ import { Rarity } from '../../Machines/GenerativeArtMachine/Rarity.js';
 import { Layer } from '../../Machines/GenerativeArtMachine/Layer.js';
 import { Element } from '../../Machines/GenerativeArtMachine/Element.js';
 import { Class } from '../../Machines/GenerativeArtMachine/Class.js';
+import { Dna } from '../../Machines/GenerativeArtMachine/Dna.js';
 
 function expectedTreeStringResult() {
   let string = `└──input\n ⋮└──classe1\n ⋮ ⋮└──background\n ⋮ ⋮ ⋮└──original\n ⋮ ⋮ ⋮ ⋮├──Background_1.png\n ⋮ ⋮ ⋮ ⋮├──Background_2.png\n ⋮ ⋮ ⋮ ⋮├──Background_3.png\n ⋮ ⋮ ⋮ ⋮├──Background_4.png\n ⋮ ⋮ ⋮ ⋮└──Background_5.png\n ⋮ ⋮ ⋮└──rare\n ⋮ ⋮ ⋮ ⋮├──Background1.png\n ⋮ ⋮ ⋮ ⋮└──Background2.png\n ⋮ ⋮ ⋮└──super_rare\n ⋮ ⋮ ⋮ ⋮└──Background1.png\n ⋮ ⋮└──circle\n ⋮ ⋮ ⋮└──original\n ⋮ ⋮ ⋮ ⋮├──Circle1.png\n ⋮ ⋮ ⋮ ⋮├──Circle2.png\n ⋮ ⋮ ⋮ ⋮├──Circle3.png\n ⋮ ⋮ ⋮ ⋮├──Circle4.png\n ⋮ ⋮ ⋮ ⋮└──Circle5.png\n ⋮ ⋮ ⋮└──rare\n ⋮ ⋮ ⋮ ⋮├──Circle1.png\n ⋮ ⋮ ⋮ ⋮└──Circle2.png\n ⋮ ⋮ ⋮└──super_rare\n ⋮ ⋮ ⋮ ⋮└──Circle1.png\n ⋮ ⋮└──innercircle\n ⋮ ⋮ ⋮└──original\n ⋮ ⋮ ⋮ ⋮├──InnerCircle1.png\n ⋮ ⋮ ⋮ ⋮├──InnerCircle2.png\n ⋮ ⋮ ⋮ ⋮├──InnerCircle3.png\n ⋮ ⋮ ⋮ ⋮├──InnerCircle4.png\n ⋮ ⋮ ⋮ ⋮└──InnerCircle5.png\n ⋮ ⋮ ⋮└──rare\n ⋮ ⋮ ⋮ ⋮├──InnerCircle1.png\n ⋮ ⋮ ⋮ ⋮└──InnerCircle2.png\n ⋮ ⋮ ⋮└──super_rare\n ⋮ ⋮ ⋮ ⋮└──InnerCircle1.png`;
@@ -220,7 +221,7 @@ export let CollectionTest =
         );
       });
     });
-    describe(`COLLECTION getters`, () => {
+    describe(`GETTERS & SETTERS`, () => {
       describe(`Getter property 'rarities'`, () => {
         it(`dovrebbe tornare una lista di oggetti di tipo 'Rarity'`, () => {
           let rarities = newCollection.rarities;
@@ -294,6 +295,16 @@ export let CollectionTest =
             listaDiElementiPerLayer.length
           ).to.be.equal(newCollection.layers.length);
         });
+        it(`dovrebbe tornare un array, il quale puo essere variato, una volta cambiato si dovrebbe\n\t  poter richiamare il getter e ricevere un nuovo array appena creato, quindi i due array\n\t  dovrebbero essere diversi`, () => {
+          let result1 = newCollection.elementsByLayer;
+          let array1Lenght = result1.length;
+          expect(array1Lenght).to.be.equal(3);
+          result1.pop();
+          expect(array1Lenght).to.be.equal(3);
+          expect(result1.length).to.be.equal(2);
+          let result2 = newCollection.elementsByLayer;
+          expect(result2.length).to.be.equal(3);
+        });
       });
       describe(`Getter property 'elementsByLayerByRarity'`, () => {
         it(`dovrebbe tornare gli elementi divisi prima per rarità e in seguito in base al loro layer.`, () => {
@@ -308,6 +319,20 @@ export let CollectionTest =
           expect(
             listaDiELementiPerRaritàPerLayer[0].length
           ).to.be.equal(newCollection.layers.length);
+        });
+      });
+      describe(`Getter property 'possibiliDna'`, () => {
+        it(`dovrebbe creare una lista con tutte le combinazioni possibili`, () => {
+          let result = newCollection.possibiliDna;
+          expect(result.length).to.be.equal(512);
+        });
+      });
+      describe(`Getter property 'possibiliDnaPerRarità'`, () => {
+        it(`dovrebbe tornare un lista di possibilità divise per rarità.`, () => {
+          let result = newCollection.possibiliDnaPerRarità;
+          expect(result[0].length).to.be.equal(125);
+          expect(result[1].length).to.be.equal(8);
+          expect(result[2].length).to.be.equal(1);
         });
       });
     });
@@ -396,19 +421,38 @@ export let CollectionTest =
           system.deleteRecursiveDir(PATHDELLACOLLEZIONE);
         });
       });
-      describe(`Method creaPossibilità()`, () => {
-        it(`dovrebbe creare una lista con tutte le combinazioni possibili`, () => {
-          let result = newCollection.creaPossibilità();
-          expect(result.length).to.be.equal(512);
+      describe.only(`Method scegliFraPossibiliDna()`, () => {
+        it(`Dovrebbe tornare un array contenente un dna a caso fra quelli possibili.`, () => {
+          let dna = newCollection.scegliFraPossibiliDna();
+          expect(zionUtil.checkObjectConstructor(dna, Dna))
+            .to.be.true;
+        });
+        it(`dovrebbe continuare l'estrazione di elementi in modo da esaurire piano piano tutte le possibili combinazioni`, () => {
+          //
+          expect(
+            newCollection.picker.estrazione
+              .elementiRimanenti.length
+          ).to.be.equal(511);
+          newCollection.scegliFraPossibiliDna();
+          expect(
+            newCollection.picker.estrazione
+              .elementiRimanenti.length
+          ).to.be.equal(510);
         });
       });
-      describe(`Method creaPossilitàPerRarità()`, () => {
-        it(`dovrebbe tornare un lista di possibilità divise per rarità.`, () => {
-          let result =
-            newCollection.creaPossilitàPerRarità();
-          expect(result[0].length).to.be.equal(125);
-          expect(result[1].length).to.be.equal(8);
-          expect(result[2].length).to.be.equal(1);
+      describe.only(`Method scegliFraPossibiliDnaNVolte()`, () => {
+        it(`dovrebbe effettuare piu volte l'estrazione fra i possibili dna`, () => {
+          log(
+            newCollection.picker.estrazione
+              .elementiRimanenti.length
+          );
+          let dnas =
+            newCollection.scegliFraPossibiliDnaNVolte(10);
+          log(dnas);
+          log(
+            newCollection.picker.estrazione
+              .elementiRimanenti.length
+          );
         });
       });
     });
