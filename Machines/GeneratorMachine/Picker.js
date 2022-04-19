@@ -1,7 +1,13 @@
 import { zionUtil } from '../../../telegram-bots/Classes/_Node Standard Modules/zionUtil.js';
 import { Media } from '../../../telegram-bots/Classes/_Node Standard Modules/zionUtil/Media.js';
+import { Estrazione } from './Estrazione.js';
+
+let b = 0;
+let x = { a: 1, b: 5, c: [1, 2, 3] };
+x.c[2];
 
 export class Picker {
+  static Estrazione = Estrazione;
   /**
    *
    * @param {number[]} listaDiNumeri lista di numeri fra i
@@ -30,6 +36,38 @@ export class Picker {
         Math.floor(Math.random() * listaDiElementi.length)
       ];
     return elementoRandom;
+  }
+  /**
+   *
+   * @param {Estrazione} estrazione
+   * @returns
+   */
+  static scegliACasoETogliElementoDaArray(estrazione) {
+    let lunghezzaArray =
+      estrazione.elementiRimanenti.length - 1;
+    let indiceEstratto =
+      this.scegliNumeroNellIntervallo(lunghezzaArray);
+    let elementoEstratto =
+      estrazione.elementiRimanenti[indiceEstratto];
+    zionUtil.changePosition(
+      estrazione.elementiRimanenti,
+      indiceEstratto,
+      lunghezzaArray
+    );
+    let elementoEstrattoCheck =
+      estrazione.elementiRimanenti.pop();
+    if (
+      elementoEstratto.name !== elementoEstrattoCheck.name
+    )
+      throw new Error(
+        `L'elemeto poppato dall'array non corrisponde con quello estratto`
+      );
+    estrazione.elementoEstratto = elementoEstratto;
+    estrazione.elementiEstratti.push(elementoEstratto);
+    return estrazione;
+  }
+  static scegliNumeroNellIntervallo(intervallo) {
+    return Math.floor(Math.random() * intervallo);
   }
   /**
    *
@@ -172,5 +210,40 @@ export class Picker {
       volte--;
     }
     return array;
+  }
+  constructor(arrayOriginale = []) {
+    this.estrazione = new Estrazione(arrayOriginale);
+  }
+  scegliACasoETogliElementoDaArray() {
+    let lunghezzaArray =
+      this.estrazione.elementiRimanenti.length - 1;
+    let indiceEstratto =
+      Picker.scegliNumeroNellIntervallo(lunghezzaArray);
+    let elementoEstratto =
+      this.estrazione.elementiRimanenti[indiceEstratto];
+    zionUtil.changePosition(
+      this.estrazione.elementiRimanenti,
+      indiceEstratto,
+      lunghezzaArray
+    );
+    let elementoEstrattoCheck =
+      this.estrazione.elementiRimanenti.pop();
+    if (
+      elementoEstratto.name !== elementoEstrattoCheck.name
+    )
+      throw new Error(
+        `L'elemeto poppato dall'array non corrisponde con quello estratto`
+      );
+    this.estrazione.elementoEstratto = elementoEstratto;
+    this.estrazione.elementiEstratti.push(elementoEstratto);
+    return this.estrazione;
+  }
+  estraiConCallbacknVolte(volte, callback) {
+    let risultati = [];
+    while (volte) {
+      risultati.push(callback());
+      volte--;
+    }
+    return risultati;
   }
 }

@@ -1,5 +1,6 @@
 import { expect } from 'chai';
 import Mocha from 'mocha';
+import { Estrazione } from '../../Machines/GeneratorMachine/Estrazione.js';
 import { Picker } from '../../Machines/GeneratorMachine/Picker.js';
 import { zionUtil } from '/Users/WAW/Documents/Projects/telegram-bots/Classes/_Node Standard Modules/zionUtil.js';
 
@@ -32,7 +33,7 @@ let valoriDegliElementi = elementi.map(
 );
 
 describe(`STATIC METHODS`, () => {
-  describe(`Method scegliNumeroFraNumeri()`, () => {
+  describe(`Method scegliACasoNumeroFraNumeri()`, () => {
     let numeri = [1, 2, 3, 4, 5];
     it(`Data una lista di numeri: ${JSON.stringify(
       numeri
@@ -45,6 +46,48 @@ describe(`STATIC METHODS`, () => {
       expect(numeroRandom2).not.to.be.null;
       expect(numeri.includes(numeroRandom1)).to.be.true;
       expect(numeri.includes(numeroRandom2)).to.be.true;
+    });
+  });
+  describe(`Method scegliACasoETogliElementoDaArray()`, () => {
+    it.only(`dovrebbe scegliere un indice a caso e dovrebbe eliminare l'elemento scelto dall'array inviato`, () => {
+      const ARRAYPROVA = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
+      let newEstrazione = new Picker.Estrazione(ARRAYPROVA);
+      let result =
+        Picker.scegliACasoETogliElementoDaArray(
+          newEstrazione
+        );
+      let result2 =
+        Picker.scegliACasoETogliElementoDaArray(result);
+      let result3 =
+        Picker.scegliACasoETogliElementoDaArray(result2);
+      expect(result3.arrayOriginale.length).to.be.equal(10);
+      let result4 =
+        Picker.scegliACasoETogliElementoDaArray(result3);
+      expect(result4.elementiRimanenti.length).to.be.equal(
+        6
+      );
+      let result5 =
+        Picker.scegliACasoETogliElementoDaArray(result4);
+      let result6 =
+        Picker.scegliACasoETogliElementoDaArray(result5);
+      let result7 =
+        Picker.scegliACasoETogliElementoDaArray(result6);
+      let result8 =
+        Picker.scegliACasoETogliElementoDaArray(result7);
+      let result9 =
+        Picker.scegliACasoETogliElementoDaArray(result8);
+      let result10 =
+        Picker.scegliACasoETogliElementoDaArray(result9);
+      expect(result10.elementiEstratti.length).to.be.equal(
+        10
+      );
+      expect(result10.arrayOriginale.length).to.be.equal(
+        10
+      );
+      expect(result10.elementiRimanenti.length).to.be.equal(
+        0
+      );
+      expect(result10.elementoEstratto).to.be.not.null;
     });
   });
   describe(`Method calcolaPercentuale()`, () => {
