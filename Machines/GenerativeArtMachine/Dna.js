@@ -3,9 +3,9 @@ import { Element } from './Element.js';
 
 export class Dna {
   static #dnas = [];
-  #dna = [];
+  #dna;
   static get dnas() {
-    return this.#dnas;
+    return Dna.#dnas;
   }
   get stringDna() {
     let servedArray = [];
@@ -20,16 +20,29 @@ export class Dna {
     return this.#dna;
   }
   set dna(dna) {
-    if (!zionUtil.checkObjectConstructor(dna, Element)) {
+    if (!zionUtil.checkObjectConstructor(dna, Array)) {
       throw new Error(
-        `È stato passato un oggetto che non è di tipo Element`
+        `È stato passato un oggetto che non è di tipo Array`
       );
     }
-    this.#dna.push(dna);
-    return this;
+    return (this.#dna = dna);
   }
-  constructor() {
+  get dnaIds() {
+    let servedArray = [];
+    this.#dna.forEach((el) => {
+      servedArray.push(el.id);
+    });
+    return servedArray;
+  }
+  constructor(dna = []) {
+    this.dna = dna;
     Dna.#dnas.push(this);
     this.id = Dna.#dnas.length;
   }
+  #aggiungiIdAdArray(element) {
+    console.log('element');
+    servedArray.push(element.id);
+    return servedArray;
+  }
+  haElemento() {}
 }
