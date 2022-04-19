@@ -12,11 +12,12 @@
     "testGenArtMachine": "NODE_DEBUG=log nodemon test/GenerativeArtMachine/GenerativeArtMachine.test.js",
     "testSystemEntity": "NODE_DEBUG=log nodemon test/GenerativeArtMachine/SystemEntity.test.js",
     "testCollection": "NODE_DEBUG=log nodemon test/GenerativeArtMachine/Collection.test.js",
-    "testDrawer": "NODE_DEBUG=log nodemon test/GenerativeArtMachine/Drawer.test.js",
     "testClass": "NODE_DEBUG=log nodemon test/GenerativeArtMachine/Class.test.js",
     "testPosition": "NODE_DEBUG=log nodemon test/GenerativeArtMachine/Position.test.js",
     "testSize": "NODE_DEBUG=log nodemon test/GenerativeArtMachine/Size.test.js",
     "testName": "NODE_DEBUG=log nodemon test/GenerativeArtMachine/Name.test.js",
+    "testDrawer": "NODE_DEBUG=log nodemon test/GenerativeArtMachine/Drawer.test.js",
+    "testDna": "NODE_DEBUG=log nodemon test/GenerativeArtMachine/Dna.test.js",
     "testNft_Metadata": "NODE_DEBUG=log nodemon test/GenerativeArtMachine/Nft_Metadata.test.js",
     "testUserInterface": "NODE_DEBUG=log node test/GenerativeArtMachine/UserInterface.test.js"
   },
