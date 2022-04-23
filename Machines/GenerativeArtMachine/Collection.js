@@ -35,9 +35,7 @@ export class Collection extends SmartContract {
   // GETTERS
   static get collections() {
     let servedArray = [];
-    Collection.#collections.forEach((el) =>
-      servedArray.push(el)
-    );
+    Collection.#collections.forEach((el) => servedArray.push(el));
     Object.freeze(servedArray);
     return servedArray;
   }
@@ -76,9 +74,7 @@ export class Collection extends SmartContract {
   }
   get nodeNames() {
     let servedArray = [];
-    this.nodes.forEach((node) =>
-      servedArray.push(node.name)
-    );
+    this.nodes.forEach((node) => servedArray.push(node.name));
     return servedArray;
   }
   get nodesIds() {
@@ -135,16 +131,13 @@ export class Collection extends SmartContract {
     return result;
   }
   get possibiliDna() {
-    let servedArray = Combinator.generateCombinations(
-      this.elementsByLayer
-    );
+    let servedArray = Combinator.generateCombinations(this.elementsByLayer);
     return servedArray;
   }
   get possibiliDnaPerRarità() {
     let result = [];
     const creaEAggiungi = function (possibilità) {
-      let servedArray =
-        Combinator.generateCombinations(possibilità);
+      let servedArray = Combinator.generateCombinations(possibilità);
       result.push(servedArray);
     };
     this.elementsByLayerByRarity.forEach(creaEAggiungi);
@@ -176,21 +169,15 @@ export class Collection extends SmartContract {
   }
   static deleteCollection(name) {
     // cerca l'indice della collezione tramite il nome
-    const indiceDellaCollezione =
-      Collection.#collections.findIndex(
-        (element) => element.name === name
-      );
+    const indiceDellaCollezione = Collection.#collections.findIndex(
+      (element) => element.name === name
+    );
     // se non c'è lancia errore
     if (indiceDellaCollezione <= -1) {
-      throw new Error(
-        'non esiste una collezione con quel nome'
-      );
+      throw new Error('non esiste una collezione con quel nome');
     }
     // se c'è cancella l'elemento
-    if (
-      indiceDellaCollezione + 1 !==
-      Collection.#collections.length
-    ) {
+    if (indiceDellaCollezione + 1 !== Collection.#collections.length) {
       zionUtil.changePosition(
         Collection.#collections,
         indiceDellaCollezione,
@@ -232,14 +219,11 @@ export class Collection extends SmartContract {
   }
   hasDir() {
     // controllare nel path se esiste una cartella
-    const folders = system.arrayOfFoldersInDirectory(
-      this.outputPath
-    );
+    const folders = system.arrayOfFoldersInDirectory(this.outputPath);
 
     return folders.some((element) => element === this.name);
   }
   creaDirectory() {
-    // controllo che la directory non esista di già
     if (this.hasDir()) throw Error('Non è stato possibile');
     if (!this.hasDir()) {
       system.createNestedDir(this.collectionPath);
@@ -253,8 +237,7 @@ export class Collection extends SmartContract {
    * @returns {Dna}
    */
   scegliFraPossibiliDna() {
-    let dna =
-      this.picker.scegliACasoETogliElementoDaArray();
+    let dna = this.picker.scegliACasoETogliElementoDaArray();
     let newDna = new Dna(dna.elementoEstratto);
     return newDna;
   }
@@ -266,10 +249,6 @@ export class Collection extends SmartContract {
       servedArray.push(newDna);
     }
     return servedArray;
-    // return this.picker.estraiConCallbacknVolte(
-    //   volte,
-    //   this.scegliFraPossibiliDna
-    // );
   }
   #buildSistemEntities() {
     let tree = this.folderTree;
@@ -358,16 +337,13 @@ export class Collection extends SmartContract {
         }
       }
       let loadedImage = new LoadedImage();
-      loadedImage.canvasLoadImage =
-        await this.drawer.loadImage(element.path);
+      loadedImage.canvasLoadImage = await this.drawer.loadImage(element.path);
       loadedImage.elementName = element.name;
       element.loadedImageIndex = count;
       count++;
       this.#drawer.loadedImages = loadedImage;
-      element.size.width =
-        loadedImage.canvasLoadImage.width;
-      element.size.height =
-        loadedImage.canvasLoadImage.height;
+      element.size.width = loadedImage.canvasLoadImage.width;
+      element.size.height = loadedImage.canvasLoadImage.height;
     });
     return this.drawer.loadedImages;
   }
