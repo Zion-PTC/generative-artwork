@@ -4,12 +4,7 @@ import { zionUtil } from '../../../telegram-bots/Classes/_Node Standard Modules/
 import { Class } from '../../Machines/GenerativeArtMachine/Class.js';
 
 const testRunner = new Mocha({ slow: 1000 });
-testRunner.suite.emit(
-  'pre-require',
-  global,
-  'nofile',
-  testRunner
-);
+testRunner.suite.emit('pre-require', global, 'nofile', testRunner);
 var suiteRun = testRunner.run();
 process.on('exit', (code) => {
   process.exit(suiteRun.stats.failures > 0);
@@ -29,37 +24,21 @@ const WIDTH = 1000;
 const HEIGHT = 1000;
 const COLLECTION = 'collection';
 
-let newClass = new Class(
-  ID,
-  NAME,
-  PATH,
-  LEVEL,
-  CHILDREN,
-  TYPE,
-  WIDTH,
-  HEIGHT,
-  COLLECTION
-);
+let newClass = new Class(NAME, PATH, TYPE, WIDTH, HEIGHT);
 
-describe(`CLASS CLASS`, () => {
+export const ClassTest = describe(`CLASS CLASS`, () => {
   describe(`CONSTRUCTOR`, () => {
     it(`dovrebbe creare una nuova classe`, () => {
       expect(newClass).to.be.not.null;
     });
     it(`dovrebbe aver creato una classe con id: ${ID}`, () => {
-      expect(newClass.id).to.be.equal(ID);
+      expect(newClass.id).to.be.equal(3);
     });
     it(`dovrebbe aver creato una classe con name: ${NAME}`, () => {
       expect(newClass.name).to.be.equal(NAME);
     });
     it(`dovrebbe aver creato una classe con path: ${PATH}`, () => {
       expect(newClass.path).to.be.equal(PATH);
-    });
-    it(`dovrebbe aver creato una classe con level: ${LEVEL}`, () => {
-      expect(newClass.level).to.be.equal(LEVEL);
-    });
-    it(`dovrebbe aver creato una classe con children: ${CHILDREN.length}`, () => {
-      expect(newClass.children.length).to.be.equal(2);
     });
     it(`dovrebbe aver creato una classe con type: ${TYPE}`, () => {
       expect(newClass.type).to.be.equal(TYPE);
