@@ -1,4 +1,6 @@
-import { System } from '../System/System.js';
+import { system } from './system.js';
+
+// import { system } from '../system/system.js';
 
 export class GenerativeArtMachine {
   /**
@@ -21,27 +23,20 @@ export class GenerativeArtMachine {
   //STATIC METHODS
   static async machineExists(name) {
     return new Promise((resolve, reject) => {
-      let listOfMachines = System.arrayOfFoldersInDirectory(
+      let listOfMachines = system.arrayOfFoldersInDirectory(
         '/Users/WAW/Documents/Projects/zion-GenerativeArtMachine/Machines/GenerativeArtMachine/Machines'
       );
-      listOfMachines.includes(name)
-        ? resolve(true)
-        : resolve(false);
+      listOfMachines.includes(name) ? resolve(true) : resolve(false);
     });
   }
   //METHODS
   async createMachineDirectoryAndJson() {
     this.logMessage = undefined;
     let ERRORMESSAGE = `It already exists a machine with name ${this.name}`;
-    let response = await GenerativeArtMachine.machineExists(
-      this.name
-    );
+    let response = await GenerativeArtMachine.machineExists(this.name);
     if (!response) {
-      System.createNestedDir(`${this.path}/Collections`);
-      System.writeJson(
-        `${this.path}/${this.name}.json`,
-        JSON.stringify(this)
-      );
+      system.createNestedDir(`${this.path}/Collections`);
+      system.writeJson(`${this.path}/${this.name}.json`, JSON.stringify(this));
       return this;
     } else {
       this.logMessage = ERRORMESSAGE;
@@ -49,7 +44,7 @@ export class GenerativeArtMachine {
     }
   }
   async deleteMachineDirectoryAndJson() {
-    System.deleteRecursiveDir(this.path);
+    system.deleteRecursiveDir(this.path);
     return this;
   }
 }

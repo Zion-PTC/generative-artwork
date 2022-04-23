@@ -19,13 +19,14 @@ export class Dna {
   get dna() {
     return this.#dna;
   }
-  set dna(dna) {
-    if (!zionUtil.checkObjectConstructor(dna, Array)) {
+  set dna(_dna = []) {
+    if (!zionUtil.checkObjectConstructor(_dna, Array)) {
       throw new Error(
         `È stato passato un oggetto che non è di tipo Array`
       );
     }
-    return (this.#dna = dna);
+    _dna.forEach((element) => this.#dna.push(element));
+    return this;
   }
   get dnaIds() {
     let servedArray = [];
@@ -35,7 +36,7 @@ export class Dna {
     return servedArray;
   }
   constructor(dna = []) {
-    this.dna = dna;
+    this.#dna = dna;
     Dna.#dnas.push(this);
     this.id = Dna.#dnas.length;
   }
@@ -44,5 +45,14 @@ export class Dna {
     servedArray.push(element.id);
     return servedArray;
   }
-  haElemento() {}
+  haElemento(elemento) {
+    if (zionUtil.checkObjectConstructor(elemento, Element))
+      return this.#dna.some(
+        (element) => element.id === elemento.id
+      );
+    else
+      throw new Error(
+        `L'argomento inviato non è di tipo corretto, prova ad inviare un Elemento!`
+      );
+  }
 }

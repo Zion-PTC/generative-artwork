@@ -32,9 +32,7 @@ export class SystemEntity {
     return this.listaDiLati.map((lato) => lato);
   }
   èConnessoA(entity) {
-    return this.listaDiLati.some(
-      (lato) => lato.id === entity.id
-    );
+    return this.listaDiLati.some((lato) => lato.id === entity.id);
   }
   /**
    *
@@ -42,8 +40,7 @@ export class SystemEntity {
    * @param {SystemEntity} entity2
    */
   èConnessoAeA(entity1, entity2) {
-    const condizione =
-      this.èConnessoA(entity1) && this.èConnessoA(entity2);
+    const condizione = this.èConnessoA(entity1) && this.èConnessoA(entity2);
     return condizione;
   }
 }
