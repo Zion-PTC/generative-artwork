@@ -6,5 +6,6 @@
 
 let c;
 // GENERATIVE ART
-import { ClassTest } from './GenerativeArtMachine/Class.test.js';
-import { CollectionTest } from './GenerativeArtMachine/Collection.test.js';
+// import { ClassTest } from './GenerativeArtMachine/Class.test.js';
+// import { CollectionTest } from './GenerativeArtMachine/Collection.test.js';
+import { DnaTest } from './GenerativeArtMachine/Dna.test.js';
