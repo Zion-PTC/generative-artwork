@@ -1,3 +1,4 @@
+import { Collection } from './Collection.js';
 import { Size } from './Size.js';
 
 export class SystemEntity {
@@ -10,6 +11,16 @@ export class SystemEntity {
     this.#systemEntities.forEach((entity) => {
       servedArray.push(entity.name);
     });
+    return servedArray;
+  }
+  static get systemEntities() {
+    return this.#systemEntities;
+  }
+  static trovaEntitàConnesseA(entità) {
+    let servedArray = [];
+    let res = this.#systemEntities.find((sysEnt) => sysEnt.id === entità.id);
+    let connessioni = res.trovaLatiAdiacenti();
+    connessioni.forEach((conn) => servedArray.push(conn));
     return servedArray;
   }
   constructor(name, path, type, width, height) {

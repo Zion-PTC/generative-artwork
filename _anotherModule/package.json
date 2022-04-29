@@ -1,0 +1,18 @@
+{
+  "name": "anothermodule",
+  "version": "0.0.1",
+  "description": "this module rocks",
+  "main": "index.js",
+  "scripts": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "interesting"
+  },
+  "keywords": [
+    "zion"
+  ],
+  "author": "Gagliano Giacomo",
+  "license": "ISC"
+}

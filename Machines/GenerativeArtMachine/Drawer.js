@@ -38,23 +38,12 @@ export class Drawer {
    * @param {number} heigth
    * @param {*} context
    */
-  constructor(
-    width = 1000,
-    heigth = 1000,
-    context = '2d',
-    collection
-  ) {
-    this.#canvasProperties = new CanvasProperties(
-      context,
-      width,
-      heigth
-    );
+  constructor(width = 1000, heigth = 1000, context = '2d', collection) {
+    this.#canvasProperties = new CanvasProperties(context, width, heigth);
     this.#collection = collection;
     // this.loadedElements = [];
     this.#canvas = createCanvas(width, heigth);
-    this.#ctx = this.canvas.getContext(
-      this.canvasProperties.context
-    );
+    this.#ctx = this.canvas.getContext(this.canvasProperties.context);
   }
   /**
    *
@@ -103,13 +92,7 @@ export class Drawer {
    * @returns
    */
   drawImage = (loadedImage, x, y, width, heigth) => {
-    return this.ctx.drawImage(
-      loadedImage,
-      x,
-      y,
-      width,
-      heigth
-    );
+    return this.ctx.drawImage(loadedImage, x, y, width, heigth);
   };
   async getImageSize(path) {
     let size = new Size();

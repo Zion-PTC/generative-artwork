@@ -57,33 +57,23 @@ const SUPPLY = 1000;
 const BASEURI = 'http://some.mighty.path';
 const DESCRIPTION = 'description of my beautiful collection.';
 const PATH = '/Users/WAW/Documents/Projects/zion-GenerativeArtMachine/input';
-const TYPE = 'Edition';
+const TYPE = 'Element';
 const OUTPUTPATH =
   '/Users/WAW/Documents/Projects/zion-GenerativeArtMachine/Machines/GenerativeArtMachine/Machines';
 const WIDTH = 1000;
 const HEIGHT = 1000;
-name = NAME;
-symbol = SYMBOL;
-supply = SUPPLY;
-baseURI = BASEURI;
-description = DESCRIPTION;
-path = PATH;
-type = TYPE;
-outputPath = OUTPUTPATH;
-width = WIDTH;
-height = HEIGHT;
 
 let newCollection = new Collection(
-  name,
-  symbol,
-  supply,
-  baseURI,
-  description,
-  path,
-  type,
-  outputPath,
-  width,
-  height
+  NAME,
+  SYMBOL,
+  SUPPLY,
+  BASEURI,
+  DESCRIPTION,
+  PATH,
+  TYPE,
+  OUTPUTPATH,
+  WIDTH,
+  HEIGHT
 );
 let newCollection2 = new Collection(
   'bla',
@@ -172,15 +162,6 @@ export let CollectionTest = describe('COLLECTION CLASS', () => {
     describe(`Collection constructor attribute: ${_FOLDERTREE}`, () => {
       it(`dovrebbe avere una proprietà: ${_FOLDERTREE}, con un valore`, () => {
         expect(newCollection[_FOLDERTREE]).to.be.not.null;
-      });
-      describe(`Class TreeNode`, () => {
-        it(`dovrebbe ritronare una stringa formattata che mostra il tree, con valore uguale a ${ZionRegEx.firstAndLastDyn(
-          expectedTreeStringResult(),
-          5
-        ).join('...')}`, () => {
-          let stringedTree = newCollection.folderTree.nodes[0].toStringedTree();
-          expect(stringedTree).to.be.equal(expectedTreeStringResult());
-        });
       });
     });
     it(`dovrebbe ritornare il path della collezione`, () => {
@@ -356,9 +337,9 @@ export let CollectionTest = describe('COLLECTION CLASS', () => {
         system.deleteRecursiveDir(PATHDELLACOLLEZIONE);
       });
     });
-    describe.only(`Method scegliFraPossibiliDna()`, () => {
+    describe(`Method creaEdizione()`, () => {
       it(`Dovrebbe tornare un array contenente un dna a caso fra quelli possibili.`, () => {
-        let dna = newCollection.scegliFraPossibiliDna();
+        let dna = newCollection.creaEdizione();
         expect(zionUtil.checkObjectConstructor(dna, Dna)).to.be.true;
       });
       it(`dovrebbe continuare l'estrazione di elementi in modo da esaurire piano piano tutte le possibili combinazioni`, () => {
@@ -366,18 +347,40 @@ export let CollectionTest = describe('COLLECTION CLASS', () => {
         expect(
           newCollection.picker.estrazione.elementiRimanenti.length
         ).to.be.equal(511);
-        newCollection.scegliFraPossibiliDna();
+        newCollection.creaEdizione();
         expect(
           newCollection.picker.estrazione.elementiRimanenti.length
         ).to.be.equal(510);
       });
     });
-    describe.only(`Method scegliFraPossibiliDnaNVolte()`, () => {
+    describe(`Method creaEdizioneNVolte()`, () => {
       it(`dovrebbe effettuare piu volte l'estrazione fra i possibili dna`, () => {
         log(newCollection.picker.estrazione.elementiRimanenti.length);
-        let dnas = newCollection.scegliFraPossibiliDnaNVolte(10);
+        let dnas = newCollection.creaEdizioneNVolte(10);
         log(dnas);
         log(newCollection.picker.estrazione.elementiRimanenti.length);
+      });
+      it(`newPicker`, () => {
+        let picker = newCollection.picker;
+        let dnaPossibili = newCollection.possibiliDna;
+        let newPicker = newCollection.newPicker;
+        let ep = picker.estrazione;
+        let enp = newPicker.estrazione;
+        let {
+          arrayOriginale: aop,
+          elementiEstratti: eiep,
+          elementiRimanenti: eirp,
+          elementoEstratto: eep,
+        } = ep;
+        let {
+          arrayOriginale: aonp,
+          elementiEstratti: eienp,
+          elementiRimanenti: eirnp,
+          elementoEstratto: eenp,
+        } = enp;
+        log(eirnp.length);
+        log(eirp.length);
+        log(dnaPossibili.length);
       });
     });
   });
@@ -397,6 +400,13 @@ export let CollectionTest = describe('COLLECTION CLASS', () => {
         newCollection.type = EXPECTEDVALUE;
         expect(newCollection.type).to.be.equal(EXPECTEDVALUE);
       });
+    });
+  });
+  describe.only(`Method methodName`, () => {
+    it(`task description`, () => {
+      let classes = newCollection.classes;
+      let primaClasse = classes[0];
+      log(primaClasse);
     });
   });
 });

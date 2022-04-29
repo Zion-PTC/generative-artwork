@@ -8,16 +8,49 @@ import { Element } from './Element.js';
 import { Class } from './Class.js';
 import { GeneratorMachine } from '../GeneratorMachine.js';
 import { Dna } from './Dna.js';
+import { Edition } from './Edition.js';
 
 const Combinator = GeneratorMachine.Combinator;
 const Picker = GeneratorMachine.Picker;
 const Estrazione = GeneratorMachine.Picker.Estrazione;
 
+// class MetodoScelta {
+//   static #metodiScelta = [];
+//   static get metodiScelta() {
+//     let copiedArray = [];
+//     this.#metodiScelta.forEach((metodo) =>
+//       copiedArray.push(metodo)
+//     );
+//     return this.#metodiScelta;
+//   }
+//   constructor() {
+//     this.metodoScelta = null;
+//     MetodoScelta.#metodiScelta.push(this);
+//   }
+//   assegnaMetodoScelta(metodo) {
+//     this.metodoScelta = metodo;
+//   }
+//   scegliElemento() {
+//     return this.metodoScelta();
+//   }
+//   static scegliMetodo(type) {
+//     return MetodoScelta.metodiScelta.find(
+//       (metodo) => metodo.name === type
+//     );
+//   }
+// }
+// const metodoScelta = new MetodoScelta();
+// metodoScelta.assegnaMetodoScelta(metodoEdition);
+// metodoScelta.assegnaMetodoScelta(metodoElemento);
+
+// const collectionPicker = function (type) {
+//   const metodo = Metodo.findMetodo(type);
+//   metodoScelta.assegnaMetodoScelta(metodo);
+//   return metodo.metodo();
+// };
+
 export class Collection extends SmartContract {
   static #collections = [];
-  // DNA
-  #dnaScelti;
-  #dnaScartati;
   // INFOS
   #id;
   #path;
@@ -25,7 +58,7 @@ export class Collection extends SmartContract {
   #type;
   #outputPath;
   #drawer;
-  #folderTree;
+  #strategy;
   // GRAPH
   #nodes = [];
   #classes = [];
@@ -35,7 +68,9 @@ export class Collection extends SmartContract {
   // GETTERS
   static get collections() {
     let servedArray = [];
-    Collection.#collections.forEach((el) => servedArray.push(el));
+    Collection.#collections.forEach((el) =>
+      servedArray.push(el)
+    );
     Object.freeze(servedArray);
     return servedArray;
   }
@@ -63,6 +98,9 @@ export class Collection extends SmartContract {
   get elements() {
     return this.#elements;
   }
+  /**
+   * @returns {Class[]}
+   */
   get classes() {
     return this.#classes;
   }
@@ -74,7 +112,9 @@ export class Collection extends SmartContract {
   }
   get nodeNames() {
     let servedArray = [];
-    this.nodes.forEach((node) => servedArray.push(node.name));
+    this.nodes.forEach((node) =>
+      servedArray.push(node.name)
+    );
     return servedArray;
   }
   get nodesIds() {
@@ -86,6 +126,7 @@ export class Collection extends SmartContract {
    * Ritorna un array con degli array contenenti gli
    * elementi di ogni layer. Dovrebbe contenere un numero di
    * array uguale al numero di layer della collezione.
+   * @returns {Element[]}
    */
   get elementsByLayer() {
     let result = [];
@@ -131,13 +172,16 @@ export class Collection extends SmartContract {
     return result;
   }
   get possibiliDna() {
-    let servedArray = Combinator.generateCombinations(this.elementsByLayer);
+    let servedArray = Combinator.generateCombinations(
+      this.elementsByLayer
+    );
     return servedArray;
   }
   get possibiliDnaPerRarità() {
     let result = [];
     const creaEAggiungi = function (possibilità) {
-      let servedArray = Combinator.generateCombinations(possibilità);
+      let servedArray =
+        Combinator.generateCombinations(possibilità);
       result.push(servedArray);
     };
     this.elementsByLayerByRarity.forEach(creaEAggiungi);
@@ -169,15 +213,21 @@ export class Collection extends SmartContract {
   }
   static deleteCollection(name) {
     // cerca l'indice della collezione tramite il nome
-    const indiceDellaCollezione = Collection.#collections.findIndex(
-      (element) => element.name === name
-    );
+    const indiceDellaCollezione =
+      Collection.#collections.findIndex(
+        (element) => element.name === name
+      );
     // se non c'è lancia errore
     if (indiceDellaCollezione <= -1) {
-      throw new Error('non esiste una collezione con quel nome');
+      throw new Error(
+        'non esiste una collezione con quel nome'
+      );
     }
     // se c'è cancella l'elemento
-    if (indiceDellaCollezione + 1 !== Collection.#collections.length) {
+    if (
+      indiceDellaCollezione + 1 !==
+      Collection.#collections.length
+    ) {
       zionUtil.changePosition(
         Collection.#collections,
         indiceDellaCollezione,
@@ -193,12 +243,12 @@ export class Collection extends SmartContract {
    * @param {string} baseUri percorso base per gli oggetti della collezione. Questo dato è quello che apparirà nei metadata degli NFT.
    */
   constructor(
-    name = 'Default Name',
-    symbol = 'DFS',
-    supply = 1000,
-    baseURI = 'http',
-    description = 'description',
-    path,
+    name = 'node della collezione',
+    symbol = 'simbolo della collezione che verrà usato per creare i token',
+    supply = 'quantità di edizioni',
+    baseURI = 'uri di base per le edizioni',
+    description = 'descrizione della collezione che apparirà sulla blockchain',
+    path = 'percorso del root della collezione',
     type = 'Edition',
     outputPath = '/Users/WAW/Documents/Projects/zion-GenerativeArtMachine/Machines/GenerativeArtMachine/Machines',
     width = 1000,
@@ -210,16 +260,18 @@ export class Collection extends SmartContract {
     this.#type = type;
     this.#outputPath = outputPath;
     this.#drawer = new Drawer(width, height, '2d', name);
-    this.folderTree = system.buildTree(path);
     Collection.#collections.push(this);
     this.id = Collection.#collections.length;
-    this.#buildSistemEntities();
+    this.#buildSistemEntities(system.buildTree);
     this.#loadElements();
+    this.newPicker = this.#collectionPicker(this.type);
     this.picker = new Picker(this.possibiliDna);
   }
   hasDir() {
     // controllare nel path se esiste una cartella
-    const folders = system.arrayOfFoldersInDirectory(this.outputPath);
+    const folders = system.arrayOfFoldersInDirectory(
+      this.outputPath
+    );
 
     return folders.some((element) => element === this.name);
   }
@@ -233,25 +285,41 @@ export class Collection extends SmartContract {
   /**
    * Accetta un lista di array, che corrisponde ai layer
    * dell'immagine. Ogni arrai contiene gli elementi da combinare.
-   * @param {array[][]} listaDiElementi
    * @returns {Dna}
    */
-  scegliFraPossibiliDna() {
-    let dna = this.picker.scegliACasoETogliElementoDaArray();
-    let newDna = new Dna(dna.elementoEstratto);
-    return newDna;
+  creaEdizione(classe) {
+    let strategy = classe;
+    let nuovaEstrazione =
+      this.picker.scegliACasoETogliElementoDaArray();
+    const NAME = 'name';
+    const PATH = this.outputPath;
+    const TYPE = 'type';
+    const WIDTH = 'width';
+    const HEIGHT = 'height';
+    let newEdizione = new Edition(
+      NAME,
+      PATH,
+      TYPE,
+      WIDTH,
+      HEIGHT,
+      nuovaEstrazione.elementoEstratto
+    );
+    return newEdizione.dna;
   }
-  scegliFraPossibiliDnaNVolte(volte) {
+  creaEdizioneNVolte(volte) {
     let servedArray = [];
     while (volte) {
       volte--;
-      let newDna = this.scegliFraPossibiliDna();
+      let newDna = this.creaEdizione();
       servedArray.push(newDna);
     }
     return servedArray;
   }
-  #buildSistemEntities() {
-    let tree = this.folderTree;
+  creaTutteLeEdizioni() {
+    let serveArray = [];
+  }
+  #buildSistemEntities(strategy) {
+    let tree = strategy(this.path);
     let nodes = tree.nodes;
     let classes = [];
     let layers = [];
@@ -337,14 +405,62 @@ export class Collection extends SmartContract {
         }
       }
       let loadedImage = new LoadedImage();
-      loadedImage.canvasLoadImage = await this.drawer.loadImage(element.path);
+      loadedImage.canvasLoadImage =
+        await this.drawer.loadImage(element.path);
       loadedImage.elementName = element.name;
       element.loadedImageIndex = count;
       count++;
       this.#drawer.loadedImages = loadedImage;
-      element.size.width = loadedImage.canvasLoadImage.width;
-      element.size.height = loadedImage.canvasLoadImage.height;
+      element.size.width =
+        loadedImage.canvasLoadImage.width;
+      element.size.height =
+        loadedImage.canvasLoadImage.height;
     });
     return this.drawer.loadedImages;
   }
+  #collectionPicker() {
+    class Metodo {
+      static #metodi = [];
+      static get metodi() {
+        return Metodo.#metodi;
+      }
+      static findMetodo(name) {
+        return Metodo.#metodi.find(
+          (metodo) => metodo.name === name
+        );
+      }
+      constructor(name, metodo) {
+        this.name = name;
+        this.metodo = metodo;
+        Metodo.#metodi.push(this);
+      }
+    }
+    class StrategiaDiScelta {
+      constructor() {
+        this.strategia = null;
+      }
+      assegnaStrategia(metodo) {
+        return (this.strategia = metodo.metodo);
+      }
+      picker() {
+        return this.strategia();
+      }
+    }
+    new Metodo('Edition', this.#metodoEdition);
+    new Metodo('Element', this.#metodoElement);
+    const metodo = Metodo.findMetodo(this.type);
+    let strategiaDiScelta = new StrategiaDiScelta();
+    strategiaDiScelta.assegnaStrategia(metodo);
+    return strategiaDiScelta.picker();
+  }
+  #metodoElement = () => {
+    return new Picker(this.possibiliDna);
+  };
+  #metodoEdition = (possibiliDnaPerRarità = []) => {
+    let stack = [];
+    for (let possibilità of possibiliDnaPerRarità) {
+      stack.push(new Picker(possibilità));
+    }
+    return stack;
+  };
 }

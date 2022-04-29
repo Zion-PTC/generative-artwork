@@ -24,7 +24,9 @@ export class System {
       return path.match(/\w+$/g)[0];
     }
     let jointSpacesPath = path.replace(/ /g, '_');
-    let res = jointSpacesPath.match(/(?<=[/])\w*[.]\w*/g)[0];
+    let res = jointSpacesPath.match(
+      /(?<=[/])\w*[.]\w*/g
+    )[0];
     return res;
   };
   /**
@@ -106,17 +108,18 @@ export class System {
    * Structure Object.
    * @returns {Tree} returns a complete Tree starting from the rootPath
    */
-  buildTree(rootPath) {
+  buildTree = (rootPath) => {
     let newTree = new Tree();
     let _types = ['Folder', 'File'];
     let nodes = [];
     let type = system.getTreeNodeType(rootPath);
-    let name = this.setNameForTreeNode(rootPath, TreeNode.types[type]);
+    let name = this.setNameForTreeNode(
+      rootPath,
+      TreeNode.types[type]
+    );
     let root = new Root(name, rootPath, type);
     newTree.add(root);
     const stack = [root];
-    // https://en.wikipedia.org/wiki/Depth-first_search
-    // Depth-first search aka DFS
     while (stack.length) {
       let currentNode = stack.pop();
       if (currentNode) {
@@ -127,7 +130,10 @@ export class System {
         for (let child of children) {
           let childPath = `${currentNode.path}/${child}`;
           let type = system.getTreeNodeType(childPath);
-          let name = this.setNameForTreeNode(childPath, TreeNode.types[type]);
+          let name = this.setNameForTreeNode(
+            childPath,
+            TreeNode.types[type]
+          );
           let childNode;
           if (_types[type] === _types[0]) {
             childNode = new Folder(
@@ -155,7 +161,9 @@ export class System {
             nodes.push(childNode);
           }
           currentNode.connettiAFiglio(childNode);
-          if (system.getTreeNodeType(childNode.path) === 0) {
+          if (
+            system.getTreeNodeType(childNode.path) === 0
+          ) {
             childNode.type = _types[0];
             stack.push(childNode);
           } else {
@@ -172,7 +180,7 @@ export class System {
     };
     nodes.forEach(addNode);
     return newTree;
-  }
+  };
   /**
    *
    * @param {String} path percorso target
@@ -221,7 +229,9 @@ export class System {
   }
   getTreeNodeType(path) {
     let result;
-    fs.statSync(path).isDirectory() ? (result = 0) : (result = 1);
+    fs.statSync(path).isDirectory()
+      ? (result = 0)
+      : (result = 1);
     return result;
   }
   // work on files

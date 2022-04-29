@@ -27,6 +27,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@types/node": "^17.0.30",
     "canvas": "^2.9.1",
     "chai": "^4.3.6",
     "ipfs": "^0.62.2",
