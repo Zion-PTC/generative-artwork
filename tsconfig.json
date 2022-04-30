@@ -7,7 +7,7 @@
     "experimentalDecorators": true,
     // "outFile": "src/Namespaces/Spaces.js",
     // "module": "AMD"
-    // "declaration": true
+    "declaration": false,
     // "paths": {}
     // "strictNullChecks":true,
     // "strictPropertyInitialization": true
@@ -15,6 +15,6 @@
     // "allowJs": true,
     // "outDir": "./built",
   },
-  "exclude": ["./test"]
+  "exclude": ["./test", "@zion"]
   // "include": ["./src/**/*"]
 }
