@@ -1,5 +1,3 @@
-import { zionUtil } from '../../../telegram-bots/Classes/_Node Standard Modules/zionUtil.js';
-
 export interface ISize {
   get width(): number;
   get height(): number;
@@ -48,8 +46,4 @@ export class Size implements ISize {
   get stringRatio(): string {
     return "I proomise I'll return";
   }
-}
-
-export function mitroviovunque() {
-  console.log('mi trovi ovunque');
 }

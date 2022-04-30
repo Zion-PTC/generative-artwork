@@ -1,7 +1,7 @@
 import * as Canvas from 'canvas';
 import { GeneratorMachine } from '../GeneratorMachine.js';
 import { CanvasProperties } from './CanvasProperties.js';
-import { ICollection } from './Collection';
+import { Collection, ICollection } from './Collection';
 import { Size, ISize } from './Size.js';
 
 type Context = '2d';

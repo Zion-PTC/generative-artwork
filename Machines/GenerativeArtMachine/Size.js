@@ -38,6 +38,3 @@ export class Size {
         return "I proomise I'll return";
     }
 }
-export function mitroviovunque() {
-    console.log('mi trovi ovunque');
-}

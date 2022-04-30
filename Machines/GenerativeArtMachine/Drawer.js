@@ -1,7 +1,9 @@
 import * as Canvas from 'canvas';
 import { GeneratorMachine } from '../GeneratorMachine.js';
 import { CanvasProperties } from './CanvasProperties.js';
+import { Collection } from './Collection';
 import { Size } from './Size.js';
+Collection;
 const { createCanvas, loadImage } = Canvas;
 export class Drawer {
     #canvasProperties;
