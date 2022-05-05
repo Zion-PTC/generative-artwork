@@ -3,6 +3,7 @@ node_modules
 .DS_Store
 # Folders
 Interface
+hashlips
 output
 _trash
 prove
