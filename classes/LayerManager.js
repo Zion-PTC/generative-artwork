@@ -1,4 +1,4 @@
-import { System } from './System.js';
+import { system } from '../Machines/System.js';
 
 class Element {
   constructor() {
@@ -42,7 +42,7 @@ export class LayerManager {
       importMetaUrl,
       sourceFolderName
     );
-    this.layersName = System.arrayOfFoldersInDirectory(
+    this.layersName = system.arrayOfFoldersInDirectory(
       this.sourcePath
     );
     this.layers = this.layersName.map((layerName) => {
@@ -50,13 +50,13 @@ export class LayerManager {
     });
   }
   makeLayer = (layer) => {
-    let raritiesOfLayer = System.arrayOfFoldersInDirectory(
+    let raritiesOfLayer = system.arrayOfFoldersInDirectory(
       `${this.sourcePath}/${layer}`
     );
     let elementsByRarityOfLayer = {};
     raritiesOfLayer.forEach((folderInLayerFolder) => {
       elementsByRarityOfLayer[folderInLayerFolder] =
-        System.arrayOfNamesOfFilesInFolder(
+        system.arrayOfNamesOfFilesInFolder(
           `${this.sourcePath}/${layer}/${folderInLayerFolder}`
         );
     });
@@ -70,7 +70,7 @@ export class LayerManager {
     };
   };
   makeSourcePath(importMetaUrl, sourceFolderName) {
-    return `${System.pathOfFileFromImportMetaUrl(
+    return `${system.pathOfFileFromImportMetaUrl(
       importMetaUrl
     )}/${sourceFolderName}`;
   }
