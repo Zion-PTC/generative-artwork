@@ -1,15 +1,17 @@
-import { system } from '../System.js';
+import { system } from '@zionstate/system';
 import { SmartContract, ISmartContract } from './SmartContract.js';
 import { Drawer, IDrawer } from './Drawer.js';
-import { zionUtil } from '../../../telegram-bots/Classes/_Node Standard Modules/zionUtil.js';
+import { zionUtil } from '@zionstate_node/zion-util';
 import { Rarity, IRarity } from './Rarity.js';
 import { Layer, ILayer } from './Layer.js';
 import { Element, IElement } from './Element.js';
 import { Class, IClass } from './Class.js';
-import { GeneratorMachine } from '../GeneratorMachine.js';
+import * as Generator from '@zionstate/generator';
 import { IDna } from './Dna.js';
 import { Edition, IEdition } from './Edition.js';
 import { ISystemEntity } from './SystemEntity.js';
+
+let GeneratorMachine = Generator.default;
 
 const Combinator = GeneratorMachine.Combinator;
 const Picker = GeneratorMachine.Picker;
@@ -106,7 +108,7 @@ export class Collection extends SmartContract {
   // GETTERS
   static get collections() {
     let servedArray = [];
-    Collection.#collections.forEach((el) => servedArray.push(el));
+    Collection.#collections.forEach(el => servedArray.push(el));
     Object.freeze(servedArray);
     return servedArray;
   }
@@ -148,12 +150,12 @@ export class Collection extends SmartContract {
   }
   get nodeNames() {
     let servedArray = [];
-    this.nodes.forEach((node) => servedArray.push(node.name));
+    this.nodes.forEach(node => servedArray.push(node.name));
     return servedArray;
   }
   get nodesIds() {
     let servedArray = [];
-    this.nodes.forEach((node) => servedArray.push(node.id));
+    this.nodes.forEach(node => servedArray.push(node.id));
     return servedArray;
   }
   /**
@@ -238,14 +240,12 @@ export class Collection extends SmartContract {
   // PROPERTIES \\
   // METHODS \\
   static collectionExists(name) {
-    return Collection.#collections.some(
-      (collection) => collection.name === name
-    );
+    return Collection.#collections.some(collection => collection.name === name);
   }
   static deleteCollection(name) {
     // cerca l'indice della collezione tramite il nome
     const indiceDellaCollezione = Collection.#collections.findIndex(
-      (element) => element.name === name
+      element => element.name === name
     );
     // se non c'è lancia errore
     if (indiceDellaCollezione <= -1) {
@@ -297,7 +297,7 @@ export class Collection extends SmartContract {
     // controllare nel path se esiste una cartella
     const folders = system.arrayOfFoldersInDirectory(this.outputPath);
 
-    return folders.some((element) => element === this.name);
+    return folders.some(element => element === this.name);
   }
   creaDirectory() {
     if (this.hasDir()) throw Error('Non è stato possibile');
@@ -351,12 +351,12 @@ export class Collection extends SmartContract {
     let classServedObj = {};
     let layerServedObj = {};
     let rarityServObj = {};
-    nodes.forEach((node) => {
+    nodes.forEach(node => {
       if (node.depth === 3) rarityServObj[node.name] = [];
       if (node.depth === 2) layerServedObj[node.name] = [];
       if (node.depth === 1) classServedObj[node.name] = [];
     });
-    nodes.forEach((node) => {
+    nodes.forEach(node => {
       if (node.depth === 1) {
         let currentClass = node;
         let newClass = new Class(
@@ -422,7 +422,7 @@ export class Collection extends SmartContract {
   }
   #loadElements() {
     let count = 0;
-    this.elements.forEach(async (element) => {
+    this.elements.forEach(async element => {
       class LoadedImage {
         elementName;
         canvasLoadImage;
@@ -451,7 +451,7 @@ export class Collection extends SmartContract {
         return Metodo.#metodi;
       }
       static findMetodo(name) {
-        return Metodo.#metodi.find((metodo) => metodo.name === name);
+        return Metodo.#metodi.find(metodo => metodo.name === name);
       }
       constructor(name, metodo) {
         this.name = name;

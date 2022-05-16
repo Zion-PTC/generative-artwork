@@ -1,9 +1,10 @@
 import * as Canvas from 'canvas';
-import { GeneratorMachine } from '../GeneratorMachine.js';
+import * as Generator from '@zionstate/generator';
 import { CanvasProperties } from './CanvasProperties.js';
 import { Collection, ICollection } from './Collection';
 import { Size, ISize } from './Size.js';
 
+let GeneratorMachine = Generator.default;
 type Context = '2d';
 interface ICanvasProperty {
   context: Context;
@@ -96,7 +97,7 @@ export class Drawer {
       this.canvasProperties.heigth
     );
   }
-  signImage = (sig) => {
+  signImage = sig => {
     this.ctx.fillStyle = '#000000';
     this.ctx.font = 'bold 30pt Courier';
     this.ctx.textBaseline = 'top';
