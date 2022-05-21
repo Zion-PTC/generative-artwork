@@ -15,9 +15,10 @@ const ID = 'id';
 const NAME = 'name';
 const PATH = 'path';
 const LEVEL = 'level';
-let newClass1 = new Class('gee', 'path/to/it', 'Edition', 0, 0);
-// let newClass2 = new Class('altra', 'nuova', 0, 0, 0);
-const CHILDREN = [];
+const CHILDREN = [
+  new Class('una', 'nuova', 0, 0, 0),
+  new Class('altra', 'nuova', 0, 0, 0),
+];
 log('ciao');
 const TYPE = 'type';
 const WIDTH = 1000;
@@ -34,13 +35,13 @@ export const ClassTest = describe(`CLASS CLASS`, () => {
     it(`dovrebbe aver creato una classe con id: ${ID}`, () => {
       expect(newClass.id).to.be.equal(3);
     });
-    it.skip(`dovrebbe aver creato una classe con name: ${NAME}`, () => {
+    it(`dovrebbe aver creato una classe con name: ${NAME}`, () => {
       expect(newClass.name).to.be.equal(NAME);
     });
-    it.skip(`dovrebbe aver creato una classe con path: ${PATH}`, () => {
+    it(`dovrebbe aver creato una classe con path: ${PATH}`, () => {
       expect(newClass.path).to.be.equal(PATH);
     });
-    it.skip(`dovrebbe aver creato una classe con type: ${TYPE}`, () => {
+    it(`dovrebbe aver creato una classe con type: ${TYPE}`, () => {
       expect(newClass.type).to.be.equal(TYPE);
     });
   });
