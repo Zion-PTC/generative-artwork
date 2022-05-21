@@ -1,11 +1,38 @@
 {
   "folders": [
-	{
-		"path": "."
-	},
-	{
-		"path": "../../packages/@zionstate/generator"
-	}
-],
+    {
+      "path": "."
+    },
+    {
+      "path": "../../packages/@zionstate/generator"
+    },
+    {
+      "path": "../../packages/@zionstate_js/error"
+    },
+    {
+      "path": "../../packages/@zionstate_js/regex"
+    },
+    {
+      "path": "../../packages/@zionstate_node/emitter"
+    },
+    {
+      "path": "../../packages/@zionstate_node/fs"
+    },
+    {
+      "path": "../../packages/@zionstate_node/fs-utilities"
+    },
+    {
+      "path": "../../__standard_configs"
+    },
+    {
+      "path": "../../../__EXTERNAL_APP_RESOURCES/generative-art"
+    },
+    {
+      "path": "../../packages/@zionstate/system"
+    },
+    {
+      "path": "../../packages/@zionstate_node/zion-util"
+    }
+  ],
   "settings": {}
 }
