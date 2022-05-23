@@ -22,7 +22,7 @@ export declare class SystemEntity<T extends ISystemEntity<T>> implements ISystem
     type: number;
     size?: ISize;
     listaDiLati: ISystemEntity<T>[];
-    constructor(name: string, path: string, type: number, width: number, height: number);
+    constructor(name: string, path: string, type: number, width?: number, height?: number);
     connettiA(entity: ISystemEntity<T>): ISystemEntity<T>;
     trovaLatiAdiacenti(): ISystemEntity<T>[];
     èConnessoA<T extends ISystemEntity<T>>(entity: T): boolean;

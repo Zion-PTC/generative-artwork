@@ -1,5 +1,5 @@
-import { Dna } from './Dna.js';
-import { Element } from './Element.js';
+import { Dna, IDna } from './Dna.js';
+import { Element, IElement } from './Element.js';
 import { SystemEntity, ISystemEntity } from './SystemEntity.js';
 
 export interface IEdition extends ISystemEntity<IEdition> {
@@ -7,17 +7,17 @@ export interface IEdition extends ISystemEntity<IEdition> {
 }
 
 export class Edition extends SystemEntity<Edition> implements IEdition {
-  dna: Dna;
+  dna: IDna;
   constructor(
     name: string,
     path: string,
     type: number,
     width: number,
     height: number,
-    dna: Element[]
+    dna: IDna
   ) {
     super(name, path, type, width, height);
-    this.dna = new Dna(dna);
+    this.dna = dna;
   }
   drawEdition(): void {}
 }

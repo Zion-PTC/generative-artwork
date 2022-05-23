@@ -1,20 +1,20 @@
 import { Dna, IDna } from './Dna.js';
 import { Edition, IEdition } from './Edition.js';
 import { Element, IElement } from './Element.js';
-import { SystemEntity, ISystemEntity } from './SystemEntity';
+import { SystemEntity, ISystemEntity } from './SystemEntity.js';
 
 export interface IRarity extends ISystemEntity<IRarity> {
-  from: number;
-  to: number;
-  percentage: number;
-  get elementsByLayer(): IElement[];
-  get possibiliDna(): IDna[];
-  creaEdizione?(): IEdition;
-  creaEdizioneNVolte?(): IEdition[];
-  creaTutteLeEdizioni?(): IEdition[];
+  from?: number;
+  to?: number;
+  percentage?: number;
+  // get elementsByLayer(): IElement[];
+  // get possibiliDna(): IDna[];
+  // creaEdizione?(): IEdition;
+  // creaEdizioneNVolte?(): IEdition[];
+  // creaTutteLeEdizioni?(): IEdition[];
 }
 
-export class Rarity extends SystemEntity<Rarity> {
+export class Rarity extends SystemEntity<Rarity> implements IRarity {
   constructor(public name = 'name', public type: number) {
     super(name, '', type, 0, 0);
     delete this.size;

@@ -1,11 +1,13 @@
-import * as Canvas from 'canvas';
+import * as Canvas from '@zionrepack/canvas';
 import * as Generator from '@zionstate/generator';
 import { CanvasProperties } from './CanvasProperties.js';
 import { Size } from './Size.js';
 let GeneratorMachine = Generator.default;
-const { createCanvas, loadImage } = Canvas;
+const { createCanvas, loadImage } = Canvas.default;
 export class Drawer {
     #canvasProperties;
+    #canvasPropertiesWidth;
+    #canvasPropertiesHeight;
     #canvas;
     #ctx;
     #collection;
@@ -25,11 +27,17 @@ export class Drawer {
     get ctx() {
         return this.#ctx;
     }
+    get canvasPropertiesWidth() {
+        return this.#canvasPropertiesWidth;
+    }
     set canvasPropertiesWidth(width) {
-        this.canvasProperties.size.width = width;
+        this.#canvasProperties.size.width = width;
+    }
+    get canvasPropertiesHeight() {
+        return this.#canvasPropertiesHeight;
     }
     set canvasPropertiesHeight(height) {
-        this.canvasProperties.size.height = height;
+        this.#canvasProperties.size.height = height;
     }
     set loadedImages(image) {
         this.#loadedImages.push(...image);
@@ -44,9 +52,11 @@ export class Drawer {
      */
     constructor(width = 1000, heigth = 1000, context, collection) {
         this.#canvasProperties = new CanvasProperties(context, width, heigth);
+        this.#canvasPropertiesWidth = width;
+        this.#canvasPropertiesHeight = heigth;
         this.#collection = collection;
         // this.loadedElements = [];
-        this.#canvas = createCanvas(width, heigth);
+        this.#canvas = createCanvas(width, heigth, 'svg');
         this.#ctx = this.canvas.getContext(this.canvasProperties.context);
     }
     /**

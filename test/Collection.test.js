@@ -1,15 +1,15 @@
 import { expect } from 'chai';
 import Mocha from 'mocha';
-import { zionUtil } from '../../../telegram-bots/Classes/_Node Standard Modules/zionUtil.js';
-import { Collection } from '../../Machines/GenerativeArtMachine/Collection.js';
-import { system } from '../../Machines/system.js';
-import { ZionRegEx } from '../../../telegram-bots/Classes/_Standard Classes/ZionRegEx.js';
-import { Drawer } from '../../Machines/GenerativeArtMachine/Drawer.js';
-import { Rarity } from '../../Machines/GenerativeArtMachine/Rarity.js';
-import { Layer } from '../../Machines/GenerativeArtMachine/Layer.js';
-import { Element } from '../../Machines/GenerativeArtMachine/Element.js';
-import { Class } from '../../Machines/GenerativeArtMachine/Class.js';
-import { Dna } from '../../Machines/GenerativeArtMachine/Dna.js';
+import { zionUtil } from '@zionstate_node/zion-util';
+import { Collection } from '../built/src/GenerativeArtMachine/Collection.js';
+import { system } from '@zionstate/system';
+// import { ZionRegExp } from '@zionstate_js/regexp';
+import { Drawer } from '../built/src/GenerativeArtMachine/Drawer.js';
+import { Rarity } from '../built/src/GenerativeArtMachine/Rarity.js';
+import { Layer } from '../built/src/GenerativeArtMachine/Layer.js';
+import { Element } from '../built/src/GenerativeArtMachine/Element.js';
+import { Class } from '../built/src/GenerativeArtMachine/Class.js';
+import { Dna } from '../built/src/GenerativeArtMachine/Dna.js';
 
 function expectedTreeStringResult() {
   let string = `└──input\n ⋮└──classe1\n ⋮ ⋮└──background\n ⋮ ⋮ ⋮└──original\n ⋮ ⋮ ⋮ ⋮├──Background_1.png\n ⋮ ⋮ ⋮ ⋮├──Background_2.png\n ⋮ ⋮ ⋮ ⋮├──Background_3.png\n ⋮ ⋮ ⋮ ⋮├──Background_4.png\n ⋮ ⋮ ⋮ ⋮└──Background_5.png\n ⋮ ⋮ ⋮└──rare\n ⋮ ⋮ ⋮ ⋮├──Background1.png\n ⋮ ⋮ ⋮ ⋮└──Background2.png\n ⋮ ⋮ ⋮└──super_rare\n ⋮ ⋮ ⋮ ⋮└──Background1.png\n ⋮ ⋮└──circle\n ⋮ ⋮ ⋮└──original\n ⋮ ⋮ ⋮ ⋮├──Circle1.png\n ⋮ ⋮ ⋮ ⋮├──Circle2.png\n ⋮ ⋮ ⋮ ⋮├──Circle3.png\n ⋮ ⋮ ⋮ ⋮├──Circle4.png\n ⋮ ⋮ ⋮ ⋮└──Circle5.png\n ⋮ ⋮ ⋮└──rare\n ⋮ ⋮ ⋮ ⋮├──Circle1.png\n ⋮ ⋮ ⋮ ⋮└──Circle2.png\n ⋮ ⋮ ⋮└──super_rare\n ⋮ ⋮ ⋮ ⋮└──Circle1.png\n ⋮ ⋮└──innercircle\n ⋮ ⋮ ⋮└──original\n ⋮ ⋮ ⋮ ⋮├──InnerCircle1.png\n ⋮ ⋮ ⋮ ⋮├──InnerCircle2.png\n ⋮ ⋮ ⋮ ⋮├──InnerCircle3.png\n ⋮ ⋮ ⋮ ⋮├──InnerCircle4.png\n ⋮ ⋮ ⋮ ⋮└──InnerCircle5.png\n ⋮ ⋮ ⋮└──rare\n ⋮ ⋮ ⋮ ⋮├──InnerCircle1.png\n ⋮ ⋮ ⋮ ⋮└──InnerCircle2.png\n ⋮ ⋮ ⋮└──super_rare\n ⋮ ⋮ ⋮ ⋮└──InnerCircle1.png`;
@@ -56,10 +56,11 @@ const SYMBOL = 'CLZ';
 const SUPPLY = 1000;
 const BASEURI = 'http://some.mighty.path';
 const DESCRIPTION = 'description of my beautiful collection.';
-const PATH = '/Users/WAW/Documents/Projects/zion-GenerativeArtMachine/input';
+const PATH =
+  '/Users/WAW/Documents/Projects/__EXTERNAL_APP_RESOURCES/generative-art/Squares';
 const TYPE = 'Element';
 const OUTPUTPATH =
-  '/Users/WAW/Documents/Projects/zion-GenerativeArtMachine/Machines/GenerativeArtMachine/Machines';
+  '/Users/WAW/Documents/Projects/__EXTERNAL_APP_RESOURCES/generative-art/Squares/output';
 const WIDTH = 1000;
 const HEIGHT = 1000;
 
@@ -75,18 +76,19 @@ let newCollection = new Collection(
   WIDTH,
   HEIGHT
 );
-let newCollection2 = new Collection(
-  'bla',
-  'sym',
-  1000,
-  'baseURi',
-  'ma che figata',
-  '/Users/WAW/Documents/Projects/zion-GenerativeArtMachine/input',
-  'Edition',
-  '/path',
-  1000,
-  1000
-);
+log(newCollection.nodes.length);
+// let newCollection2 = new Collection(
+//   'bla',
+//   'sym',
+//   1000,
+//   'baseURi',
+//   'ma che figata',
+//   '/Users/WAW/Documents/Projects/__EXTERNAL_APP_RESOURCES/generative-art/Squares',
+//   'Edition',
+//   '/path',
+//   1000,
+//   1000
+// );
 let arrayConIlContenutoDellaDirectory = system.readdirSync(PATH);
 // nel caso in cui la lista contenga il file .DS_Store
 if (arrayConIlContenutoDellaDirectory.includes('.DS_Store')) {
@@ -95,14 +97,15 @@ if (arrayConIlContenutoDellaDirectory.includes('.DS_Store')) {
 
 const checkElementsInArrayConstructor = function (elements = [], constructor) {
   let results = [];
-  elements.forEach((element) => {
+  elements.forEach(element => {
     if (element.constructor !== constructor) {
       results.push(false);
     }
     results.push(true);
   });
-  return results.some((res) => res === false) ? false : true;
+  return results.some(res => res === false) ? false : true;
 };
+log('ciao');
 
 export let CollectionTest = describe('COLLECTION CLASS', () => {
   describe('COLLECTION CONSTRUCTOR', () => {
@@ -175,17 +178,17 @@ export let CollectionTest = describe('COLLECTION CLASS', () => {
         let rarities = newCollection.rarities;
         expect(Array.isArray(rarities)).to.be.true;
         let results = [];
-        rarities.forEach((rarity) => {
+        rarities.forEach(rarity => {
           if (rarity.constructor === Rarity) {
             results.push(true);
           } else {
             results.push(false);
           }
         });
-        expect(results.some((res) => res === false)).to.be.false;
+        expect(results.some(res => res === false)).to.be.false;
       });
       it(`dovrebbe avere una proprietà type`, () => {
-        log(newCollection.rarities[0].type);
+        log(newCollection.rarities);
       });
     });
     describe(`Getter property 'layers'`, () => {
@@ -256,9 +259,10 @@ export let CollectionTest = describe('COLLECTION CLASS', () => {
         );
       });
     });
-    describe(`Getter property 'possibiliDna'`, () => {
+    describe.only(`Getter property 'possibiliDna'`, () => {
       it(`dovrebbe creare una lista con tutte le combinazioni possibili`, () => {
         let result = newCollection.possibiliDna;
+        log(result[0].dna);
         expect(result.length).to.be.equal(512);
       });
     });
@@ -300,7 +304,7 @@ export let CollectionTest = describe('COLLECTION CLASS', () => {
         expect(Collection.collections.length).to.be.equal(1);
         expect(
           Collection.collections.findIndex(
-            (collection) => collection.name === nomeDellaCollezioneDaCancellare
+            collection => collection.name === nomeDellaCollezioneDaCancellare
           )
         ).to.be.equal(-1);
       });
@@ -365,20 +369,20 @@ export let CollectionTest = describe('COLLECTION CLASS', () => {
         let dnaPossibili = newCollection.possibiliDna;
         let newPicker = newCollection.newPicker;
         let ep = picker.estrazione;
-        let enp = newPicker.estrazione;
+        // let enp = newPicker.estrazione;
         let {
           arrayOriginale: aop,
           elementiEstratti: eiep,
           elementiRimanenti: eirp,
           elementoEstratto: eep,
         } = ep;
-        let {
-          arrayOriginale: aonp,
-          elementiEstratti: eienp,
-          elementiRimanenti: eirnp,
-          elementoEstratto: eenp,
-        } = enp;
-        log(eirnp.length);
+        // let {
+        //   arrayOriginale: aonp,
+        //   elementiEstratti: eienp,
+        //   elementiRimanenti: eirnp,
+        //   elementoEstratto: eenp,
+        // } = enp;
+        // log(eirnp.length);
         log(eirp.length);
         log(dnaPossibili.length);
       });
@@ -402,7 +406,7 @@ export let CollectionTest = describe('COLLECTION CLASS', () => {
       });
     });
   });
-  describe.only(`Method methodName`, () => {
+  describe(`Method methodName`, () => {
     it(`task description`, () => {
       let classes = newCollection.classes;
       let primaClasse = classes[0];

@@ -9,6 +9,7 @@ export interface IElement
   extension: string;
   fileSize: number;
   position: IPosition;
+  loadedImageIndex: number;
   description: string;
 }
 

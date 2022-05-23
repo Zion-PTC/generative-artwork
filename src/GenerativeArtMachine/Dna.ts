@@ -11,12 +11,12 @@ export interface IDna {
 }
 
 export class Dna implements IDna {
-  id: number;
   static #dnas: Dna[] = [];
-  #dna: IElement[];
   static get dnas() {
     return Dna.#dnas;
   }
+  name: string;
+  id: number;
   get stringDna() {
     let servedArray: string[] = [];
     this.dna.forEach(element => {
@@ -26,6 +26,7 @@ export class Dna implements IDna {
       ', '
     )}`;
   }
+  #dna: IElement[];
   get dna(): IElement[] {
     return this.#dna;
   }
@@ -42,14 +43,15 @@ export class Dna implements IDna {
     });
     return servedArray;
   }
-  constructor(dna: Element[] = [], public name: string) {
+  constructor(dna: IElement[] = [], name: string) {
+    this.name = name;
     this.#dna = dna;
     Dna.#dnas.push(this);
     this.id = Dna.#dnas.length;
   }
   #aggiungiIdAdArray(element: IElement) {
     let servedArray = [];
-    console.log('element');
+    // console.log('element');
     servedArray.push(element.id);
     return servedArray;
   }

@@ -1,27 +1,17 @@
 import { expect } from 'chai';
 import Mocha from 'mocha';
-import { zionUtil } from '../../../telegram-bots/Classes/_Node Standard Modules/zionUtil.js';
-import { Size } from '../../Machines/GenerativeArtMachine/Size.js';
+import { zionUtil } from '@zionstate_node/zion-util';
+import { Size } from '../built/src/GenerativeArtMachine/Size.js';
 
 const testRunner = new Mocha({ slow: 1000 });
-testRunner.suite.emit(
-  'pre-require',
-  global,
-  'nofile',
-  testRunner
-);
+testRunner.suite.emit('pre-require', global, 'nofile', testRunner);
 var suiteRun = testRunner.run();
-process.on('exit', (code) => {
+process.on('exit', code => {
   process.exit(suiteRun.stats.failures > 0);
 });
 let log = zionUtil.debuglog('log');
 
-let width,
-  height,
-  width2,
-  height2,
-  expectedRatio,
-  expectedRatio2;
+let width, height, width2, height2, expectedRatio, expectedRatio2;
 width = 400;
 height = 500;
 width2 = 1000;
@@ -52,9 +42,7 @@ describe(`SIZE Class`, () => {
         expect(Size.sizes[1].height).to.be.equal(height2);
       });
       it(`La ratio della seconda Size creata, dovrebbe essere: ${expectedRatio2}`, () => {
-        expect(Size.sizes[1].ratio).to.be.equal(
-          expectedRatio2
-        );
+        expect(Size.sizes[1].ratio).to.be.equal(expectedRatio2);
       });
     });
   });

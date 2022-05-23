@@ -1,5 +1,5 @@
 /// <reference types="node" />
-import * as Canvas from 'canvas';
+import * as Canvas from '@zionrepack/canvas';
 import { CanvasProperties, CanvasContext } from './CanvasProperties.js';
 import { Collection } from './Collection';
 import { ISize } from './Size.js';
@@ -9,13 +9,17 @@ interface ICanvasProperty {
 }
 export interface IDrawer {
     get canvasProperties(): ICanvasProperty;
+    set canvasProperties(canvasProperties: ICanvasProperty);
+    get canvasPropertiesWidth(): number;
+    set canvasPropertiesWidth(width: number);
+    get canvasPropertiesHeight(): number;
+    set canvasPropertiesHeight(height: number);
     get canvas(): Canvas.Canvas;
     get loadedImages(): Promise<Canvas.Image>[];
-    get collection(): Collection;
-    get ctx(): Canvas.CanvasRenderingContext2D;
-    set canvasProperties(canvasProperties: ICanvasProperty);
     set loadedImages(image: Promise<Canvas.Image>[]);
+    get collection(): Collection;
     set collection(collection: Collection);
+    get ctx(): Canvas.CanvasRenderingContext2D;
     randomBackground(): void;
     signImage(sig: string): void;
     loadImage(path: string): Promise<Canvas.Image>;
@@ -26,11 +30,13 @@ export interface IDrawer {
 export declare class Drawer implements IDrawer {
     #private;
     get canvasProperties(): CanvasProperties;
-    get canvas(): Canvas.Canvas;
+    get canvas(): import("canvas").Canvas;
     get loadedImages(): Promise<Canvas.Image>[];
     get collection(): Collection;
-    get ctx(): Canvas.CanvasRenderingContext2D;
+    get ctx(): import("canvas").CanvasRenderingContext2D;
+    get canvasPropertiesWidth(): number;
     set canvasPropertiesWidth(width: number);
+    get canvasPropertiesHeight(): number;
     set canvasPropertiesHeight(height: number);
     set loadedImages(image: Promise<Canvas.Image>[]);
     set collection(collection: Collection);

@@ -1,13 +1,12 @@
 import { zionUtil } from '@zionstate_node/zion-util';
 import { Element } from './Element.js';
 export class Dna {
-    name;
-    id;
     static #dnas = [];
-    #dna;
     static get dnas() {
         return Dna.#dnas;
     }
+    name;
+    id;
     get stringDna() {
         let servedArray = [];
         this.dna.forEach(element => {
@@ -15,6 +14,7 @@ export class Dna {
         });
         return `Questa edizione ha le seguenti caratteristiche: ${servedArray.join(', ')}`;
     }
+    #dna;
     get dna() {
         return this.#dna;
     }
@@ -39,7 +39,7 @@ export class Dna {
     }
     #aggiungiIdAdArray(element) {
         let servedArray = [];
-        console.log('element');
+        // console.log('element');
         servedArray.push(element.id);
         return servedArray;
     }

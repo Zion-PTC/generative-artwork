@@ -5,8 +5,8 @@ export interface IPosition {
   set y(y: number);
 }
 
-export class Position {
-  static #positions: Position[] = [];
+export class Position implements IPosition {
+  static #positions: IPosition[] = [];
   #x: number;
   #y: number;
   constructor(x: number, y: number) {

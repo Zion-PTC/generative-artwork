@@ -51,13 +51,13 @@ export class SystemEntity<T extends ISystemEntity<T>>
     name: string,
     path: string,
     type: number,
-    width: number,
-    height: number
+    width?: number,
+    height?: number
   ) {
     this.name = name;
     this.path = path;
     this.type = type;
-    this.size = new Size(width, height);
+    // this.size = new Size(width, height);
     SystemEntity.#systemEntities.push(this);
     this.id = SystemEntity.#systemEntities.length;
   }
@@ -82,8 +82,4 @@ export class SystemEntity<T extends ISystemEntity<T>>
     const condizione = this.èConnessoA(entity1) && this.èConnessoA(entity2);
     return condizione;
   }
-}
-
-function mitroviovunque() {
-  console.log('mi trovi ovunque');
 }

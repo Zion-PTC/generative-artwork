@@ -21,16 +21,9 @@ width = 1000;
 height = 1000;
 collection = 'yeah';
 
-let newSystemEntity = new SystemEntity(
-  name,
-  path,
-  level,
-  type,
-  width,
-  height
-  // children,
-  // collection
-);
+let newSystemEntity = new SystemEntity(name, path, level, type, width, height);
+
+log('ciao');
 
 describe(`SYSTEM ENTITY Class`, () => {
   describe(`GETTERS & SETTERS`, () => {});

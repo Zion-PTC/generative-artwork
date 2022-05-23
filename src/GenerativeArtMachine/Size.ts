@@ -22,9 +22,10 @@ export class Size implements ISize {
   constructor(width: number = 0, height: number = 0) {
     this.#width = width;
     this.#height = height;
-    // this.#ratio = zionUtil.convertDecimalToFracionString(
-    //   this.#width / this.#height
-    // );
+    // TODO #2 far funzionare ratio
+    this.#ratio = zionUtil.convertDecimalToFracionString(
+      this.#width / this.#height
+    );
     Size.#sizes.push(this);
   }
   static get sizes() {

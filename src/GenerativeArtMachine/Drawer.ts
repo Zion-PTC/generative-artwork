@@ -1,4 +1,4 @@
-import * as Canvas from 'canvas';
+import * as Canvas from '@zionrepack/canvas';
 import * as Generator from '@zionstate/generator';
 import { CanvasProperties, CanvasContext } from './CanvasProperties.js';
 import { Collection, ICollection } from './Collection';
@@ -13,13 +13,17 @@ interface ICanvasProperty {
 type Image = Canvas.Image;
 export interface IDrawer {
   get canvasProperties(): ICanvasProperty;
+  set canvasProperties(canvasProperties);
+  get canvasPropertiesWidth(): number;
+  set canvasPropertiesWidth(width: number);
+  get canvasPropertiesHeight(): number;
+  set canvasPropertiesHeight(height: number);
   get canvas(): Canvas.Canvas;
   get loadedImages(): Promise<Canvas.Image>[];
-  get collection(): Collection;
-  get ctx(): Canvas.CanvasRenderingContext2D;
-  set canvasProperties(canvasProperties);
   set loadedImages(image: Promise<Canvas.Image>[]);
+  get collection(): Collection;
   set collection(collection);
+  get ctx(): Canvas.CanvasRenderingContext2D;
   randomBackground(): void;
   signImage(sig: string): void;
   loadImage(path: string): Promise<Canvas.Image>;
@@ -34,9 +38,11 @@ export interface IDrawer {
   printImage(): IDrawer;
 }
 
-const { createCanvas, loadImage } = Canvas;
+const { createCanvas, loadImage } = Canvas.default;
 export class Drawer implements IDrawer {
   #canvasProperties: CanvasProperties;
+  #canvasPropertiesWidth: number;
+  #canvasPropertiesHeight: number;
   #canvas: Canvas.Canvas;
   #ctx: Canvas.CanvasRenderingContext2D;
   #collection: Collection;
@@ -56,11 +62,17 @@ export class Drawer implements IDrawer {
   get ctx() {
     return this.#ctx;
   }
+  get canvasPropertiesWidth() {
+    return this.#canvasPropertiesWidth;
+  }
   set canvasPropertiesWidth(width: number) {
-    this.canvasProperties.size.width = width;
+    this.#canvasProperties.size.width = width;
+  }
+  get canvasPropertiesHeight() {
+    return this.#canvasPropertiesHeight;
   }
   set canvasPropertiesHeight(height: number) {
-    this.canvasProperties.size.height = height;
+    this.#canvasProperties.size.height = height;
   }
   set loadedImages(image: Promise<Canvas.Image>[]) {
     this.#loadedImages.push(...image);
@@ -80,9 +92,11 @@ export class Drawer implements IDrawer {
     collection: Collection
   ) {
     this.#canvasProperties = new CanvasProperties(context, width, heigth);
+    this.#canvasPropertiesWidth = width;
+    this.#canvasPropertiesHeight = heigth;
     this.#collection = collection;
     // this.loadedElements = [];
-    this.#canvas = createCanvas(width, heigth);
+    this.#canvas = createCanvas(width, heigth, 'svg');
     this.#ctx = this.canvas.getContext(this.canvasProperties.context);
   }
   /**

@@ -1,4 +1,12 @@
-import { system, TreeNode } from '@zionstate/system';
+import {
+  system,
+  TreeNode,
+  ITree,
+  ITreeNode,
+  IFile,
+  IFolder,
+  IRoot,
+} from '@zionstate/system';
 import { SmartContract, ISmartContract } from './SmartContract.js';
 import { Drawer, IDrawer } from './Drawer.js';
 import { zionUtil } from '@zionstate_node/zion-util';
@@ -7,9 +15,11 @@ import { Layer, ILayer } from './Layer.js';
 import { Element, IElement } from './Element.js';
 import { Class, IClass } from './Class.js';
 import * as Generator from '@zionstate/generator';
-import { IDna } from './Dna.js';
+import { IEstrazione, IPicker } from '@zionstate/generator';
+import { Dna, IDna } from './Dna.js';
 import { Edition, IEdition } from './Edition.js';
 import { ISystemEntity } from './SystemEntity.js';
+import { Image } from '@zionrepack/canvas';
 // import { TreeNode } from '@zionstate/system/built/src/TreeNode';
 
 let GeneratorMachine = Generator.default;
@@ -74,10 +84,11 @@ export interface ICollection extends ISmartContract {
   get elements(): IElement[];
   get classes(): IClass[];
   get nodes(): ISystemEntity<SystemEntities>[];
+  set nodes(node: ISystemEntity<SystemEntities>[]);
   get collectionPath(): string;
   get nodeNames(): string;
   get nodesIds(): number;
-  get elementsByLayer(): IElement[];
+  get elementsByLayer(): IElement[][];
   get elementsByLayerByRarity(): IElement[][];
   get possibiliDna(): IDna[];
   get possibiliDnaPerRarità(): IDna[][];
@@ -90,163 +101,16 @@ export interface ICollection extends ISmartContract {
 }
 
 export class Collection extends SmartContract {
-  static #collections: Collection[] = [];
-  // INFOS
-  #id?: string | number;
-  #path;
-  #types = ['Edition', 'Element'];
-  #type;
-  #outputPath;
-  #drawer: Drawer;
-  #strategy;
-  newPicker;
-  picker;
-  // GRAPH
-  #nodes: ISystemEntity<SystemEntities>[] = [];
-  #classes: IClass[] = [];
-  #layers: ILayer[] = [];
-  #rarities: IRarity[] = [];
-  #elements: IElement[] = [];
-  // GETTERS
-  get id() {
-    return this.#id;
-  }
-  set id(id) {
-    this.#id = id;
-  }
-  get path() {
-    return this.#path;
-  }
-  get type() {
-    return this.#type;
-  }
-  get outputPath() {
-    return this.#outputPath;
-  }
-  get drawer() {
-    return this.#drawer;
-  }
-  get rarities() {
-    return this.#rarities;
-  }
-  get layers() {
-    return this.#layers;
-  }
-  get elements() {
-    return this.#elements;
-  }
-  /**
-   * @returns {Class[]}
-   */
-  get classes() {
-    return this.#classes;
-  }
-  get nodes() {
-    return this.#nodes;
-  }
-  get collectionPath() {
-    return `${this.outputPath}/${this.name}`;
-  }
-  get nodeNames() {
-    let servedArray: string[] = [];
-    this.nodes.forEach(node => servedArray.push(node.name));
-    return servedArray;
-  }
-  get nodesIds() {
-    let servedArray: (string | number)[] = [];
-    this.nodes.forEach(node => servedArray.push(node.id));
-    return servedArray;
-  }
-  /**
-   * Ritorna un array con degli array contenenti gli
-   * elementi di ogni layer. Dovrebbe contenere un numero di
-   * array uguale al numero di layer della collezione.
-   * @returns {Element[]}
-   */
-  get elementsByLayer(): IElement[][] | undefined {
-    let result: IElement[][] = [];
-    let layersStack: SystemEntities[] = [];
-    const aggiungiALayersStack = function (layer: ILayer) {
-      layersStack.push(layer);
-    };
-    this.layers.forEach(aggiungiALayersStack);
-    while (layersStack.length) {
-      let elementsOfArray: IElement[] = [];
-      const currentLayer = layersStack.shift();
-      for (let element of this.elements) {
-        if (!currentLayer) return;
-        if (element.èConnessoA(currentLayer)) {
-          elementsOfArray.push(element);
-        }
-      }
-      result.push(elementsOfArray);
-    }
-    return result;
-  }
-  /**
-   * Ritorna un array contenente un array per ogni rarità.
-   * Ogni array a sua volta contiene un array per ogni
-   * layer. Ognuno di questi array contiene gli elementi del
-   * layer raggruppati in sostanza per rarità.
-   */
-  get elementsByLayerByRarity(): string[][][] | undefined {
-    let result: string[][][] = [];
-    for (let rarity of this.rarities) {
-      let array = this.elementsByLayer;
-      let rarityLayers: string[][] = [];
-      if (!array) return;
-      for (let layer of array) {
-        let elementsOfLayerByRarity: string[] = [];
-        for (let element of layer) {
-          if (element.èConnessoA(rarity)) {
-            elementsOfLayerByRarity.push(element.name);
-          }
-        }
-        rarityLayers.push(elementsOfLayerByRarity);
-      }
-      result.push(rarityLayers);
-    }
-    return result;
-  }
-  get possibiliDna(): IElement[][] | undefined {
-    if (!this.elementsByLayer) return;
-    let servedArray = Combinator.generateCombinations(this.elementsByLayer);
-    return servedArray;
-  }
-  get possibiliDnaPerRarità() {
-    let result: string[][][] = [];
-    const creaEAggiungi = function (possibilità: string[][]) {
-      let servedArray: string[][] = [];
-      servedArray = Combinator.generateCombinations(possibilità);
-      result.push(servedArray);
-    };
-    if (this.elementsByLayerByRarity)
-      this.elementsByLayerByRarity.forEach(creaEAggiungi);
-    return result;
-  }
-  // SETTERS
-  set path(path) {
-    this.#path = path;
-  }
-  set outputPath(outputPath) {
-    this.#outputPath = outputPath;
-  }
-  set type(type) {
-    if (type)
-      if (!this.#types.includes(type)) {
-        throw new Error('Il tipo selezionato non esiste');
-      }
-    this.#type = type;
-  }
   // STATIC \\
+  static #collections: Collection[] = [];
   // PROPERTIES \\
-  // METHODS \\
   static get collections() {
     let servedArray: Collection[] = [];
     Collection.#collections.forEach(el => servedArray.push(el));
     Object.freeze(servedArray);
     return servedArray;
   }
+  // METHODS \\
   static collectionExists(name: string) {
     return Collection.#collections.some(collection => collection.name === name);
   }
@@ -270,6 +134,157 @@ export class Collection extends SmartContract {
     Collection.#collections.pop();
     return Collection.#collections;
   }
+  // INFOS
+  // #strategy:Function;
+  // newPicker: IPicker<IDna>;
+  picker: IPicker<IDna> | undefined;
+  // GRAPH
+  #id?: string | number;
+  get id() {
+    return this.#id;
+  }
+  set id(id) {
+    this.#id = id;
+  }
+  #path;
+  get path() {
+    return this.#path;
+  }
+  set path(path) {
+    this.#path = path;
+  }
+  #types = ['Edition', 'Element'];
+  #type: string | undefined;
+  get type() {
+    if (!this.#type) this.#type = 'Edition';
+    return this.#type;
+  }
+  set type(type: string) {
+    if (type)
+      if (!this.#types.includes(type)) {
+        throw new Error('Il tipo selezionato non esiste');
+      }
+    this.#type = type;
+  }
+  #outputPath;
+  get outputPath() {
+    return this.#outputPath;
+  }
+  set outputPath(outputPath) {
+    this.#outputPath = outputPath;
+  }
+  #drawer: IDrawer | undefined;
+  get drawer() {
+    return this.#drawer;
+  }
+  #rarities: IRarity[] = [];
+  get rarities() {
+    return this.#rarities;
+  }
+  #layers: ILayer[] = [];
+  get layers() {
+    return this.#layers;
+  }
+  #elements: IElement[] = [];
+  get elements() {
+    return this.#elements;
+  }
+  #classes: IClass[] = [];
+  /**
+   * @returns {Class[]}
+   */
+  get classes() {
+    return this.#classes;
+  }
+  #nodes: ISystemEntity<SystemEntities>[] = [];
+  get nodes() {
+    return this.#nodes;
+  }
+  set nodes(nodes: ISystemEntity<SystemEntities>[]) {
+    this.#nodes.push(...nodes);
+  }
+  get nodeNames() {
+    let servedArray: string[] = [];
+    this.nodes.forEach(node => servedArray.push(node.name));
+    return servedArray;
+  }
+  get nodesIds() {
+    let servedArray: (string | number)[] = [];
+    this.nodes.forEach(node => servedArray.push(node.id));
+    return servedArray;
+  }
+  get collectionPath() {
+    return `${this.outputPath}/${this.name}`;
+  }
+  /**
+   * Ritorna un array con degli array contenenti gli
+   * elementi di ogni layer. Dovrebbe contenere un numero di
+   * array uguale al numero di layer della collezione.
+   * @returns {Element[]}
+   */
+  get elementsByLayer(): IElement[][] {
+    let result: IElement[][] = [];
+    let layersStack: SystemEntities[] = [];
+    const aggiungiALayersStack = function (layer: ILayer) {
+      layersStack.push(layer);
+    };
+    this.layers.forEach(aggiungiALayersStack);
+    while (layersStack.length) {
+      let elementsOfArray: IElement[] = [];
+      const currentLayer = layersStack.shift();
+      for (let element of this.elements) {
+        if (!currentLayer) throw new Error('No Current Layer');
+        if (element.èConnessoA(currentLayer)) {
+          elementsOfArray.push(element);
+        }
+      }
+      result.push(elementsOfArray);
+    }
+    return result;
+  }
+  /**
+   * Ritorna un array contenente un array per ogni rarità.
+   * Ogni array a sua volta contiene un array per ogni
+   * layer. Ognuno di questi array contiene gli elementi del
+   * layer raggruppati in sostanza per rarità.
+   */
+  get elementsByLayerByRarity(): IElement[][][] {
+    let result: IElement[][][] = [];
+    for (let rarity of this.rarities) {
+      let array = this.elementsByLayer;
+      let rarityLayers: IElement[][] = [];
+      if (!array) throw new Error('no array');
+      for (let layer of array) {
+        let elementsOfLayerByRarity: IElement[] = [];
+        for (let element of layer) {
+          if (element.èConnessoA(rarity)) {
+            elementsOfLayerByRarity.push(element);
+          }
+        }
+        rarityLayers.push(elementsOfLayerByRarity);
+      }
+      result.push(rarityLayers);
+    }
+    return result;
+  }
+  get possibiliDna(): IDna[] {
+    if (!this.elementsByLayer) throw new Error('no elements by layer');
+    let combinations = Combinator.generateCombinations(this.elementsByLayer);
+    let servedArray: IDna[] = combinations.map(e => new Dna(e, 'name'));
+    return servedArray;
+  }
+  get possibiliDnaPerRarità(): IDna[][] {
+    let result: IDna[][] = [],
+      combinations: IElement[][];
+    const creaEAggiungi = function (elementsByLayer: IElement[][]) {
+      combinations = Combinator.generateCombinations(elementsByLayer);
+      let servedArray: IDna[] = combinations.map(e => new Dna(e, 'name'));
+      result.push(servedArray);
+    };
+    if (this.elementsByLayerByRarity)
+      this.elementsByLayerByRarity.forEach(creaEAggiungi);
+    return result;
+  }
   /**
    * @param {string} name nome della collezione
    * @param {string} path percorso della cartella contenente i dati della collezione
@@ -289,17 +304,17 @@ export class Collection extends SmartContract {
   ) {
     if (!Collection.collectionExists(name)) {
       super(name, symbol, supply, baseURI, description);
+      let drawer = new Drawer(width, height, '2d', this);
       this.#path = path;
       this.#type = type;
       this.#outputPath = outputPath;
-      this.#drawer = new Drawer(width, height, '2d', this);
+      this.#drawer = drawer;
       Collection.#collections.push(this);
       this.#id = Collection.#collections.length;
       this.#buildSistemEntities(system.buildTree);
       this.#loadElements();
-      this.newPicker = this.#collectionPicker();
-      if (this.possibiliDna)
-        this.picker = new Picker<IElement>(...this.possibiliDna);
+      // this.newPicker = this.#collectionPicker();
+      if (this.possibiliDna) this.picker = new Picker<IDna>(this.possibiliDna);
     }
   }
   hasDir(): boolean | undefined {
@@ -321,7 +336,7 @@ export class Collection extends SmartContract {
    * dell'immagine. Ogni arrai contiene gli elementi da combinare.
    * @returns {Dna}
    */
-  creaEdizione(classe: IClass) {
+  creaEdizione(classe: IClass): IEdition {
     let strategy = classe,
       nuovaEstrazione,
       PATH;
@@ -333,7 +348,9 @@ export class Collection extends SmartContract {
     const TYPE = 0;
     const WIDTH = 0;
     const HEIGHT = 0;
-    if (!PATH) return;
+    if (!PATH) throw new Error('no path');
+    if (nuovaEstrazione?.elementoEstratto === undefined)
+      throw new Error('no estrazione');
     let newEdizione = new Edition(
       NAME,
       PATH,
@@ -342,13 +359,13 @@ export class Collection extends SmartContract {
       HEIGHT,
       nuovaEstrazione.elementoEstratto
     );
-    return newEdizione.dna;
+    return newEdizione;
   }
-  creaEdizioneNVolte(volte: number) {
+  creaEdizioneNVolte(volte: number, classe: IClass) {
     let servedArray = [];
     while (volte) {
       volte--;
-      let newDna = this.creaEdizione('');
+      let newDna = this.creaEdizione(classe);
       servedArray.push(newDna);
     }
     return servedArray;
@@ -356,16 +373,20 @@ export class Collection extends SmartContract {
   creaTutteLeEdizioni() {
     let serveArray = [];
   }
-  #buildSistemEntities(strategy: Function) {
+  #buildSistemEntities(strategy: typeof system.buildTree) {
+    if (!this.path) return 'no path';
     let tree = strategy(this.path);
-    let nodes: TreeNode[] = tree.nodes;
+    if (!tree) return 'no tree';
+    let nodes: (ITreeNode | IFile | IFolder | IRoot)[] = tree.nodes;
+    console.log(nodes.length);
+
     let classes: IClass[] = [];
     let layers: ILayer[] = [];
     let rarities: IRarity[] = [];
     let elements: IElement[] = [];
-    let classServedObj = {};
-    let layerServedObj = {};
-    let rarityServObj = {};
+    let classServedObj: { [key: string]: string[] } = {};
+    let layerServedObj: { [key: string]: string[] } = {};
+    let rarityServObj: { [key: string]: IElement[] } = {};
     nodes.forEach(node => {
       if (node.depth === 3) rarityServObj[node.name] = [];
       if (node.depth === 2) layerServedObj[node.name] = [];
@@ -377,32 +398,45 @@ export class Collection extends SmartContract {
         let newClass = new Class(
           currentClass.name,
           currentClass.path,
-          this.type,
+          this.type === 'Edition' ? 0 : 1,
           0,
           0
         );
         this.#nodes.push(newClass);
+        if (!currentClass.figlio) throw new Error('no figlio');
         for (let layer of currentClass.figlio) {
+          // TODO cambiare gli Error
+          if (!this.#drawer) throw new Error('no drawer');
           let newLayer = new Layer(
             layer.name,
             layer.path,
-            this.type,
-            undefined,
-            undefined
+            this.#types.findIndex(e => e === this.type),
+            this.#drawer.canvasPropertiesWidth,
+            this.#drawer.canvasPropertiesHeight
           );
           this.#nodes.push(newLayer);
+          if (!layer.figlio) throw new Error('no figlio');
           for (let rarity of layer.figlio) {
+            if (!rarity.figlio) throw new Error('no figlio');
             for (let element of rarity.figlio) {
+              let file: IFile;
+              if ('extension' in element) {
+                file = element;
+                if (!file.extension) throw new Error('no exetension');
+                if (!file.fileSize) throw new Error('no fileSize');
+              } else {
+                throw new Error('not a File');
+              }
               layerServedObj[layer.name].push(element.name);
               // qui potrei creare gli elementi
               let newElement = new Element(
-                element.name,
-                element.path,
-                this.type,
-                undefined, // width
-                undefined,
-                element.extension,
-                element.fileSize,
+                file.name,
+                file.path,
+                this.#types.findIndex(e => e === this.type),
+                this.#drawer.canvasPropertiesWidth,
+                this.#drawer.canvasPropertiesHeight,
+                file.extension,
+                file.fileSize,
                 'description',
                 0
               );
@@ -420,7 +454,10 @@ export class Collection extends SmartContract {
       }
     });
     for (let key in rarityServObj) {
-      let newRarity = new Rarity(key, this.type);
+      let newRarity: IRarity = new Rarity(
+        key,
+        this.#types.findIndex(e => e === this.type)
+      );
       this.#nodes.push(newRarity);
       const connectToRarity = function (_class: IClass) {
         newRarity.connettiA(_class);
@@ -438,24 +475,28 @@ export class Collection extends SmartContract {
     this.#layers = layers;
   }
   #loadElements() {
+    if (!this.drawer) throw new Error('no drawer');
     let count = 0;
     this.elements.forEach(async element => {
       class LoadedImage {
         elementName;
         canvasLoadImage;
-        constructor(elementName: string, image) {
+        constructor(elementName?: string, image?: Promise<Image>) {
           this.elementName = elementName;
           this.canvasLoadImage = image;
         }
       }
-      let loadedImage = new LoadedImage('', '');
-      loadedImage.canvasLoadImage = await this.drawer.loadImage(element.path);
+      let loadedImage = new LoadedImage();
+      if (!this.drawer) throw new Error('no drawer');
+      if (!element.size) throw new Error('no size');
+      if (element.path)
+        loadedImage.canvasLoadImage = this.drawer.loadImage(element.path);
       loadedImage.elementName = element.name;
       element.loadedImageIndex = count;
       count++;
-      this.#drawer.loadedImages = loadedImage;
-      element.size.width = loadedImage.canvasLoadImage.width;
-      element.size.height = loadedImage.canvasLoadImage.height;
+      this.drawer.loadedImages.push(loadedImage.canvasLoadImage!);
+      element.size.width = (await loadedImage.canvasLoadImage!).width;
+      element.size.height = (await loadedImage.canvasLoadImage!).height;
     });
     return this.drawer.loadedImages;
   }
@@ -467,7 +508,8 @@ export class Collection extends SmartContract {
       static get metodi() {
         return Metodo.#metodi;
       }
-      static findMetodo(name: string): Metodo {
+      static findMetodo(name: string): Metodo | undefined {
+        if (!Metodo.#metodi) throw new Error('no metodi');
         return Metodo.#metodi.find(metodo => metodo.name === name);
       }
       constructor(name: string, metodo: Function) {
@@ -489,6 +531,7 @@ export class Collection extends SmartContract {
     new Metodo('Element', this.#metodoElement);
     const metodo = Metodo.findMetodo(this.type);
     let strategiaDiScelta = new StrategiaDiScelta();
+    if (!metodo) throw new Error('no metodo');
     strategiaDiScelta.assegnaStrategia(metodo);
     return strategiaDiScelta.picker();
   }

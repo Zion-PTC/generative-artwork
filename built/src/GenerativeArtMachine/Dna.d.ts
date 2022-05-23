@@ -1,4 +1,4 @@
-import { Element, IElement } from './Element.js';
+import { IElement } from './Element.js';
 export interface IDna {
     name: string;
     get stringDna(): string;
@@ -9,13 +9,13 @@ export interface IDna {
 }
 export declare class Dna implements IDna {
     #private;
+    static get dnas(): Dna[];
     name: string;
     id: number;
-    static get dnas(): Dna[];
     get stringDna(): string;
     get dna(): IElement[];
     set dna(_dna: IElement[]);
     get elementsIds(): (string | number)[];
-    constructor(dna: Element[] | undefined, name: string);
+    constructor(dna: IElement[] | undefined, name: string);
     haElemento(elemento: IElement): boolean;
 }

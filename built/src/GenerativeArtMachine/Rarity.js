@@ -1,4 +1,4 @@
-import { SystemEntity } from './SystemEntity';
+import { SystemEntity } from './SystemEntity.js';
 export class Rarity extends SystemEntity {
     name;
     type;

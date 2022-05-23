@@ -7,6 +7,7 @@ export interface IElement extends ISystemEntity<IElement | IRarity | ILayer | IC
     extension: string;
     fileSize: number;
     position: IPosition;
+    loadedImageIndex: number;
     description: string;
 }
 export declare class Element extends SystemEntity<Element | Rarity | ILayer | IClass> {

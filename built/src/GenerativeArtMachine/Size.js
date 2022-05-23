@@ -1,3 +1,4 @@
+import { zionUtil } from '@zionstate_node/zion-util';
 // le dimensiondi dovrebbero essere proprietà di:
 // • classe
 // • layer
@@ -11,9 +12,8 @@ export class Size {
     constructor(width = 0, height = 0) {
         this.#width = width;
         this.#height = height;
-        // this.#ratio = zionUtil.convertDecimalToFracionString(
-        //   this.#width / this.#height
-        // );
+        // TODO #2 far funzionare ratio
+        this.#ratio = zionUtil.convertDecimalToFracionString(this.#width / this.#height);
         Size.#sizes.push(this);
     }
     static get sizes() {

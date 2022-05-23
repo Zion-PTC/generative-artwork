@@ -1,37 +1,48 @@
 {
   "folders": [
     {
-      "path": "."
-    },
-    {
-      "path": "../../packages/@zionstate/generator"
-    },
-    {
-      "path": "../../packages/@zionstate_js/error"
-    },
-    {
-      "path": "../../packages/@zionstate_js/regex"
-    },
-    {
-      "path": "../../packages/@zionstate_node/emitter"
-    },
-    {
-      "path": "../../packages/@zionstate_node/fs"
-    },
-    {
-      "path": "../../packages/@zionstate_node/fs-utilities"
-    },
-    {
-      "path": "../../__standard_configs"
-    },
-    {
+      "name": "generative-art",
       "path": "../../../__EXTERNAL_APP_RESOURCES/generative-art"
     },
     {
+      "name": "generative-artwork",
+      "path": "."
+    },
+    {
+      "name": "generator",
+      "path": "../../packages/@zionstate/generator"
+    },
+    {
+      "name": "system",
       "path": "../../packages/@zionstate/system"
     },
     {
+      "name": "error",
+      "path": "../../packages/@zionstate_js/error"
+    },
+    {
+      "name": "regex",
+      "path": "../../packages/@zionstate_js/regex"
+    },
+    {
+      "name": "emitter",
+      "path": "../../packages/@zionstate_node/emitter"
+    },
+    {
+      "name": "fs",
+      "path": "../../packages/@zionstate_node/fs"
+    },
+    {
+      "name": "fs-utilities",
+      "path": "../../packages/@zionstate_node/fs-utilities"
+    },
+    {
+      "name": "zion-util",
       "path": "../../packages/@zionstate_node/zion-util"
+    },
+    {
+      "name": "canvas",
+      "path": "../../packages/@zionrepack/canvas"
     }
   ],
   "settings": {}
