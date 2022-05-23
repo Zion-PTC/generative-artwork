@@ -10,16 +10,22 @@ import { IEdition } from './Edition.js';
 import { ISystemEntity } from './SystemEntity.js';
 declare type SystemEntities = IClass | IElement | IEdition | ILayer;
 /**
- * @param id identificativo della collezione
- *
+ * @param {number} id identificativo della collezione
+ * @param {string} name nome della collezione
+ * @param {string} symbol simbolo della collezione che verrà usato per creare i token
+ * @param {string} supply quantità di token della collezione
+ * @param {string} baseURI percorso base per gli oggetti della collezione. Questo dato è quello che apparirà nei metadata degli NFT.
+ * @param {string} description descrizione della collezione che apparirà sulla blockchain
+ * @param {string} path percorso del root della collezione contenente i dati della collezione
+ * @param {string} type tipo di collezione ('Edition' o 'Element')
  */
 export interface ICollection extends ISmartContract {
     get id(): number;
     set id(id: number);
-    set type(type: number);
     get path(): string;
     set path(path: string);
-    get type(): number;
+    get type(): string;
+    set type(type: string);
     get outputPath(): string;
     set outputPath(outputPath: string);
     get drawer(): IDrawer;
@@ -30,33 +36,32 @@ export interface ICollection extends ISmartContract {
     get nodes(): ISystemEntity<SystemEntities>[];
     set nodes(node: ISystemEntity<SystemEntities>[]);
     get collectionPath(): string;
-    get nodeNames(): string;
-    get nodesIds(): number;
+    get nodeNames(): string[];
+    get nodesIds(): (string | number)[];
     get elementsByLayer(): IElement[][];
-    get elementsByLayerByRarity(): IElement[][];
+    get elementsByLayerByRarity(): IElement[][][];
     get possibiliDna(): IDna[];
     get possibiliDnaPerRarità(): IDna[][];
     hasDir(): boolean;
-    creaDirectory(): ICollection;
+    creaDirectory(): Collection;
     creaEdizione(classe: IClass): IEdition;
-    creaEdizioneNVolte(volte: number): IEdition[];
+    creaEdizioneNVolte(volte: number, classe: IClass): IEdition[];
     creaTutteLeEdizioni(): IEdition[];
 }
-export declare class Collection extends SmartContract {
+export declare class Collection extends SmartContract implements ICollection {
     #private;
     static get collections(): Collection[];
     static collectionExists(name: string): boolean;
     static deleteCollection(name: string): Collection[];
-    picker: IPicker<IDna> | undefined;
-    get id(): string | number | undefined;
-    set id(id: string | number | undefined);
-    get path(): string | undefined;
-    set path(path: string | undefined);
+    get id(): number;
+    set id(id: number);
+    get path(): string;
+    set path(path: string);
     get type(): string;
     set type(type: string);
-    get outputPath(): string | undefined;
-    set outputPath(outputPath: string | undefined);
-    get drawer(): IDrawer | undefined;
+    get outputPath(): string;
+    set outputPath(outputPath: string);
+    get drawer(): IDrawer;
     get rarities(): IRarity[];
     get layers(): ILayer[];
     get elements(): IElement[];
@@ -85,14 +90,10 @@ export declare class Collection extends SmartContract {
     get elementsByLayerByRarity(): IElement[][][];
     get possibiliDna(): IDna[];
     get possibiliDnaPerRarità(): IDna[][];
-    /**
-     * @param {string} name nome della collezione
-     * @param {string} path percorso della cartella contenente i dati della collezione
-     * @param {string} baseUri percorso base per gli oggetti della collezione. Questo dato è quello che apparirà nei metadata degli NFT.
-     */
-    constructor(name: string, symbol: string | undefined, supply: number | undefined, baseURI: URL, description?: string, path?: string, type?: 'Edition' | 'Element', outputPath?: string, width?: number, height?: number);
-    hasDir(): boolean | undefined;
-    creaDirectory(): this | undefined;
+    picker: IPicker<IDna>;
+    constructor(name: string, symbol: string, supply: number, baseURI: URL, description: string, path: string, type: 'Edition' | 'Element', outputPath?: string, width?: number, height?: number);
+    hasDir(): boolean;
+    creaDirectory(): Collection;
     /**
      * Accetta un lista di array, che corrisponde ai layer
      * dell'immagine. Ogni arrai contiene gli elementi da combinare.
@@ -100,6 +101,6 @@ export declare class Collection extends SmartContract {
      */
     creaEdizione(classe: IClass): IEdition;
     creaEdizioneNVolte(volte: number, classe: IClass): IEdition[];
-    creaTutteLeEdizioni(): void;
+    creaTutteLeEdizioni(): IEdition[];
 }
 export {};

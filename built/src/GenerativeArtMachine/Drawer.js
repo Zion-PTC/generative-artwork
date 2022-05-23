@@ -2,9 +2,20 @@ import * as Canvas from '@zionrepack/canvas';
 import * as Generator from '@zionstate/generator';
 import { CanvasProperties } from './CanvasProperties.js';
 import { Size } from './Size.js';
+export class LoadedImage {
+    elementName;
+    canvasLoadImage;
+    constructor(elementName, image) {
+        this.elementName = elementName;
+        this.canvasLoadImage = image;
+    }
+}
 let GeneratorMachine = Generator.default;
 const { createCanvas, loadImage } = Canvas.default;
 export class Drawer {
+    width;
+    heigth;
+    context;
     #canvasProperties;
     #canvasPropertiesWidth;
     #canvasPropertiesHeight;
@@ -51,6 +62,9 @@ export class Drawer {
      * @param {*} context
      */
     constructor(width = 1000, heigth = 1000, context, collection) {
+        this.width = width;
+        this.heigth = heigth;
+        this.context = context;
         this.#canvasProperties = new CanvasProperties(context, width, heigth);
         this.#canvasPropertiesWidth = width;
         this.#canvasPropertiesHeight = heigth;

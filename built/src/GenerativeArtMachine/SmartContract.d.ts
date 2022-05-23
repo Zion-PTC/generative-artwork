@@ -3,8 +3,8 @@ export interface ISmartContract {
     symbol: string;
     get supply(): number;
     set supply(supply: number);
-    get type(): number;
-    set type(type: number);
+    get type(): string;
+    set type(type: string);
 }
 export declare class SmartContract {
     #private;
@@ -12,9 +12,9 @@ export declare class SmartContract {
     symbol: string;
     baseURI: URL;
     description: string;
-    constructor(name: string, symbol: string, supply: number, baseURI: URL, description: string);
     get supply(): number;
     set supply(supply: number);
-    get type(): unknown;
-    set type(type: unknown);
+    get type(): string | undefined;
+    set type(type: string | undefined);
+    constructor(name: string, symbol: string, supply: number, baseURI: URL, description: string);
 }

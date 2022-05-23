@@ -10,6 +10,7 @@ import { Layer } from '../built/src/GenerativeArtMachine/Layer.js';
 import { Element } from '../built/src/GenerativeArtMachine/Element.js';
 import { Class } from '../built/src/GenerativeArtMachine/Class.js';
 import { Dna } from '../built/src/GenerativeArtMachine/Dna.js';
+import { Edition } from '../built/src/GenerativeArtMachine/Edition.js';
 
 function expectedTreeStringResult() {
   let string = `└──input\n ⋮└──classe1\n ⋮ ⋮└──background\n ⋮ ⋮ ⋮└──original\n ⋮ ⋮ ⋮ ⋮├──Background_1.png\n ⋮ ⋮ ⋮ ⋮├──Background_2.png\n ⋮ ⋮ ⋮ ⋮├──Background_3.png\n ⋮ ⋮ ⋮ ⋮├──Background_4.png\n ⋮ ⋮ ⋮ ⋮└──Background_5.png\n ⋮ ⋮ ⋮└──rare\n ⋮ ⋮ ⋮ ⋮├──Background1.png\n ⋮ ⋮ ⋮ ⋮└──Background2.png\n ⋮ ⋮ ⋮└──super_rare\n ⋮ ⋮ ⋮ ⋮└──Background1.png\n ⋮ ⋮└──circle\n ⋮ ⋮ ⋮└──original\n ⋮ ⋮ ⋮ ⋮├──Circle1.png\n ⋮ ⋮ ⋮ ⋮├──Circle2.png\n ⋮ ⋮ ⋮ ⋮├──Circle3.png\n ⋮ ⋮ ⋮ ⋮├──Circle4.png\n ⋮ ⋮ ⋮ ⋮└──Circle5.png\n ⋮ ⋮ ⋮└──rare\n ⋮ ⋮ ⋮ ⋮├──Circle1.png\n ⋮ ⋮ ⋮ ⋮└──Circle2.png\n ⋮ ⋮ ⋮└──super_rare\n ⋮ ⋮ ⋮ ⋮└──Circle1.png\n ⋮ ⋮└──innercircle\n ⋮ ⋮ ⋮└──original\n ⋮ ⋮ ⋮ ⋮├──InnerCircle1.png\n ⋮ ⋮ ⋮ ⋮├──InnerCircle2.png\n ⋮ ⋮ ⋮ ⋮├──InnerCircle3.png\n ⋮ ⋮ ⋮ ⋮├──InnerCircle4.png\n ⋮ ⋮ ⋮ ⋮└──InnerCircle5.png\n ⋮ ⋮ ⋮└──rare\n ⋮ ⋮ ⋮ ⋮├──InnerCircle1.png\n ⋮ ⋮ ⋮ ⋮└──InnerCircle2.png\n ⋮ ⋮ ⋮└──super_rare\n ⋮ ⋮ ⋮ ⋮└──InnerCircle1.png`;
@@ -56,11 +57,10 @@ const SYMBOL = 'CLZ';
 const SUPPLY = 1000;
 const BASEURI = 'http://some.mighty.path';
 const DESCRIPTION = 'description of my beautiful collection.';
-const PATH =
-  '/Users/WAW/Documents/Projects/__EXTERNAL_APP_RESOURCES/generative-art/Squares';
+const APP_RESOURCES = '/Users/WAW/Documents/Projects/__EXTERNAL_APP_RESOURCES';
+const PATH = APP_RESOURCES + '/generative-art/Squares';
+const OUTPUTPATH = APP_RESOURCES + '/generative-art/Squares/output';
 const TYPE = 'Element';
-const OUTPUTPATH =
-  '/Users/WAW/Documents/Projects/__EXTERNAL_APP_RESOURCES/generative-art/Squares/output';
 const WIDTH = 1000;
 const HEIGHT = 1000;
 
@@ -76,19 +76,19 @@ let newCollection = new Collection(
   WIDTH,
   HEIGHT
 );
-log(newCollection.nodes.length);
-// let newCollection2 = new Collection(
-//   'bla',
-//   'sym',
-//   1000,
-//   'baseURi',
-//   'ma che figata',
-//   '/Users/WAW/Documents/Projects/__EXTERNAL_APP_RESOURCES/generative-art/Squares',
-//   'Edition',
-//   '/path',
-//   1000,
-//   1000
-// );
+// log(newCollection.nodes.length);
+let newCollection2 = new Collection(
+  'bla',
+  'sym',
+  1000,
+  'baseURi',
+  'ma che figata',
+  '/Users/WAW/Documents/Projects/__EXTERNAL_APP_RESOURCES/generative-art/Squares',
+  'Edition',
+  '/path',
+  1000,
+  1000
+);
 let arrayConIlContenutoDellaDirectory = system.readdirSync(PATH);
 // nel caso in cui la lista contenga il file .DS_Store
 if (arrayConIlContenutoDellaDirectory.includes('.DS_Store')) {
@@ -105,7 +105,6 @@ const checkElementsInArrayConstructor = function (elements = [], constructor) {
   });
   return results.some(res => res === false) ? false : true;
 };
-log('ciao');
 
 export let CollectionTest = describe('COLLECTION CLASS', () => {
   describe('COLLECTION CONSTRUCTOR', () => {
@@ -151,6 +150,7 @@ export let CollectionTest = describe('COLLECTION CLASS', () => {
         );
       });
       it(`dovrebbe aver caricato tutti gli elementi`, () => {
+        // log(newCollection.drawer.loadedImages);
         expect(newCollection.drawer.loadedImages.length).to.be.equal(
           newCollection.elements.length
         );
@@ -188,7 +188,7 @@ export let CollectionTest = describe('COLLECTION CLASS', () => {
         expect(results.some(res => res === false)).to.be.false;
       });
       it(`dovrebbe avere una proprietà type`, () => {
-        log(newCollection.rarities);
+        // log(newCollection.rarities);
       });
     });
     describe(`Getter property 'layers'`, () => {
@@ -259,10 +259,10 @@ export let CollectionTest = describe('COLLECTION CLASS', () => {
         );
       });
     });
-    describe.only(`Getter property 'possibiliDna'`, () => {
+    describe(`Getter property 'possibiliDna'`, () => {
       it(`dovrebbe creare una lista con tutte le combinazioni possibili`, () => {
         let result = newCollection.possibiliDna;
-        log(result[0].dna);
+        // log(result[0].dna);
         expect(result.length).to.be.equal(512);
       });
     });
@@ -343,8 +343,8 @@ export let CollectionTest = describe('COLLECTION CLASS', () => {
     });
     describe(`Method creaEdizione()`, () => {
       it(`Dovrebbe tornare un array contenente un dna a caso fra quelli possibili.`, () => {
-        let dna = newCollection.creaEdizione();
-        expect(zionUtil.checkObjectConstructor(dna, Dna)).to.be.true;
+        let edition = newCollection.creaEdizione();
+        expect(zionUtil.checkObjectConstructor(edition, Edition)).to.be.true;
       });
       it(`dovrebbe continuare l'estrazione di elementi in modo da esaurire piano piano tutte le possibili combinazioni`, () => {
         //
@@ -359,23 +359,27 @@ export let CollectionTest = describe('COLLECTION CLASS', () => {
     });
     describe(`Method creaEdizioneNVolte()`, () => {
       it(`dovrebbe effettuare piu volte l'estrazione fra i possibili dna`, () => {
-        log(newCollection.picker.estrazione.elementiRimanenti.length);
+        expect(
+          newCollection.picker.estrazione.elementiRimanenti.length
+        ).to.be.equal(510);
         let dnas = newCollection.creaEdizioneNVolte(10);
-        log(dnas);
-        log(newCollection.picker.estrazione.elementiRimanenti.length);
+        expect(dnas.length).to.be.equal(10);
+        expect(
+          newCollection.picker.estrazione.elementiRimanenti.length
+        ).to.be.equal(500);
       });
       it(`newPicker`, () => {
         let picker = newCollection.picker;
         let dnaPossibili = newCollection.possibiliDna;
-        let newPicker = newCollection.newPicker;
+        // let newPicker = newCollection.newPicker;
         let ep = picker.estrazione;
-        // let enp = newPicker.estrazione;
         let {
           arrayOriginale: aop,
           elementiEstratti: eiep,
           elementiRimanenti: eirp,
           elementoEstratto: eep,
         } = ep;
+        // let enp = newPicker.estrazione;
         // let {
         //   arrayOriginale: aonp,
         //   elementiEstratti: eienp,
@@ -383,8 +387,8 @@ export let CollectionTest = describe('COLLECTION CLASS', () => {
         //   elementoEstratto: eenp,
         // } = enp;
         // log(eirnp.length);
-        log(eirp.length);
-        log(dnaPossibili.length);
+        expect(eirp.length).to.be.equal(500);
+        expect(dnaPossibili.length).to.be.equal(512);
       });
     });
   });
@@ -410,7 +414,7 @@ export let CollectionTest = describe('COLLECTION CLASS', () => {
     it(`task description`, () => {
       let classes = newCollection.classes;
       let primaClasse = classes[0];
-      log(primaClasse);
+      // log(primaClasse);
     });
   });
 });

@@ -4,6 +4,15 @@ import { CanvasProperties, CanvasContext } from './CanvasProperties.js';
 import { Collection, ICollection } from './Collection';
 import { Size, ISize } from './Size.js';
 
+export class LoadedImage {
+  elementName;
+  canvasLoadImage;
+  constructor(elementName?: string, image?: Promise<Image>) {
+    this.elementName = elementName;
+    this.canvasLoadImage = image;
+  }
+}
+
 let GeneratorMachine = Generator.default;
 interface ICanvasProperty {
   context: CanvasContext;
@@ -86,9 +95,9 @@ export class Drawer implements IDrawer {
    * @param {*} context
    */
   constructor(
-    width = 1000,
-    heigth = 1000,
-    context: CanvasContext,
+    public width: number = 1000,
+    public heigth: number = 1000,
+    public context: CanvasContext,
     collection: Collection
   ) {
     this.#canvasProperties = new CanvasProperties(context, width, heigth);

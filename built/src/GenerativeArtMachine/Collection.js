@@ -1,6 +1,6 @@
 import { system, } from '@zionstate/system';
 import { SmartContract } from './SmartContract.js';
-import { Drawer } from './Drawer.js';
+import { Drawer, LoadedImage } from './Drawer.js';
 import { zionUtil } from '@zionstate_node/zion-util';
 import { Rarity } from './Rarity.js';
 import { Layer } from './Layer.js';
@@ -15,38 +15,27 @@ const Combinator = GeneratorMachine.Combinator;
 const Picker = GeneratorMachine.Picker;
 const Estrazione = GeneratorMachine.Picker.Estrazione;
 export class Collection extends SmartContract {
-    // STATIC \\
     static #collections = [];
-    // PROPERTIES \\
     static get collections() {
         let servedArray = [];
         Collection.#collections.forEach(el => servedArray.push(el));
         Object.freeze(servedArray);
         return servedArray;
     }
-    // METHODS \\
     static collectionExists(name) {
         return Collection.#collections.some(collection => collection.name === name);
     }
     static deleteCollection(name) {
-        // cerca l'indice della collezione tramite il nome
         const indiceDellaCollezione = Collection.#collections.findIndex(element => element.name === name);
-        // se non c'è lancia errore
         if (indiceDellaCollezione <= -1) {
             throw new Error('non esiste una collezione con quel nome');
         }
-        // se c'è cancella l'elemento
         if (indiceDellaCollezione + 1 !== Collection.#collections.length) {
             zionUtil.changePosition(Collection.#collections, indiceDellaCollezione, Collection.#collections.length - 1);
         }
         Collection.#collections.pop();
         return Collection.#collections;
     }
-    // INFOS
-    // #strategy:Function;
-    // newPicker: IPicker<IDna>;
-    picker;
-    // GRAPH
     #id;
     get id() {
         return this.#id;
@@ -64,8 +53,6 @@ export class Collection extends SmartContract {
     #types = ['Edition', 'Element'];
     #type;
     get type() {
-        if (!this.#type)
-            this.#type = 'Edition';
         return this.#type;
     }
     set type(type) {
@@ -144,9 +131,8 @@ export class Collection extends SmartContract {
             for (let element of this.elements) {
                 if (!currentLayer)
                     throw new Error('No Current Layer');
-                if (element.èConnessoA(currentLayer)) {
+                if (element.èConnessoA(currentLayer))
                     elementsOfArray.push(element);
-                }
             }
             result.push(elementsOfArray);
         }
@@ -163,15 +149,11 @@ export class Collection extends SmartContract {
         for (let rarity of this.rarities) {
             let array = this.elementsByLayer;
             let rarityLayers = [];
-            if (!array)
-                throw new Error('no array');
             for (let layer of array) {
                 let elementsOfLayerByRarity = [];
-                for (let element of layer) {
-                    if (element.èConnessoA(rarity)) {
+                for (let element of layer)
+                    if (element.èConnessoA(rarity))
                         elementsOfLayerByRarity.push(element);
-                    }
-                }
                 rarityLayers.push(elementsOfLayerByRarity);
             }
             result.push(rarityLayers);
@@ -192,36 +174,27 @@ export class Collection extends SmartContract {
             let servedArray = combinations.map(e => new Dna(e, 'name'));
             result.push(servedArray);
         };
-        if (this.elementsByLayerByRarity)
-            this.elementsByLayerByRarity.forEach(creaEAggiungi);
+        this.elementsByLayerByRarity.forEach(creaEAggiungi);
         return result;
     }
-    /**
-     * @param {string} name nome della collezione
-     * @param {string} path percorso della cartella contenente i dati della collezione
-     * @param {string} baseUri percorso base per gli oggetti della collezione. Questo dato è quello che apparirà nei metadata degli NFT.
-     */
-    constructor(name, symbol = 'simbolo della collezione che verrà usato per creare i token', supply = 1000, baseURI, description = 'descrizione della collezione che apparirà sulla blockchain', path = 'percorso del root della collezione', type = 'Edition', outputPath = '/Users/WAW/Documents/Projects/zion-GenerativeArtMachine/Machines/GenerativeArtMachine/Machines', width = 1000, height = 1000) {
-        if (!Collection.collectionExists(name)) {
-            super(name, symbol, supply, baseURI, description);
-            let drawer = new Drawer(width, height, '2d', this);
-            this.#path = path;
-            this.#type = type;
-            this.#outputPath = outputPath;
-            this.#drawer = drawer;
-            Collection.#collections.push(this);
-            this.#id = Collection.#collections.length;
-            this.#buildSistemEntities(system.buildTree);
-            this.#loadElements();
-            // this.newPicker = this.#collectionPicker();
-            if (this.possibiliDna)
-                this.picker = new Picker(this.possibiliDna);
-        }
+    picker;
+    constructor(name, symbol, supply, baseURI, description, path, type, outputPath = '/Users/WAW/Documents/Projects/zion-GenerativeArtMachine/Machines/GenerativeArtMachine/Machines', width = 1000, height = 1000) {
+        if (Collection.collectionExists(name))
+            throw new Error('already exists');
+        super(name, symbol, supply, baseURI, description);
+        let drawer = new Drawer(width, height, '2d', this);
+        this.#path = path;
+        this.#type = type;
+        this.#outputPath = outputPath;
+        this.#drawer = drawer;
+        Collection.#collections.push(this);
+        this.#id = Collection.#collections.length;
+        this.#buildSistemEntities(system.buildTree);
+        this.#loadElements();
+        this.picker = new Picker(this.possibiliDna);
+        // this.newPicker = this.#collectionPicker();
     }
     hasDir() {
-        // controllare nel path se esiste una cartella
-        if (!this.outputPath)
-            return;
         const folders = system.arrayOfFoldersInDirectory(this.outputPath);
         return folders.some(element => element.name === this.name);
     }
@@ -230,8 +203,8 @@ export class Collection extends SmartContract {
             throw Error('Non è stato possibile');
         if (!this.hasDir()) {
             system.createNestedDir(this.collectionPath);
-            return this;
         }
+        return this;
     }
     /**
      * Accetta un lista di array, che corrisponde ai layer
@@ -265,7 +238,8 @@ export class Collection extends SmartContract {
         return servedArray;
     }
     creaTutteLeEdizioni() {
-        let serveArray = [];
+        let servedArray = [];
+        return servedArray;
     }
     #buildSistemEntities(strategy) {
         if (!this.path)
@@ -274,7 +248,6 @@ export class Collection extends SmartContract {
         if (!tree)
             return 'no tree';
         let nodes = tree.nodes;
-        console.log(nodes.length);
         let classes = [];
         let layers = [];
         let rarities = [];
@@ -337,16 +310,11 @@ export class Collection extends SmartContract {
             }
         });
         for (let key in rarityServObj) {
-            let newRarity = new Rarity(key, this.#types.findIndex(e => e === this.type));
+            let index = this.#types.findIndex(e => e === this.type);
+            let newRarity = new Rarity(key, index);
             this.#nodes.push(newRarity);
-            const connectToRarity = function (_class) {
-                newRarity.connettiA(_class);
-            };
-            const connectToElement = function (element) {
-                element.connettiA(newRarity);
-            };
-            classes.forEach(connectToRarity);
-            rarityServObj[key].forEach(connectToElement);
+            classes.forEach(_class => newRarity.connettiA(_class));
+            rarityServObj[key].forEach(element => element.connettiA(newRarity));
             rarities.push(newRarity);
         }
         this.#classes = classes;
@@ -355,25 +323,10 @@ export class Collection extends SmartContract {
         this.#layers = layers;
     }
     #loadElements() {
-        if (!this.drawer)
-            throw new Error('no drawer');
         let count = 0;
         this.elements.forEach(async (element) => {
-            class LoadedImage {
-                elementName;
-                canvasLoadImage;
-                constructor(elementName, image) {
-                    this.elementName = elementName;
-                    this.canvasLoadImage = image;
-                }
-            }
             let loadedImage = new LoadedImage();
-            if (!this.drawer)
-                throw new Error('no drawer');
-            if (!element.size)
-                throw new Error('no size');
-            if (element.path)
-                loadedImage.canvasLoadImage = this.drawer.loadImage(element.path);
+            loadedImage.canvasLoadImage = this.drawer.loadImage(element.path);
             loadedImage.elementName = element.name;
             element.loadedImageIndex = count;
             count++;

@@ -1,6 +1,6 @@
 {
-  "name": "@zionapp/generativeartwork",
-  "version": "0.0.1",
+  "name": "@zionapp/generative-artwork",
+  "version": "0.0.132",
   "description": "",
   "main": "index.js",
   "scripts": {

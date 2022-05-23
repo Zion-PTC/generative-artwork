@@ -3,10 +3,16 @@ import * as Canvas from '@zionrepack/canvas';
 import { CanvasProperties, CanvasContext } from './CanvasProperties.js';
 import { Collection } from './Collection';
 import { ISize } from './Size.js';
+export declare class LoadedImage {
+    elementName: string | undefined;
+    canvasLoadImage: Promise<import("canvas").Image> | undefined;
+    constructor(elementName?: string, image?: Promise<Image>);
+}
 interface ICanvasProperty {
     context: CanvasContext;
     size: ISize;
 }
+declare type Image = Canvas.Image;
 export interface IDrawer {
     get canvasProperties(): ICanvasProperty;
     set canvasProperties(canvasProperties: ICanvasProperty);
@@ -29,6 +35,9 @@ export interface IDrawer {
 }
 export declare class Drawer implements IDrawer {
     #private;
+    width: number;
+    heigth: number;
+    context: CanvasContext;
     get canvasProperties(): CanvasProperties;
     get canvas(): import("canvas").Canvas;
     get loadedImages(): Promise<Canvas.Image>[];
@@ -45,7 +54,7 @@ export declare class Drawer implements IDrawer {
      * @param {number} heigth
      * @param {*} context
      */
-    constructor(width: number | undefined, heigth: number | undefined, context: CanvasContext, collection: Collection);
+    constructor(width: number, heigth: number, context: CanvasContext, collection: Collection);
     /**
      *
      * @param {Element} element - Oggetto contente le informazioni sull'elemento

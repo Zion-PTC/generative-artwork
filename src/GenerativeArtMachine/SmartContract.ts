@@ -3,13 +3,25 @@ export interface ISmartContract {
   symbol: string;
   get supply(): number;
   set supply(supply: number);
-  get type(): number;
-  set type(type: number);
+  get type(): string;
+  set type(type: string);
 }
 
 export class SmartContract {
   #supply: number;
-  #type: unknown;
+  get supply() {
+    return this.#supply;
+  }
+  set supply(supply) {
+    this.#supply = supply;
+  }
+  #type?: string;
+  get type() {
+    return this.#type;
+  }
+  set type(type) {
+    this.#type = type;
+  }
   constructor(
     public name: string,
     public symbol: string,
@@ -22,17 +34,5 @@ export class SmartContract {
     this.#supply = supply;
     this.baseURI = baseURI;
     this.description = description;
-  }
-  get supply() {
-    return this.#supply;
-  }
-  set supply(supply) {
-    this.#supply = supply;
-  }
-  get type() {
-    return this.#type;
-  }
-  set type(type) {
-    this.#type = type;
   }
 }

@@ -4,7 +4,19 @@ export class SmartContract {
     baseURI;
     description;
     #supply;
+    get supply() {
+        return this.#supply;
+    }
+    set supply(supply) {
+        this.#supply = supply;
+    }
     #type;
+    get type() {
+        return this.#type;
+    }
+    set type(type) {
+        this.#type = type;
+    }
     constructor(name, symbol, supply, baseURI, description) {
         this.name = name;
         this.symbol = symbol;
@@ -15,17 +27,5 @@ export class SmartContract {
         this.#supply = supply;
         this.baseURI = baseURI;
         this.description = description;
-    }
-    get supply() {
-        return this.#supply;
-    }
-    set supply(supply) {
-        this.#supply = supply;
-    }
-    get type() {
-        return this.#type;
-    }
-    set type(type) {
-        this.#type = type;
     }
 }

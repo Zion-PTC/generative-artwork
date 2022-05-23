@@ -8,7 +8,7 @@ import {
   IRoot,
 } from '@zionstate/system';
 import { SmartContract, ISmartContract } from './SmartContract.js';
-import { Drawer, IDrawer } from './Drawer.js';
+import { Drawer, IDrawer, LoadedImage } from './Drawer.js';
 import { zionUtil } from '@zionstate_node/zion-util';
 import { Rarity, IRarity } from './Rarity.js';
 import { Layer, ILayer } from './Layer.js';
@@ -66,16 +66,22 @@ type SystemEntities = IClass | IElement | IEdition | ILayer;
 
 type CollectionType = 'Edition' | 'Element';
 /**
- * @param id identificativo della collezione
- *
+ * @param {number} id identificativo della collezione
+ * @param {string} name nome della collezione
+ * @param {string} symbol simbolo della collezione che verrà usato per creare i token
+ * @param {string} supply quantità di token della collezione
+ * @param {string} baseURI percorso base per gli oggetti della collezione. Questo dato è quello che apparirà nei metadata degli NFT.
+ * @param {string} description descrizione della collezione che apparirà sulla blockchain
+ * @param {string} path percorso del root della collezione contenente i dati della collezione
+ * @param {string} type tipo di collezione ('Edition' o 'Element')
  */
 export interface ICollection extends ISmartContract {
   get id();
   set id(id: number);
-  set type(type: number);
   get path(): string;
   set path(path: string);
-  get type(): number;
+  get type(): string;
+  set type(type: string);
   get outputPath(): string;
   set outputPath(outputPath: string);
   get drawer(): IDrawer;
@@ -86,44 +92,37 @@ export interface ICollection extends ISmartContract {
   get nodes(): ISystemEntity<SystemEntities>[];
   set nodes(node: ISystemEntity<SystemEntities>[]);
   get collectionPath(): string;
-  get nodeNames(): string;
-  get nodesIds(): number;
+  get nodeNames(): string[];
+  get nodesIds(): (string | number)[];
   get elementsByLayer(): IElement[][];
-  get elementsByLayerByRarity(): IElement[][];
+  get elementsByLayerByRarity(): IElement[][][];
   get possibiliDna(): IDna[];
   get possibiliDnaPerRarità(): IDna[][];
   hasDir(): boolean;
-  creaDirectory(): ICollection;
+  creaDirectory(): Collection;
   creaEdizione(classe: IClass): IEdition;
-  creaEdizioneNVolte(volte: number): IEdition[];
+  creaEdizioneNVolte(volte: number, classe: IClass): IEdition[];
   creaTutteLeEdizioni(): IEdition[];
-  //
 }
 
-export class Collection extends SmartContract {
-  // STATIC \\
+export class Collection extends SmartContract implements ICollection {
   static #collections: Collection[] = [];
-  // PROPERTIES \\
   static get collections() {
     let servedArray: Collection[] = [];
     Collection.#collections.forEach(el => servedArray.push(el));
     Object.freeze(servedArray);
     return servedArray;
   }
-  // METHODS \\
   static collectionExists(name: string) {
     return Collection.#collections.some(collection => collection.name === name);
   }
   static deleteCollection(name: string) {
-    // cerca l'indice della collezione tramite il nome
     const indiceDellaCollezione = Collection.#collections.findIndex(
       element => element.name === name
     );
-    // se non c'è lancia errore
     if (indiceDellaCollezione <= -1) {
       throw new Error('non esiste una collezione con quel nome');
     }
-    // se c'è cancella l'elemento
     if (indiceDellaCollezione + 1 !== Collection.#collections.length) {
       zionUtil.changePosition(
         Collection.#collections,
@@ -134,12 +133,7 @@ export class Collection extends SmartContract {
     Collection.#collections.pop();
     return Collection.#collections;
   }
-  // INFOS
-  // #strategy:Function;
-  // newPicker: IPicker<IDna>;
-  picker: IPicker<IDna> | undefined;
-  // GRAPH
-  #id?: string | number;
+  #id: number;
   get id() {
     return this.#id;
   }
@@ -154,9 +148,8 @@ export class Collection extends SmartContract {
     this.#path = path;
   }
   #types = ['Edition', 'Element'];
-  #type: string | undefined;
+  #type: string;
   get type() {
-    if (!this.#type) this.#type = 'Edition';
     return this.#type;
   }
   set type(type: string) {
@@ -173,7 +166,7 @@ export class Collection extends SmartContract {
   set outputPath(outputPath) {
     this.#outputPath = outputPath;
   }
-  #drawer: IDrawer | undefined;
+  #drawer: IDrawer;
   get drawer() {
     return this.#drawer;
   }
@@ -234,9 +227,7 @@ export class Collection extends SmartContract {
       const currentLayer = layersStack.shift();
       for (let element of this.elements) {
         if (!currentLayer) throw new Error('No Current Layer');
-        if (element.èConnessoA(currentLayer)) {
-          elementsOfArray.push(element);
-        }
+        if (element.èConnessoA(currentLayer)) elementsOfArray.push(element);
       }
       result.push(elementsOfArray);
     }
@@ -253,14 +244,10 @@ export class Collection extends SmartContract {
     for (let rarity of this.rarities) {
       let array = this.elementsByLayer;
       let rarityLayers: IElement[][] = [];
-      if (!array) throw new Error('no array');
       for (let layer of array) {
         let elementsOfLayerByRarity: IElement[] = [];
-        for (let element of layer) {
-          if (element.èConnessoA(rarity)) {
-            elementsOfLayerByRarity.push(element);
-          }
-        }
+        for (let element of layer)
+          if (element.èConnessoA(rarity)) elementsOfLayerByRarity.push(element);
         rarityLayers.push(elementsOfLayerByRarity);
       }
       result.push(rarityLayers);
@@ -281,55 +268,46 @@ export class Collection extends SmartContract {
       let servedArray: IDna[] = combinations.map(e => new Dna(e, 'name'));
       result.push(servedArray);
     };
-    if (this.elementsByLayerByRarity)
-      this.elementsByLayerByRarity.forEach(creaEAggiungi);
+    this.elementsByLayerByRarity.forEach(creaEAggiungi);
     return result;
   }
-  /**
-   * @param {string} name nome della collezione
-   * @param {string} path percorso della cartella contenente i dati della collezione
-   * @param {string} baseUri percorso base per gli oggetti della collezione. Questo dato è quello che apparirà nei metadata degli NFT.
-   */
+  picker: IPicker<IDna>;
   constructor(
     name: string,
-    symbol: string = 'simbolo della collezione che verrà usato per creare i token',
-    supply: number = 1000,
+    symbol: string,
+    supply: number,
     baseURI: URL,
-    description: string = 'descrizione della collezione che apparirà sulla blockchain',
-    path: string = 'percorso del root della collezione',
-    type: 'Edition' | 'Element' = 'Edition',
+    description: string,
+    path: string,
+    type: 'Edition' | 'Element',
     outputPath: string = '/Users/WAW/Documents/Projects/zion-GenerativeArtMachine/Machines/GenerativeArtMachine/Machines',
     width = 1000,
     height = 1000
   ) {
-    if (!Collection.collectionExists(name)) {
-      super(name, symbol, supply, baseURI, description);
-      let drawer = new Drawer(width, height, '2d', this);
-      this.#path = path;
-      this.#type = type;
-      this.#outputPath = outputPath;
-      this.#drawer = drawer;
-      Collection.#collections.push(this);
-      this.#id = Collection.#collections.length;
-      this.#buildSistemEntities(system.buildTree);
-      this.#loadElements();
-      // this.newPicker = this.#collectionPicker();
-      if (this.possibiliDna) this.picker = new Picker<IDna>(this.possibiliDna);
-    }
+    if (Collection.collectionExists(name)) throw new Error('already exists');
+    super(name, symbol, supply, baseURI, description);
+    let drawer = new Drawer(width, height, '2d', this);
+    this.#path = path;
+    this.#type = type;
+    this.#outputPath = outputPath;
+    this.#drawer = drawer;
+    Collection.#collections.push(this);
+    this.#id = Collection.#collections.length;
+    this.#buildSistemEntities(system.buildTree);
+    this.#loadElements();
+    this.picker = new Picker<IDna>(this.possibiliDna);
+    // this.newPicker = this.#collectionPicker();
   }
-  hasDir(): boolean | undefined {
-    // controllare nel path se esiste una cartella
-    if (!this.outputPath) return;
+  hasDir(): boolean {
     const folders = system.arrayOfFoldersInDirectory(this.outputPath);
-
     return folders.some(element => element.name === this.name);
   }
-  creaDirectory() {
+  creaDirectory(): Collection {
     if (this.hasDir()) throw Error('Non è stato possibile');
     if (!this.hasDir()) {
       system.createNestedDir(this.collectionPath);
-      return this;
     }
+    return this;
   }
   /**
    * Accetta un lista di array, che corrisponde ai layer
@@ -340,7 +318,6 @@ export class Collection extends SmartContract {
     let strategy = classe,
       nuovaEstrazione,
       PATH;
-
     if (this.picker)
       nuovaEstrazione = this.picker.scegliACasoETogliElementoDaArray();
     const NAME = 'name';
@@ -370,16 +347,15 @@ export class Collection extends SmartContract {
     }
     return servedArray;
   }
-  creaTutteLeEdizioni() {
-    let serveArray = [];
+  creaTutteLeEdizioni(): IEdition[] {
+    let servedArray: IEdition[] = [];
+    return servedArray;
   }
   #buildSistemEntities(strategy: typeof system.buildTree) {
     if (!this.path) return 'no path';
     let tree = strategy(this.path);
     if (!tree) return 'no tree';
     let nodes: (ITreeNode | IFile | IFolder | IRoot)[] = tree.nodes;
-    console.log(nodes.length);
-
     let classes: IClass[] = [];
     let layers: ILayer[] = [];
     let rarities: IRarity[] = [];
@@ -454,19 +430,11 @@ export class Collection extends SmartContract {
       }
     });
     for (let key in rarityServObj) {
-      let newRarity: IRarity = new Rarity(
-        key,
-        this.#types.findIndex(e => e === this.type)
-      );
+      let index = this.#types.findIndex(e => e === this.type);
+      let newRarity: IRarity = new Rarity(key, index);
       this.#nodes.push(newRarity);
-      const connectToRarity = function (_class: IClass) {
-        newRarity.connettiA(_class);
-      };
-      const connectToElement = function (element: IElement) {
-        element.connettiA(newRarity);
-      };
-      classes.forEach(connectToRarity);
-      rarityServObj[key].forEach(connectToElement);
+      classes.forEach(_class => newRarity.connettiA(_class));
+      rarityServObj[key].forEach(element => element.connettiA(newRarity));
       rarities.push(newRarity);
     }
     this.#classes = classes;
@@ -474,31 +442,19 @@ export class Collection extends SmartContract {
     this.#rarities = rarities;
     this.#layers = layers;
   }
-  #loadElements() {
-    if (!this.drawer) throw new Error('no drawer');
+  #loadElements(): Promise<Image>[] {
     let count = 0;
     this.elements.forEach(async element => {
-      class LoadedImage {
-        elementName;
-        canvasLoadImage;
-        constructor(elementName?: string, image?: Promise<Image>) {
-          this.elementName = elementName;
-          this.canvasLoadImage = image;
-        }
-      }
       let loadedImage = new LoadedImage();
-      if (!this.drawer) throw new Error('no drawer');
-      if (!element.size) throw new Error('no size');
-      if (element.path)
-        loadedImage.canvasLoadImage = this.drawer.loadImage(element.path);
+      loadedImage.canvasLoadImage = this.drawer!.loadImage(element.path!);
       loadedImage.elementName = element.name;
       element.loadedImageIndex = count;
       count++;
-      this.drawer.loadedImages.push(loadedImage.canvasLoadImage!);
-      element.size.width = (await loadedImage.canvasLoadImage!).width;
-      element.size.height = (await loadedImage.canvasLoadImage!).height;
+      this.drawer!.loadedImages.push(loadedImage.canvasLoadImage!);
+      element.size!.width = (await loadedImage.canvasLoadImage!).width;
+      element.size!.height = (await loadedImage.canvasLoadImage!).height;
     });
-    return this.drawer.loadedImages;
+    return this.drawer!.loadedImages;
   }
   #collectionPicker() {
     class Metodo {
