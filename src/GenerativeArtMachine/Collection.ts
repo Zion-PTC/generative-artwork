@@ -29,40 +29,71 @@ const Picker = GeneratorMachine.Picker;
 const Estrazione = GeneratorMachine.Picker.Estrazione;
 
 type SystemEntities = IClass | IElement | IEdition | ILayer;
-// class MetodoScelta {
-//   static #metodiScelta = [];
-//   static get metodiScelta() {
-//     let copiedArray = [];
-//     this.#metodiScelta.forEach((metodo) =>
-//       copiedArray.push(metodo)
-//     );
-//     return this.#metodiScelta;
-//   }
-//   constructor() {
-//     this.metodoScelta = null;
-//     MetodoScelta.#metodiScelta.push(this);
-//   }
-//   assegnaMetodoScelta(metodo) {
-//     this.metodoScelta = metodo;
-//   }
-//   scegliElemento() {
-//     return this.metodoScelta();
-//   }
-//   static scegliMetodo(type) {
-//     return MetodoScelta.metodiScelta.find(
-//       (metodo) => metodo.name === type
-//     );
-//   }
-// }
-// const metodoScelta = new MetodoScelta();
-// metodoScelta.assegnaMetodoScelta(metodoEdition);
-// metodoScelta.assegnaMetodoScelta(metodoElemento);
+class MetodoScelta {
+  static #metodiScelta: MetodoScelta[] = [];
+  static get metodiScelta() {
+    let copiedArray = [];
+    this.#metodiScelta.forEach(metodo => copiedArray.push(metodo));
+    return this.#metodiScelta;
+  }
+  static scegliMetodo(type: 'Edition' | 'Element') {
+    return MetodoScelta.metodiScelta.find(metodo => metodo.name === type);
+  }
+  constructor(public name?: string, public metodoScelta?: Function) {
+    MetodoScelta.#metodiScelta.push(this);
+  }
+  assegnaMetodoScelta(metodo: Function) {
+    this.metodoScelta = metodo;
+  }
+  scegliElemento() {
+    if (!this.metodoScelta) throw new Error('no method');
+    return this.metodoScelta();
+  }
+}
+const metodoScelta = new MetodoScelta();
+function metodoEdition() {}
+function metodoElemento() {}
+metodoScelta.assegnaMetodoScelta(metodoEdition);
+metodoScelta.assegnaMetodoScelta(metodoElemento);
 
-// const collectionPicker = function (type) {
-//   const metodo = Metodo.findMetodo(type);
-//   metodoScelta.assegnaMetodoScelta(metodo);
-//   return metodo.metodo();
-// };
+class Metodo {
+  name: string;
+  metodo: Function;
+  static #metodi: Metodo[] = [];
+  static get metodi() {
+    return Metodo.#metodi;
+  }
+  static findMetodo(name: string): Function {
+    if (!Metodo.#metodi) throw new Error('no metodi');
+    let res: Metodo | undefined = Metodo.#metodi.find(
+      metodo => metodo.name === name
+    );
+    if (!res) throw new Error('no match');
+    return res.metodo;
+  }
+  constructor(name: string, metodo: Function) {
+    this.name = name;
+    this.metodo = metodo;
+    Metodo.#metodi.push(this);
+  }
+}
+
+const collectionPicker = function (type: string) {
+  const metodo = Metodo.findMetodo(type);
+  metodoScelta.assegnaMetodoScelta(metodo);
+  return metodo;
+};
+
+class StrategiaDiScelta {
+  constructor(public strategia?: Function) {}
+  assegnaStrategia(metodo: Function) {
+    this.strategia = metodo;
+    return this;
+  }
+  picker() {
+    if (this.strategia) return this.strategia();
+  }
+}
 
 type CollectionType = 'Edition' | 'Element';
 /**
@@ -457,32 +488,6 @@ export class Collection extends SmartContract implements ICollection {
     return this.drawer!.loadedImages;
   }
   #collectionPicker() {
-    class Metodo {
-      name: string;
-      metodo: Function;
-      static #metodi: Metodo[] = [];
-      static get metodi() {
-        return Metodo.#metodi;
-      }
-      static findMetodo(name: string): Metodo | undefined {
-        if (!Metodo.#metodi) throw new Error('no metodi');
-        return Metodo.#metodi.find(metodo => metodo.name === name);
-      }
-      constructor(name: string, metodo: Function) {
-        this.name = name;
-        this.metodo = metodo;
-        Metodo.#metodi.push(this);
-      }
-    }
-    class StrategiaDiScelta {
-      constructor(public strategia?: Function) {}
-      assegnaStrategia(metodo: Metodo) {
-        return (this.strategia = metodo.metodo);
-      }
-      picker() {
-        if (this.strategia) return this.strategia();
-      }
-    }
     new Metodo('Edition', this.#metodoEdition);
     new Metodo('Element', this.#metodoElement);
     const metodo = Metodo.findMetodo(this.type);

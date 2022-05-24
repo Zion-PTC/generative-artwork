@@ -4,22 +4,25 @@ import { CanvasProperties, CanvasContext } from './CanvasProperties.js';
 import { Collection, ICollection } from './Collection';
 import { Size, ISize } from './Size.js';
 
-export class LoadedImage {
-  elementName;
-  canvasLoadImage;
-  constructor(elementName?: string, image?: Promise<Image>) {
-    this.elementName = elementName;
-    this.canvasLoadImage = image;
-  }
-}
-
+type Image = Canvas.Image;
 let GeneratorMachine = Generator.default;
-interface ICanvasProperty {
+const { createCanvas, loadImage } = Canvas.default;
+
+export type drawImage = {
+  (
+    loadedImage: Buffer,
+    x: number,
+    y: number,
+    width: number,
+    height: number
+  ): IDrawer;
+};
+
+export interface ICanvasProperty {
   context: CanvasContext;
   size: ISize;
 }
 
-type Image = Canvas.Image;
 export interface IDrawer {
   get canvasProperties(): ICanvasProperty;
   set canvasProperties(canvasProperties);
@@ -36,58 +39,60 @@ export interface IDrawer {
   randomBackground(): void;
   signImage(sig: string): void;
   loadImage(path: string): Promise<Canvas.Image>;
-  drawImage(
-    loadedImage: Buffer,
-    x: number,
-    y: number,
-    width: number,
-    height: number
-  ): void;
+  drawImage: drawImage;
   getImageSize(path: String): Promise<ISize>;
   printImage(): IDrawer;
 }
 
-const { createCanvas, loadImage } = Canvas.default;
+export class LoadedImage {
+  elementName;
+  canvasLoadImage;
+  constructor(elementName?: string, image?: Promise<Image>) {
+    this.elementName = elementName;
+    this.canvasLoadImage = image;
+  }
+}
+
 export class Drawer implements IDrawer {
   #canvasProperties: CanvasProperties;
-  #canvasPropertiesWidth: number;
-  #canvasPropertiesHeight: number;
-  #canvas: Canvas.Canvas;
-  #ctx: Canvas.CanvasRenderingContext2D;
-  #collection: Collection;
-  #loadedImages: Promise<Canvas.Image>[] = [];
   get canvasProperties() {
     return this.#canvasProperties;
   }
+  #canvas: Canvas.Canvas;
   get canvas() {
     return this.#canvas;
   }
+  #loadedImages: Promise<Canvas.Image>[] = [];
   get loadedImages() {
     return this.#loadedImages;
   }
+  set loadedImages(image: Promise<Canvas.Image>[]) {
+    this.#loadedImages.push(...image);
+  }
+  #collection: Collection;
   get collection() {
     return this.#collection;
   }
+  set collection(collection) {
+    this.#collection = collection;
+  }
+  #ctx: Canvas.CanvasRenderingContext2D;
   get ctx() {
     return this.#ctx;
   }
+  #canvasPropertiesWidth: number;
   get canvasPropertiesWidth() {
     return this.#canvasPropertiesWidth;
   }
   set canvasPropertiesWidth(width: number) {
     this.#canvasProperties.size.width = width;
   }
+  #canvasPropertiesHeight: number;
   get canvasPropertiesHeight() {
     return this.#canvasPropertiesHeight;
   }
   set canvasPropertiesHeight(height: number) {
     this.#canvasProperties.size.height = height;
-  }
-  set loadedImages(image: Promise<Canvas.Image>[]) {
-    this.#loadedImages.push(...image);
-  }
-  set collection(collection) {
-    this.#collection = collection;
   }
   /**
    * @param {number} width : 1000; larghezza del canvas legaro al drawer
@@ -104,20 +109,9 @@ export class Drawer implements IDrawer {
     this.#canvasPropertiesWidth = width;
     this.#canvasPropertiesHeight = heigth;
     this.#collection = collection;
-    // this.loadedElements = [];
     this.#canvas = createCanvas(width, heigth, 'svg');
     this.#ctx = this.canvas.getContext(this.canvasProperties.context);
   }
-  /**
-   *
-   * @param {Element} element - Oggetto contente le informazioni sull'elemento
-   * @param {buffer} element.loadedImage -
-   * @param {buffer} element.layer.position.x -
-   * @param {buffer} element.layer.position.y -
-   * @param {buffer} element.layer.size.width -
-   * @param {buffer} element.layer.size.heigth -
-   *
-   */
   randomBackground() {
     this.ctx.fillStyle = GeneratorMachine.color();
     this.ctx.fillRect(
@@ -135,7 +129,7 @@ export class Drawer implements IDrawer {
     this.ctx.fillText(sig, 40, 40);
   };
   /**
-   * carica l'immagine in pkg per poi imprimerla tramite ctx.drawImage()
+   * Carica l'immagine in pkg per poi imprimerla tramite ctx.drawImage()
    * @param {string} path percorso dell'immagine da caricare
    * nella memoria di pkg
    * @returns {pkg.Image} ritorna un oggetto pkg.Image
@@ -161,7 +155,8 @@ export class Drawer implements IDrawer {
     width: number,
     heigth: number
   ) => {
-    return this.ctx.drawImage(loadedImage, x, y, width, heigth);
+    this.ctx.drawImage(loadedImage, x, y, width, heigth);
+    return this;
   };
   async getImageSize(path: string): Promise<ISize> {
     let size = new Size();

@@ -14,6 +14,77 @@ let GeneratorMachine = Generator.default;
 const Combinator = GeneratorMachine.Combinator;
 const Picker = GeneratorMachine.Picker;
 const Estrazione = GeneratorMachine.Picker.Estrazione;
+class MetodoScelta {
+    name;
+    metodoScelta;
+    static #metodiScelta = [];
+    static get metodiScelta() {
+        let copiedArray = [];
+        this.#metodiScelta.forEach(metodo => copiedArray.push(metodo));
+        return this.#metodiScelta;
+    }
+    static scegliMetodo(type) {
+        return MetodoScelta.metodiScelta.find(metodo => metodo.name === type);
+    }
+    constructor(name, metodoScelta) {
+        this.name = name;
+        this.metodoScelta = metodoScelta;
+        MetodoScelta.#metodiScelta.push(this);
+    }
+    assegnaMetodoScelta(metodo) {
+        this.metodoScelta = metodo;
+    }
+    scegliElemento() {
+        if (!this.metodoScelta)
+            throw new Error('no method');
+        return this.metodoScelta();
+    }
+}
+const metodoScelta = new MetodoScelta();
+function metodoEdition() { }
+function metodoElemento() { }
+metodoScelta.assegnaMetodoScelta(metodoEdition);
+metodoScelta.assegnaMetodoScelta(metodoElemento);
+class Metodo {
+    name;
+    metodo;
+    static #metodi = [];
+    static get metodi() {
+        return Metodo.#metodi;
+    }
+    static findMetodo(name) {
+        if (!Metodo.#metodi)
+            throw new Error('no metodi');
+        let res = Metodo.#metodi.find(metodo => metodo.name === name);
+        if (!res)
+            throw new Error('no match');
+        return res.metodo;
+    }
+    constructor(name, metodo) {
+        this.name = name;
+        this.metodo = metodo;
+        Metodo.#metodi.push(this);
+    }
+}
+const collectionPicker = function (type) {
+    const metodo = Metodo.findMetodo(type);
+    metodoScelta.assegnaMetodoScelta(metodo);
+    return metodo;
+};
+class StrategiaDiScelta {
+    strategia;
+    constructor(strategia) {
+        this.strategia = strategia;
+    }
+    assegnaStrategia(metodo) {
+        this.strategia = metodo;
+        return this;
+    }
+    picker() {
+        if (this.strategia)
+            return this.strategia();
+    }
+}
 export class Collection extends SmartContract {
     static #collections = [];
     static get collections() {
@@ -337,37 +408,6 @@ export class Collection extends SmartContract {
         return this.drawer.loadedImages;
     }
     #collectionPicker() {
-        class Metodo {
-            name;
-            metodo;
-            static #metodi = [];
-            static get metodi() {
-                return Metodo.#metodi;
-            }
-            static findMetodo(name) {
-                if (!Metodo.#metodi)
-                    throw new Error('no metodi');
-                return Metodo.#metodi.find(metodo => metodo.name === name);
-            }
-            constructor(name, metodo) {
-                this.name = name;
-                this.metodo = metodo;
-                Metodo.#metodi.push(this);
-            }
-        }
-        class StrategiaDiScelta {
-            strategia;
-            constructor(strategia) {
-                this.strategia = strategia;
-            }
-            assegnaStrategia(metodo) {
-                return (this.strategia = metodo.metodo);
-            }
-            picker() {
-                if (this.strategia)
-                    return this.strategia();
-            }
-        }
         new Metodo('Edition', this.#metodoEdition);
         new Metodo('Element', this.#metodoElement);
         const metodo = Metodo.findMetodo(this.type);

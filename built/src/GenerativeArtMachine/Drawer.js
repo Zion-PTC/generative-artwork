@@ -2,6 +2,8 @@ import * as Canvas from '@zionrepack/canvas';
 import * as Generator from '@zionstate/generator';
 import { CanvasProperties } from './CanvasProperties.js';
 import { Size } from './Size.js';
+let GeneratorMachine = Generator.default;
+const { createCanvas, loadImage } = Canvas.default;
 export class LoadedImage {
     elementName;
     canvasLoadImage;
@@ -10,51 +12,49 @@ export class LoadedImage {
         this.canvasLoadImage = image;
     }
 }
-let GeneratorMachine = Generator.default;
-const { createCanvas, loadImage } = Canvas.default;
 export class Drawer {
     width;
     heigth;
     context;
     #canvasProperties;
-    #canvasPropertiesWidth;
-    #canvasPropertiesHeight;
-    #canvas;
-    #ctx;
-    #collection;
-    #loadedImages = [];
     get canvasProperties() {
         return this.#canvasProperties;
     }
+    #canvas;
     get canvas() {
         return this.#canvas;
     }
+    #loadedImages = [];
     get loadedImages() {
         return this.#loadedImages;
     }
+    set loadedImages(image) {
+        this.#loadedImages.push(...image);
+    }
+    #collection;
     get collection() {
         return this.#collection;
     }
+    set collection(collection) {
+        this.#collection = collection;
+    }
+    #ctx;
     get ctx() {
         return this.#ctx;
     }
+    #canvasPropertiesWidth;
     get canvasPropertiesWidth() {
         return this.#canvasPropertiesWidth;
     }
     set canvasPropertiesWidth(width) {
         this.#canvasProperties.size.width = width;
     }
+    #canvasPropertiesHeight;
     get canvasPropertiesHeight() {
         return this.#canvasPropertiesHeight;
     }
     set canvasPropertiesHeight(height) {
         this.#canvasProperties.size.height = height;
-    }
-    set loadedImages(image) {
-        this.#loadedImages.push(...image);
-    }
-    set collection(collection) {
-        this.#collection = collection;
     }
     /**
      * @param {number} width : 1000; larghezza del canvas legaro al drawer
@@ -69,20 +69,9 @@ export class Drawer {
         this.#canvasPropertiesWidth = width;
         this.#canvasPropertiesHeight = heigth;
         this.#collection = collection;
-        // this.loadedElements = [];
         this.#canvas = createCanvas(width, heigth, 'svg');
         this.#ctx = this.canvas.getContext(this.canvasProperties.context);
     }
-    /**
-     *
-     * @param {Element} element - Oggetto contente le informazioni sull'elemento
-     * @param {buffer} element.loadedImage -
-     * @param {buffer} element.layer.position.x -
-     * @param {buffer} element.layer.position.y -
-     * @param {buffer} element.layer.size.width -
-     * @param {buffer} element.layer.size.heigth -
-     *
-     */
     randomBackground() {
         this.ctx.fillStyle = GeneratorMachine.color();
         this.ctx.fillRect(0, 0, this.canvasProperties.size.width, this.canvasProperties.size.height);
@@ -95,7 +84,7 @@ export class Drawer {
         this.ctx.fillText(sig, 40, 40);
     };
     /**
-     * carica l'immagine in pkg per poi imprimerla tramite ctx.drawImage()
+     * Carica l'immagine in pkg per poi imprimerla tramite ctx.drawImage()
      * @param {string} path percorso dell'immagine da caricare
      * nella memoria di pkg
      * @returns {pkg.Image} ritorna un oggetto pkg.Image
@@ -115,7 +104,8 @@ export class Drawer {
      * @returns
      */
     drawImage = (loadedImage, x, y, width, heigth) => {
-        return this.ctx.drawImage(loadedImage, x, y, width, heigth);
+        this.ctx.drawImage(loadedImage, x, y, width, heigth);
+        return this;
     };
     async getImageSize(path) {
         let size = new Size();
