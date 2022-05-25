@@ -12,6 +12,7 @@ export class Element extends SystemEntity {
     extension;
     fileSize;
     description;
+    loadedImage;
     constructor(name, path, type, width, height, extension, fileSize, description, loadedImageIndex) {
         super(name, path, type, width, height);
         this.position = new Position(0, 0);

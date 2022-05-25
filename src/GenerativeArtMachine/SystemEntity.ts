@@ -57,7 +57,7 @@ export class SystemEntity<T extends ISystemEntity<T>>
     this.name = name;
     this.path = path;
     this.type = type;
-    // this.size = new Size(width, height);
+    this.size = new Size(width, height);
     SystemEntity.#systemEntities.push(this);
     this.id = SystemEntity.#systemEntities.length;
   }

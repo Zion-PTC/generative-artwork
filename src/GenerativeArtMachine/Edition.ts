@@ -3,6 +3,7 @@ import { Element, IElement } from './Element.js';
 import { SystemEntity, ISystemEntity } from './SystemEntity.js';
 
 export interface IEdition extends ISystemEntity<IEdition> {
+  dna: IDna;
   drawEdition(): void;
 }
 

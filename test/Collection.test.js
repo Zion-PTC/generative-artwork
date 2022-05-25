@@ -416,8 +416,10 @@ export let CollectionTest = describe('COLLECTION CLASS', () => {
       let primaClasse = classes[0];
       // log(primaClasse);
     });
-    it(`some tests`, () => {
-      log(newCollection.report);
+    it(`some tests`, async () => {
+      log(await newCollection.possibiliDna[0].layeredImages);
+      log(newCollection.editionsReport);
+      log(newCollection.picker.estrazione.elementiEstratti.length);
     });
   });
 });

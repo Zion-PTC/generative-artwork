@@ -29,6 +29,19 @@ declare class CollectionReport {
         totali: number;
     }, supply: number, extractableCombinations: IDna[]);
 }
+declare class EditionsReport {
+    #private;
+    collection: string;
+    createdEditions: IEdition[];
+    elementsReport: {
+        [key: string]: string;
+    };
+    set elementUsage(elementUsage: string);
+    get createdEditionsAmount(): number | undefined;
+    constructor(collection: string, createdEditions?: IEdition[], elementsReport?: {
+        [key: string]: string;
+    });
+}
 declare type SystemEntities = IClass | IElement | IEdition | ILayer;
 /**
  * @param {number} id identificativo della collezione
@@ -49,13 +62,17 @@ export interface ICollection extends ISmartContract {
     set type(type: string);
     get outputPath(): string;
     set outputPath(outputPath: string);
+    get editions(): IEdition[];
+    set editions(editions: IEdition[]);
+    get editionsReport(): EditionsReport;
+    set editionsReport(editionReport: EditionsReport);
+    get nodes(): ISystemEntity<SystemEntities>[];
+    set nodes(node: ISystemEntity<SystemEntities>[]);
     get drawer(): IDrawer;
     get rarities(): IRarity[];
     get layers(): ILayer[];
     get elements(): IElement[];
     get classes(): IClass[];
-    get nodes(): ISystemEntity<SystemEntities>[];
-    set nodes(node: ISystemEntity<SystemEntities>[]);
     get collectionPath(): string;
     get nodeNames(): string[];
     get nodesIds(): (string | number)[];
@@ -83,6 +100,12 @@ export declare class Collection extends SmartContract implements ICollection {
     set type(type: string);
     get outputPath(): string;
     set outputPath(outputPath: string);
+    get editions(): IEdition[];
+    set editions(editions: IEdition[]);
+    get nodes(): ISystemEntity<SystemEntities>[];
+    set nodes(nodes: ISystemEntity<SystemEntities>[]);
+    get editionsReport(): EditionsReport;
+    set editionsReport(editionReport: EditionsReport);
     get drawer(): IDrawer;
     get rarities(): IRarity[];
     get layers(): ILayer[];
@@ -91,8 +114,6 @@ export declare class Collection extends SmartContract implements ICollection {
      * @returns {Class[]}
      */
     get classes(): IClass[];
-    get nodes(): ISystemEntity<SystemEntities>[];
-    set nodes(nodes: ISystemEntity<SystemEntities>[]);
     get nodeNames(): string[];
     get nodesIds(): (string | number)[];
     get collectionPath(): string;

@@ -32,6 +32,13 @@ export class Dna {
         });
         return servedArray;
     }
+    get layeredImages() {
+        return new Promise(async (res, rej) => {
+            let map = this.combination.map(element => element.loadedImage?.canvasLoadImage);
+            let result = await Promise.all(map);
+            res(result);
+        });
+    }
     name;
     id;
     constructor(combination = [], name) {

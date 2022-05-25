@@ -34,6 +34,35 @@ class CollectionReport {
         this.extractableCombinations = extractableCombinations;
     }
 }
+class EditionsReport {
+    collection;
+    createdEditions;
+    elementsReport;
+    #elementsUsage = {};
+    set elementUsage(elementUsage) {
+        if (this.#elementsUsage[elementUsage])
+            this.#elementsUsage[elementUsage]++;
+        else
+            this.#elementsUsage[elementUsage] = 1;
+        this.#composeReport();
+    }
+    get createdEditionsAmount() {
+        if (this.createdEditions)
+            return this.createdEditions.length;
+    }
+    constructor(collection, createdEditions = [], elementsReport = {}) {
+        this.collection = collection;
+        this.createdEditions = createdEditions;
+        this.elementsReport = elementsReport;
+    }
+    #composeReport() {
+        for (let key in this.#elementsUsage) {
+            if (this.createdEditionsAmount)
+                this.elementsReport[key] =
+                    (Math.floor((this.#elementsUsage[key] / this.createdEditionsAmount) * 10000) / 100).toString() + ' %';
+        }
+    }
+}
 class MetodoScelta {
     name;
     metodoScelta;
@@ -160,6 +189,31 @@ export class Collection extends SmartContract {
     set outputPath(outputPath) {
         this.#outputPath = outputPath;
     }
+    #editions = [];
+    get editions() {
+        return this.#editions;
+    }
+    set editions(editions) {
+        this.#editions.push(...editions);
+    }
+    #nodes = [];
+    get nodes() {
+        return this.#nodes;
+    }
+    set nodes(nodes) {
+        this.#nodes.push(...nodes);
+    }
+    #editionsReport;
+    get editionsReport() {
+        if (this.#editionsReport)
+            return this.#editionsReport;
+        return new EditionsReport('no report', [
+            new Edition('no name', 'no path', 0, 0, 0, new Dna(undefined, 'noname')),
+        ], { element: 'no element' });
+    }
+    set editionsReport(editionReport) {
+        this.#editionsReport = editionReport;
+    }
     #drawer;
     get drawer() {
         return this.#drawer;
@@ -182,13 +236,6 @@ export class Collection extends SmartContract {
      */
     get classes() {
         return this.#classes;
-    }
-    #nodes = [];
-    get nodes() {
-        return this.#nodes;
-    }
-    set nodes(nodes) {
-        this.#nodes.push(...nodes);
     }
     get nodeNames() {
         let servedArray = [];
@@ -280,6 +327,7 @@ export class Collection extends SmartContract {
             throw new Error('already exists');
         super(name, symbol, supply, baseURI, description);
         let drawer = new Drawer(width, height, '2d', this);
+        this.editionsReport = new EditionsReport(this.name);
         this.#path = path;
         this.#type = type;
         this.#outputPath = outputPath;
@@ -316,13 +364,16 @@ export class Collection extends SmartContract {
         if (this.outputPath)
             PATH = this.outputPath;
         const TYPE = 0;
-        const WIDTH = 0;
-        const HEIGHT = 0;
+        const WIDTH = this.#drawer.canvasPropertiesWidth;
+        const HEIGHT = this.#drawer.canvasPropertiesHeight;
         if (!PATH)
             throw new Error('no path');
         if (nuovaEstrazione?.elementoEstratto === undefined)
             throw new Error('no estrazione');
         let newEdizione = new Edition(NAME, PATH, TYPE, WIDTH, HEIGHT, nuovaEstrazione.elementoEstratto);
+        this.editions = [newEdizione];
+        this.editionsReport.createdEditions = this.editions;
+        nuovaEstrazione.elementoEstratto.combination.forEach(element => (this.editionsReport.elementUsage = element.name));
         return newEdizione;
     }
     creaEdizioneNVolte(volte, classe) {
@@ -339,6 +390,7 @@ export class Collection extends SmartContract {
         return servedArray;
     }
     #buildSistemEntities(strategy) {
+        const index = this.#types.findIndex(e => e === this.type);
         if (!this.path)
             return 'no path';
         let tree = strategy(this.path);
@@ -377,7 +429,7 @@ export class Collection extends SmartContract {
                     // TODO cambiare gli Error
                     // if (!this.#drawer) throw new Error('no drawer');
                     // creo i layer della classe
-                    let newLayer = new Layer(layer.name, layer.path, this.#types.findIndex(e => e === this.type), this.#drawer.canvasPropertiesWidth, this.#drawer.canvasPropertiesHeight);
+                    let newLayer = new Layer(layer.name, layer.path, index, this.#drawer.canvasPropertiesWidth, this.#drawer.canvasPropertiesHeight);
                     // aggiungo layer a lista
                     this.#nodes.push(newLayer);
                     if (!layer.figlio)
@@ -402,7 +454,7 @@ export class Collection extends SmartContract {
                             }
                             layerServedObj[layer.name].push(element.name);
                             // creo gli elementi per ogni rarità
-                            let newElement = new Element(file.name, file.path, this.#types.findIndex(e => e === this.type), this.#drawer.canvasPropertiesWidth, this.#drawer.canvasPropertiesHeight, file.extension, file.fileSize, 'description', 0);
+                            let newElement = new Element(file.name, file.path, index, this.#drawer.canvasPropertiesWidth, this.#drawer.canvasPropertiesHeight, file.extension, file.fileSize, 'description', 0);
                             // aggiungo elemento a lista
                             this.#nodes.push(newElement);
                             // connetto elememto a layer
@@ -419,16 +471,13 @@ export class Collection extends SmartContract {
                 classes.push(newClass);
             }
         });
-        // TODO portare questo blocco nella parte rarity di algo
         for (let key in rarityServObj) {
-            let index = this.#types.findIndex(e => e === this.type);
             let newRarity = new Rarity(key, index);
             this.#nodes.push(newRarity);
             classes.forEach(_class => newRarity.connettiA(_class));
             rarityServObj[key].forEach(element => element.connettiA(newRarity));
             rarities.push(newRarity);
         }
-        console.log(fileCounter);
         this.#classes = classes;
         this.#elements = elements;
         this.#rarities = rarities;
@@ -441,6 +490,7 @@ export class Collection extends SmartContract {
             loadedImage.canvasLoadImage = this.drawer.loadImage(element.path);
             loadedImage.elementName = element.name;
             element.loadedImageIndex = count;
+            element.loadedImage = loadedImage;
             count++;
             this.drawer.loadedImages.push(loadedImage.canvasLoadImage);
             element.size.width = (await loadedImage.canvasLoadImage).width;

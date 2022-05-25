@@ -29,8 +29,6 @@ export class SmartContract {
     public baseURI: URL,
     public description: string
   ) {
-    console.log(name, _supply);
-
     this.name = name;
     this.symbol = symbol;
     this.#supply = _supply;

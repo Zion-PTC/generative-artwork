@@ -1,3 +1,4 @@
+import { Size } from './Size.js';
 export class SystemEntity {
     static #systemEntities = [];
     static get systemEntities() {
@@ -30,7 +31,7 @@ export class SystemEntity {
         this.name = name;
         this.path = path;
         this.type = type;
-        // this.size = new Size(width, height);
+        this.size = new Size(width, height);
         SystemEntity.#systemEntities.push(this);
         this.id = SystemEntity.#systemEntities.length;
     }

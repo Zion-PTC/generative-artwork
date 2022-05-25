@@ -1,3 +1,4 @@
+import { Image } from '@zionrepack/canvas';
 import { zionUtil } from '@zionstate_node/zion-util';
 import { Element, IElement } from './Element.js';
 
@@ -7,6 +8,7 @@ export interface IDna {
   get combination(): IElement[];
   set combination(combination: IElement[]);
   get elementsIds(): (string | number)[];
+  get layeredImages(): Promise<(Image | undefined)[]>;
   haElemento(elemento: IElement): boolean;
 }
 
@@ -43,6 +45,15 @@ export class Dna implements IDna {
       servedArray.push(el.id);
     });
     return servedArray;
+  }
+  get layeredImages(): Promise<(Image | undefined)[]> {
+    return new Promise(async (res, rej) => {
+      let map = this.combination.map(
+        element => element.loadedImage?.canvasLoadImage
+      );
+      let result = await Promise.all(map);
+      res(result);
+    });
   }
   name: string;
   id: number;

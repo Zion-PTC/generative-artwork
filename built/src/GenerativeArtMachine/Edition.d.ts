@@ -1,6 +1,7 @@
 import { IDna } from './Dna.js';
 import { SystemEntity, ISystemEntity } from './SystemEntity.js';
 export interface IEdition extends ISystemEntity<IEdition> {
+    dna: IDna;
     drawEdition(): void;
 }
 export declare class Edition extends SystemEntity<Edition> implements IEdition {

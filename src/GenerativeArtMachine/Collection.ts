@@ -44,6 +44,34 @@ class CollectionReport {
   ) {}
 }
 
+class EditionsReport {
+  #elementsUsage: { [key: string]: number } = {};
+  set elementUsage(elementUsage: string) {
+    if (this.#elementsUsage[elementUsage]) this.#elementsUsage[elementUsage]++;
+    else this.#elementsUsage[elementUsage] = 1;
+    this.#composeReport();
+  }
+  get createdEditionsAmount(): number | undefined {
+    if (this.createdEditions) return this.createdEditions.length;
+  }
+  constructor(
+    public collection: string,
+    public createdEditions: IEdition[] = [],
+    public elementsReport: { [key: string]: string } = {}
+  ) {}
+  #composeReport() {
+    for (let key in this.#elementsUsage) {
+      if (this.createdEditionsAmount)
+        this.elementsReport[key] =
+          (
+            Math.floor(
+              (this.#elementsUsage[key] / this.createdEditionsAmount) * 10000
+            ) / 100
+          ).toString() + ' %';
+    }
+  }
+}
+
 type SystemEntities = IClass | IElement | IEdition | ILayer;
 class MetodoScelta {
   static #metodiScelta: MetodoScelta[] = [];
@@ -131,13 +159,18 @@ export interface ICollection extends ISmartContract {
   set type(type: string);
   get outputPath(): string;
   set outputPath(outputPath: string);
+  get editions(): IEdition[];
+  set editions(editions: IEdition[]);
+  get editionsReport(): EditionsReport;
+  set editionsReport(editionReport: EditionsReport);
+  get nodes(): ISystemEntity<SystemEntities>[];
+  set nodes(node: ISystemEntity<SystemEntities>[]);
+  // READ ONLY
   get drawer(): IDrawer;
   get rarities(): IRarity[];
   get layers(): ILayer[];
   get elements(): IElement[];
   get classes(): IClass[];
-  get nodes(): ISystemEntity<SystemEntities>[];
-  set nodes(node: ISystemEntity<SystemEntities>[]);
   get collectionPath(): string;
   get nodeNames(): string[];
   get nodesIds(): (string | number)[];
@@ -214,6 +247,41 @@ export class Collection extends SmartContract implements ICollection {
   set outputPath(outputPath) {
     this.#outputPath = outputPath;
   }
+  #editions: IEdition[] = [];
+  get editions(): IEdition[] {
+    return this.#editions;
+  }
+  set editions(editions: IEdition[]) {
+    this.#editions.push(...editions);
+  }
+  #nodes: ISystemEntity<SystemEntities>[] = [];
+  get nodes() {
+    return this.#nodes;
+  }
+  set nodes(nodes: ISystemEntity<SystemEntities>[]) {
+    this.#nodes.push(...nodes);
+  }
+  #editionsReport?: EditionsReport;
+  get editionsReport(): EditionsReport {
+    if (this.#editionsReport) return this.#editionsReport;
+    return new EditionsReport(
+      'no report',
+      [
+        new Edition(
+          'no name',
+          'no path',
+          0,
+          0,
+          0,
+          new Dna(undefined, 'noname')
+        ),
+      ],
+      { element: 'no element' }
+    );
+  }
+  set editionsReport(editionReport: EditionsReport) {
+    this.#editionsReport = editionReport;
+  }
   #drawer: IDrawer;
   get drawer() {
     return this.#drawer;
@@ -236,13 +304,6 @@ export class Collection extends SmartContract implements ICollection {
    */
   get classes() {
     return this.#classes;
-  }
-  #nodes: ISystemEntity<SystemEntities>[] = [];
-  get nodes() {
-    return this.#nodes;
-  }
-  set nodes(nodes: ISystemEntity<SystemEntities>[]) {
-    this.#nodes.push(...nodes);
   }
   get nodeNames() {
     let servedArray: string[] = [];
@@ -354,6 +415,7 @@ export class Collection extends SmartContract implements ICollection {
     if (Collection.collectionExists(name)) throw new Error('already exists');
     super(name, symbol, supply, baseURI, description);
     let drawer = new Drawer(width, height, '2d', this);
+    this.editionsReport = new EditionsReport(this.name);
     this.#path = path;
     this.#type = type;
     this.#outputPath = outputPath;
@@ -390,8 +452,8 @@ export class Collection extends SmartContract implements ICollection {
     const NAME = 'name';
     if (this.outputPath) PATH = this.outputPath;
     const TYPE = 0;
-    const WIDTH = 0;
-    const HEIGHT = 0;
+    const WIDTH = this.#drawer.canvasPropertiesWidth;
+    const HEIGHT = this.#drawer.canvasPropertiesHeight;
     if (!PATH) throw new Error('no path');
     if (nuovaEstrazione?.elementoEstratto === undefined)
       throw new Error('no estrazione');
@@ -402,6 +464,11 @@ export class Collection extends SmartContract implements ICollection {
       WIDTH,
       HEIGHT,
       nuovaEstrazione.elementoEstratto
+    );
+    this.editions = [newEdizione];
+    this.editionsReport.createdEditions = this.editions;
+    nuovaEstrazione.elementoEstratto.combination.forEach(
+      element => (this.editionsReport.elementUsage = element.name)
     );
     return newEdizione;
   }
@@ -419,6 +486,7 @@ export class Collection extends SmartContract implements ICollection {
     return servedArray;
   }
   #buildSistemEntities(strategy: typeof system.buildTree) {
+    const index = this.#types.findIndex(e => e === this.type);
     if (!this.path) return 'no path';
     let tree = strategy(this.path);
     if (!tree) return 'no tree';
@@ -459,7 +527,7 @@ export class Collection extends SmartContract implements ICollection {
           let newLayer = new Layer(
             layer.name,
             layer.path,
-            this.#types.findIndex(e => e === this.type),
+            index,
             this.#drawer.canvasPropertiesWidth,
             this.#drawer.canvasPropertiesHeight
           );
@@ -485,7 +553,7 @@ export class Collection extends SmartContract implements ICollection {
               let newElement = new Element(
                 file.name,
                 file.path,
-                this.#types.findIndex(e => e === this.type),
+                index,
                 this.#drawer.canvasPropertiesWidth,
                 this.#drawer.canvasPropertiesHeight,
                 file.extension,
@@ -503,23 +571,19 @@ export class Collection extends SmartContract implements ICollection {
               elements.push(newElement);
             }
           }
-
           newLayer.connettiA(newClass);
           layers.push(newLayer);
         }
         classes.push(newClass);
       }
     });
-    // TODO portare questo blocco nella parte rarity di algo
     for (let key in rarityServObj) {
-      let index = this.#types.findIndex(e => e === this.type);
       let newRarity: IRarity = new Rarity(key, index);
       this.#nodes.push(newRarity);
       classes.forEach(_class => newRarity.connettiA(_class));
       rarityServObj[key].forEach(element => element.connettiA(newRarity));
       rarities.push(newRarity);
     }
-    console.log(fileCounter);
     this.#classes = classes;
     this.#elements = elements;
     this.#rarities = rarities;
@@ -532,6 +596,7 @@ export class Collection extends SmartContract implements ICollection {
       loadedImage.canvasLoadImage = this.drawer!.loadImage(element.path!);
       loadedImage.elementName = element.name;
       element.loadedImageIndex = count;
+      element.loadedImage = loadedImage;
       count++;
       this.drawer!.loadedImages.push(loadedImage.canvasLoadImage!);
       element.size!.width = (await loadedImage.canvasLoadImage!).width;
