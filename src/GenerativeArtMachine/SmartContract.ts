@@ -25,13 +25,15 @@ export class SmartContract {
   constructor(
     public name: string,
     public symbol: string,
-    supply: number,
+    public _supply: number,
     public baseURI: URL,
     public description: string
   ) {
+    console.log(name, _supply);
+
     this.name = name;
     this.symbol = symbol;
-    this.#supply = supply;
+    this.#supply = _supply;
     this.baseURI = baseURI;
     this.description = description;
   }

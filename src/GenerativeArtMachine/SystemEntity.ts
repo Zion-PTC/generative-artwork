@@ -43,8 +43,8 @@ export class SystemEntity<T extends ISystemEntity<T>>
   }
   id: number | string;
   name: string;
-  path?: string;
   type: number;
+  path?: string;
   size?: ISize;
   listaDiLati: ISystemEntity<T>[] = [];
   constructor(

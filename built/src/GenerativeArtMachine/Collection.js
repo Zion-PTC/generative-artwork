@@ -14,6 +14,26 @@ let GeneratorMachine = Generator.default;
 const Combinator = GeneratorMachine.Combinator;
 const Picker = GeneratorMachine.Picker;
 const Estrazione = GeneratorMachine.Picker.Estrazione;
+class CollectionReport {
+    name;
+    classes;
+    rarities;
+    layers;
+    elements;
+    possibleCombinations;
+    supply;
+    extractableCombinations;
+    constructor(name, classes, rarities, layers, elements, possibleCombinations, supply, extractableCombinations) {
+        this.name = name;
+        this.classes = classes;
+        this.rarities = rarities;
+        this.layers = layers;
+        this.elements = elements;
+        this.possibleCombinations = possibleCombinations;
+        this.supply = supply;
+        this.extractableCombinations = extractableCombinations;
+    }
+}
 class MetodoScelta {
     name;
     metodoScelta;
@@ -248,6 +268,12 @@ export class Collection extends SmartContract {
         this.elementsByLayerByRarity.forEach(creaEAggiungi);
         return result;
     }
+    get report() {
+        let report, servedRarityObj = {};
+        this.possibiliDnaPerRarità.forEach((rarità, index) => (servedRarityObj[index.toString()] = rarità.length));
+        report = new CollectionReport(this.name, this.classes.map((classe, index) => [index, classe.name]), this.rarities.map((rarity, index) => [index, rarity.name]), this.layers.map((layer, index) => [index, layer.name]), this.elements.map((element, index) => [index, element.name]), { perLayer: servedRarityObj, totali: this.possibiliDna.length }, this.supply, []);
+        return report;
+    }
     picker;
     constructor(name, symbol, supply, baseURI, description, path, type, outputPath = '/Users/WAW/Documents/Projects/zion-GenerativeArtMachine/Machines/GenerativeArtMachine/Machines', width = 1000, height = 1000) {
         if (Collection.collectionExists(name))
@@ -334,30 +360,40 @@ export class Collection extends SmartContract {
             if (node.depth === 1)
                 classServedObj[node.name] = [];
         });
+        let fileCounter = 0;
         nodes.forEach(node => {
             if (node.depth === 1) {
                 let currentClass = node;
-                let newClass = new Class(currentClass.name, currentClass.path, this.type === 'Edition' ? 0 : 1, 0, 0);
+                // creo classe per ogni cartella con depth 1
+                let newClass = new Class(currentClass.name, currentClass.path, 
+                // TODO cambiare type da number a string?
+                this.type === 'Edition' ? 0 : 1, 0, 0);
+                // aggiungo classe a lista
                 this.#nodes.push(newClass);
+                //
                 if (!currentClass.figlio)
                     throw new Error('no figlio');
                 for (let layer of currentClass.figlio) {
                     // TODO cambiare gli Error
-                    if (!this.#drawer)
-                        throw new Error('no drawer');
+                    // if (!this.#drawer) throw new Error('no drawer');
+                    // creo i layer della classe
                     let newLayer = new Layer(layer.name, layer.path, this.#types.findIndex(e => e === this.type), this.#drawer.canvasPropertiesWidth, this.#drawer.canvasPropertiesHeight);
+                    // aggiungo layer a lista
                     this.#nodes.push(newLayer);
                     if (!layer.figlio)
                         throw new Error('no figlio');
+                    // controllo le rarità
                     for (let rarity of layer.figlio) {
                         if (!rarity.figlio)
                             throw new Error('no figlio');
                         for (let element of rarity.figlio) {
+                            fileCounter++;
+                            // controllo che sia un TreeNode di tipo IFile
                             let file;
                             if ('extension' in element) {
                                 file = element;
                                 if (!file.extension)
-                                    throw new Error('no exetension');
+                                    throw new Error('no extension');
                                 if (!file.fileSize)
                                     throw new Error('no fileSize');
                             }
@@ -365,10 +401,13 @@ export class Collection extends SmartContract {
                                 throw new Error('not a File');
                             }
                             layerServedObj[layer.name].push(element.name);
-                            // qui potrei creare gli elementi
+                            // creo gli elementi per ogni rarità
                             let newElement = new Element(file.name, file.path, this.#types.findIndex(e => e === this.type), this.#drawer.canvasPropertiesWidth, this.#drawer.canvasPropertiesHeight, file.extension, file.fileSize, 'description', 0);
+                            // aggiungo elemento a lista
                             this.#nodes.push(newElement);
+                            // connetto elememto a layer
                             newElement.connettiA(newLayer);
+                            // connetto elememto a classe
                             newElement.connettiA(newClass);
                             rarityServObj[rarity.name].push(newElement);
                             elements.push(newElement);
@@ -380,6 +419,7 @@ export class Collection extends SmartContract {
                 classes.push(newClass);
             }
         });
+        // TODO portare questo blocco nella parte rarity di algo
         for (let key in rarityServObj) {
             let index = this.#types.findIndex(e => e === this.type);
             let newRarity = new Rarity(key, index);
@@ -388,6 +428,7 @@ export class Collection extends SmartContract {
             rarityServObj[key].forEach(element => element.connettiA(newRarity));
             rarities.push(newRarity);
         }
+        console.log(fileCounter);
         this.#classes = classes;
         this.#elements = elements;
         this.#rarities = rarities;

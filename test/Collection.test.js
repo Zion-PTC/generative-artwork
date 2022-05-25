@@ -54,7 +54,7 @@ const _ROOT = 'root';
 
 const NAME = 'Collezione';
 const SYMBOL = 'CLZ';
-const SUPPLY = 1000;
+const SUPPLY = 250;
 const BASEURI = 'http://some.mighty.path';
 const DESCRIPTION = 'description of my beautiful collection.';
 const APP_RESOURCES = '/Users/WAW/Documents/Projects/__EXTERNAL_APP_RESOURCES';
@@ -394,7 +394,7 @@ export let CollectionTest = describe('COLLECTION CLASS', () => {
   });
   describe(`COLLECTION SETTERS`, () => {
     const SUPPLY = 'supply';
-    const VALUE = 1000;
+    const VALUE = 256;
     describe(`Method: set supply()`, () => {
       it(`dovrebbe registrare l'attributo: ${SUPPLY} con un valore uguale a: ${VALUE}`, () => {
         newCollection.supply = VALUE;
@@ -415,6 +415,9 @@ export let CollectionTest = describe('COLLECTION CLASS', () => {
       let classes = newCollection.classes;
       let primaClasse = classes[0];
       // log(primaClasse);
+    });
+    it(`some tests`, () => {
+      log(newCollection.report);
     });
   });
 });

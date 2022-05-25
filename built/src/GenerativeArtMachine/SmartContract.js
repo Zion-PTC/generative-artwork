@@ -1,6 +1,7 @@
 export class SmartContract {
     name;
     symbol;
+    _supply;
     baseURI;
     description;
     #supply;
@@ -17,14 +18,16 @@ export class SmartContract {
     set type(type) {
         this.#type = type;
     }
-    constructor(name, symbol, supply, baseURI, description) {
+    constructor(name, symbol, _supply, baseURI, description) {
         this.name = name;
         this.symbol = symbol;
+        this._supply = _supply;
         this.baseURI = baseURI;
         this.description = description;
+        console.log(name, _supply);
         this.name = name;
         this.symbol = symbol;
-        this.#supply = supply;
+        this.#supply = _supply;
         this.baseURI = baseURI;
         this.description = description;
     }

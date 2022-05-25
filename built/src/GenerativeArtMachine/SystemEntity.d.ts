@@ -18,8 +18,8 @@ export declare class SystemEntity<T extends ISystemEntity<T>> implements ISystem
     static trovaEntitàConnesseA<T extends ISystemEntity<T>>(entità: T): ISystemEntity<T>[] | undefined;
     id: number | string;
     name: string;
-    path?: string;
     type: number;
+    path?: string;
     size?: ISize;
     listaDiLati: ISystemEntity<T>[];
     constructor(name: string, path: string, type: number, width?: number, height?: number);

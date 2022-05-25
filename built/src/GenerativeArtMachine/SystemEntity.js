@@ -22,8 +22,8 @@ export class SystemEntity {
     }
     id;
     name;
-    path;
     type;
+    path;
     size;
     listaDiLati = [];
     constructor(name, path, type, width, height) {

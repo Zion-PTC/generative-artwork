@@ -10,11 +10,12 @@ export declare class SmartContract {
     #private;
     name: string;
     symbol: string;
+    _supply: number;
     baseURI: URL;
     description: string;
     get supply(): number;
     set supply(supply: number);
     get type(): string | undefined;
     set type(type: string | undefined);
-    constructor(name: string, symbol: string, supply: number, baseURI: URL, description: string);
+    constructor(name: string, symbol: string, _supply: number, baseURI: URL, description: string);
 }

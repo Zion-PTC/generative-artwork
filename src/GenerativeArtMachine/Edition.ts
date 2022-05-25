@@ -7,6 +7,7 @@ export interface IEdition extends ISystemEntity<IEdition> {
 }
 
 export class Edition extends SystemEntity<Edition> implements IEdition {
+  static #editions: IEdition[] = [];
   dna: IDna;
   constructor(
     name: string,
@@ -18,6 +19,7 @@ export class Edition extends SystemEntity<Edition> implements IEdition {
   ) {
     super(name, path, type, width, height);
     this.dna = dna;
+    Edition.#editions.push(this);
   }
   drawEdition(): void {}
 }

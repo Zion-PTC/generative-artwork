@@ -1,6 +1,6 @@
 import { ISize } from './Size.js';
 export declare type CanvasContext = '2d';
-interface ICanvasProperty {
+export interface ICanvasProperty {
     context: CanvasContext;
     size: ISize;
 }
@@ -9,4 +9,3 @@ export declare class CanvasProperties implements ICanvasProperty {
     size: ISize;
     constructor(context: CanvasContext, width: number, height: number);
 }
-export {};

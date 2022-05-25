@@ -4,15 +4,12 @@ import { zionUtil } from '../../../telegram-bots/Classes/_Node Standard Modules/
 import { Drawer } from '../../Machines/GenerativeArtMachine/Drawer.js';
 import { system } from '../../Machines/System.js';
 
+// TODO #3 provare se funziona con gli elementi
+
 const testRunner = new Mocha({ slow: 1000 });
-testRunner.suite.emit(
-  'pre-require',
-  global,
-  'nofile',
-  testRunner
-);
+testRunner.suite.emit('pre-require', global, 'nofile', testRunner);
 var suiteRun = testRunner.run();
-process.on('exit', (code) => {
+process.on('exit', code => {
   process.exit(suiteRun.stats.failures > 0);
 });
 let log = zionUtil.debuglog('log');
@@ -37,43 +34,30 @@ export let DrawerTest = describe(`DRAWER CLASS`, () => {
   describe(`DRAWER CONSTRUCTOR`, () => {
     describe(`Oggetto construito con valori default`, () => {
       it(`dovrebbe ritornare width = 1000`, () => {
-        expect(
-          newDefaultDrawer.canvasProperties.size.width
-        ).to.be.equal(1000);
+        expect(newDefaultDrawer.canvasProperties.size.width).to.be.equal(1000);
       });
       it(`dovrebbe ritornare heigth = 1000`, () => {
-        expect(
-          newDefaultDrawer.canvasProperties.size.height
-        ).to.be.equal(1000);
+        expect(newDefaultDrawer.canvasProperties.size.height).to.be.equal(1000);
       });
       it(`dovrebbe ritornare context = '2d'`, () => {
-        expect(
-          newDefaultDrawer.canvasProperties.context
-        ).to.be.equal('2d');
+        expect(newDefaultDrawer.canvasProperties.context).to.be.equal('2d');
       });
     });
     describe(`Oggetto construito con widht: ${width}, height: ${height} e context: ${context}`, () => {
       it(`dovrebbe ritornare width = ${width}`, () => {
-        expect(
-          newDrawer.canvasProperties.size.width
-        ).to.be.equal(width);
+        expect(newDrawer.canvasProperties.size.width).to.be.equal(width);
       });
       it(`dovrebbe ritornare heigth = ${height}`, () => {
-        expect(
-          newDrawer.canvasProperties.size.height
-        ).to.be.equal(height);
+        expect(newDrawer.canvasProperties.size.height).to.be.equal(height);
       });
       it(`dovrebbe ritornare context = ${context}`, () => {
-        expect(
-          newDrawer.canvasProperties.context
-        ).to.be.equal(context);
+        expect(newDrawer.canvasProperties.context).to.be.equal(context);
       });
     });
   });
   describe(`METHODS`, () => {
     let image1 = newDefaultDrawer.loadImage(IMAGE1PATH);
-    let loadedImages =
-      newDefaultDrawer.loadImages(IMAGESPATHS);
+    let loadedImages = newDefaultDrawer.loadImages(IMAGESPATHS);
     describe(`Method loadImage()`, () => {
       it(`dovrebbe completare il caricamento del file dal percorso fornito`, async () => {
         let expectedResult = true;
@@ -106,21 +90,11 @@ export let DrawerTest = describe(`DRAWER CLASS`, () => {
         const FILENAME = 'prova.png';
         const PATH = `${OUTPUTPATH}/${FILENAME}`;
         let image = await image1;
-        newDefaultDrawer.drawImage(
-          image,
-          x,
-          y,
-          width,
-          height
-        );
+        newDefaultDrawer.drawImage(image, x, y, width, height);
         log(newDefaultDrawer.canvas);
-        system.writePng(
-          PATH,
-          newDefaultDrawer.canvas.toBuffer()
-        );
-        expect(system.isFileInFolder(FILENAME, OUTPUTPATH))
-          .to.be.true;
-        let logger = (thisIs) => {
+        system.writePng(PATH, newDefaultDrawer.canvas.toBuffer());
+        expect(system.isFileInFolder(FILENAME, OUTPUTPATH)).to.be.true;
+        let logger = thisIs => {
           log(thisIs);
         };
         system.deleteFile(PATH, logger);

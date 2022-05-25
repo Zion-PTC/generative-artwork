@@ -1,7 +1,8 @@
 import { Size, ISize } from './Size.js';
 
 export type CanvasContext = '2d';
-interface ICanvasProperty {
+
+export interface ICanvasProperty {
   context: CanvasContext;
   size: ISize;
 }

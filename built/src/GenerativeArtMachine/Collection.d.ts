@@ -8,6 +8,27 @@ import { IPicker } from '@zionstate/generator';
 import { IDna } from './Dna.js';
 import { IEdition } from './Edition.js';
 import { ISystemEntity } from './SystemEntity.js';
+declare class CollectionReport {
+    name: string;
+    classes: [number, string][];
+    rarities: [number, string][];
+    layers: [number, string][];
+    elements: [number, string][];
+    possibleCombinations: {
+        perLayer: {
+            [key: string]: number;
+        };
+        totali: number;
+    };
+    supply: number;
+    extractableCombinations: IDna[];
+    constructor(name: string, classes: [number, string][], rarities: [number, string][], layers: [number, string][], elements: [number, string][], possibleCombinations: {
+        perLayer: {
+            [key: string]: number;
+        };
+        totali: number;
+    }, supply: number, extractableCombinations: IDna[]);
+}
 declare type SystemEntities = IClass | IElement | IEdition | ILayer;
 /**
  * @param {number} id identificativo della collezione
@@ -42,6 +63,7 @@ export interface ICollection extends ISmartContract {
     get elementsByLayerByRarity(): IElement[][][];
     get possibiliDna(): IDna[];
     get possibiliDnaPerRarità(): IDna[][];
+    get report(): CollectionReport;
     hasDir(): boolean;
     creaDirectory(): Collection;
     creaEdizione(classe: IClass): IEdition;
@@ -90,6 +112,7 @@ export declare class Collection extends SmartContract implements ICollection {
     get elementsByLayerByRarity(): IElement[][][];
     get possibiliDna(): IDna[];
     get possibiliDnaPerRarità(): IDna[][];
+    get report(): CollectionReport;
     picker: IPicker<IDna>;
     constructor(name: string, symbol: string, supply: number, baseURI: URL, description: string, path: string, type: 'Edition' | 'Element', outputPath?: string, width?: number, height?: number);
     hasDir(): boolean;

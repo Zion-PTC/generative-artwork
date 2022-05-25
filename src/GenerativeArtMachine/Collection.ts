@@ -28,6 +28,22 @@ const Combinator = GeneratorMachine.Combinator;
 const Picker = GeneratorMachine.Picker;
 const Estrazione = GeneratorMachine.Picker.Estrazione;
 
+class CollectionReport {
+  constructor(
+    public name: string,
+    public classes: [number, string][],
+    public rarities: [number, string][],
+    public layers: [number, string][],
+    public elements: [number, string][],
+    public possibleCombinations: {
+      perLayer: { [key: string]: number };
+      totali: number;
+    },
+    public supply: number,
+    public extractableCombinations: IDna[]
+  ) {}
+}
+
 type SystemEntities = IClass | IElement | IEdition | ILayer;
 class MetodoScelta {
   static #metodiScelta: MetodoScelta[] = [];
@@ -129,6 +145,7 @@ export interface ICollection extends ISmartContract {
   get elementsByLayerByRarity(): IElement[][][];
   get possibiliDna(): IDna[];
   get possibiliDnaPerRarità(): IDna[][];
+  get report(): CollectionReport;
   hasDir(): boolean;
   creaDirectory(): Collection;
   creaEdizione(classe: IClass): IEdition;
@@ -302,6 +319,25 @@ export class Collection extends SmartContract implements ICollection {
     this.elementsByLayerByRarity.forEach(creaEAggiungi);
     return result;
   }
+  get report(): CollectionReport {
+    let report: CollectionReport,
+      servedRarityObj: { [key: string]: number } = {};
+    this.possibiliDnaPerRarità.forEach(
+      (rarità, index) => (servedRarityObj[index.toString()] = rarità.length)
+    );
+    report = new CollectionReport(
+      this.name,
+      this.classes.map((classe, index) => [index, classe.name]),
+      this.rarities.map((rarity, index) => [index, rarity.name]),
+      this.layers.map((layer, index) => [index, layer.name]),
+      this.elements.map((element, index) => [index, element.name]),
+      { perLayer: servedRarityObj, totali: this.possibiliDna.length },
+      this.supply,
+      []
+    );
+
+    return report;
+  }
   picker: IPicker<IDna>;
   constructor(
     name: string,
@@ -399,21 +435,27 @@ export class Collection extends SmartContract implements ICollection {
       if (node.depth === 2) layerServedObj[node.name] = [];
       if (node.depth === 1) classServedObj[node.name] = [];
     });
+    let fileCounter = 0;
     nodes.forEach(node => {
       if (node.depth === 1) {
         let currentClass = node;
+        // creo classe per ogni cartella con depth 1
         let newClass = new Class(
           currentClass.name,
           currentClass.path,
+          // TODO cambiare type da number a string?
           this.type === 'Edition' ? 0 : 1,
           0,
           0
         );
+        // aggiungo classe a lista
         this.#nodes.push(newClass);
+        //
         if (!currentClass.figlio) throw new Error('no figlio');
         for (let layer of currentClass.figlio) {
           // TODO cambiare gli Error
-          if (!this.#drawer) throw new Error('no drawer');
+          // if (!this.#drawer) throw new Error('no drawer');
+          // creo i layer della classe
           let newLayer = new Layer(
             layer.name,
             layer.path,
@@ -421,21 +463,25 @@ export class Collection extends SmartContract implements ICollection {
             this.#drawer.canvasPropertiesWidth,
             this.#drawer.canvasPropertiesHeight
           );
+          // aggiungo layer a lista
           this.#nodes.push(newLayer);
           if (!layer.figlio) throw new Error('no figlio');
+          // controllo le rarità
           for (let rarity of layer.figlio) {
             if (!rarity.figlio) throw new Error('no figlio');
             for (let element of rarity.figlio) {
+              fileCounter++;
+              // controllo che sia un TreeNode di tipo IFile
               let file: IFile;
               if ('extension' in element) {
                 file = element;
-                if (!file.extension) throw new Error('no exetension');
+                if (!file.extension) throw new Error('no extension');
                 if (!file.fileSize) throw new Error('no fileSize');
               } else {
                 throw new Error('not a File');
               }
               layerServedObj[layer.name].push(element.name);
-              // qui potrei creare gli elementi
+              // creo gli elementi per ogni rarità
               let newElement = new Element(
                 file.name,
                 file.path,
@@ -447,19 +493,24 @@ export class Collection extends SmartContract implements ICollection {
                 'description',
                 0
               );
+              // aggiungo elemento a lista
               this.#nodes.push(newElement);
+              // connetto elememto a layer
               newElement.connettiA(newLayer);
+              // connetto elememto a classe
               newElement.connettiA(newClass);
               rarityServObj[rarity.name].push(newElement);
               elements.push(newElement);
             }
           }
+
           newLayer.connettiA(newClass);
           layers.push(newLayer);
         }
         classes.push(newClass);
       }
     });
+    // TODO portare questo blocco nella parte rarity di algo
     for (let key in rarityServObj) {
       let index = this.#types.findIndex(e => e === this.type);
       let newRarity: IRarity = new Rarity(key, index);
@@ -468,6 +519,7 @@ export class Collection extends SmartContract implements ICollection {
       rarityServObj[key].forEach(element => element.connettiA(newRarity));
       rarities.push(newRarity);
     }
+    console.log(fileCounter);
     this.#classes = classes;
     this.#elements = elements;
     this.#rarities = rarities;
