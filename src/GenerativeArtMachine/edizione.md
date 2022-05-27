@@ -50,10 +50,40 @@ creerebbe tutte le combinazioni posibili.
 
 ////////////
 
-methods:
+possibili combinazioni rarità nei layer
 
-creaEdizione
-creaNEdizioni
-creaTutteCombinazioni
+0 0 0 ///
+0 0 1
+0 0 2
 
-nel caso in cui
+0 1 0
+0 1 1
+0 1 2
+
+0 2 0
+0 2 1
+0 2 2
+
+1 0 0
+1 0 1
+1 0 2
+
+1 1 0
+1 1 1 ///
+1 1 2
+
+1 2 0
+1 2 1
+1 2 2
+
+2 0 0
+2 0 1
+2 0 2
+
+2 1 0
+2 1 1
+2 1 2
+
+2 2 0
+2 2 1
+2 2 2 ///

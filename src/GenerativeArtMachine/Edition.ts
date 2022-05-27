@@ -3,7 +3,7 @@ import { SystemEntity, ISystemEntity } from './SystemEntity.js';
 
 export interface IEdition extends ISystemEntity<IEdition> {
   dna: IDna;
-  drawEdition(): void;
+  drawEdition(): IEdition;
 }
 
 export class Edition extends SystemEntity<Edition> implements IEdition {
@@ -21,5 +21,8 @@ export class Edition extends SystemEntity<Edition> implements IEdition {
     this.dna = dna;
     Edition.#editions.push(this);
   }
-  drawEdition(): void {}
+  drawEdition(): IEdition {
+    
+    return this
+  }
 }

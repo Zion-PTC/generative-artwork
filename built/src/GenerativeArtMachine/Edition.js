@@ -7,5 +7,7 @@ export class Edition extends SystemEntity {
         this.dna = dna;
         Edition.#editions.push(this);
     }
-    drawEdition() { }
+    drawEdition() {
+        return this;
+    }
 }

@@ -11,8 +11,6 @@ import { Dna } from './Dna.js';
 import { Edition } from './Edition.js';
 import { CollectionReport } from './Collection/CollectionReport.js';
 import { EditionsReport } from './Collection/EditionsReport.js';
-import { Metodo } from './Metodo/Metodo.js';
-import { StrategiaDiScelta } from './Metodo/StratediDiScelta.js';
 let GeneratorMachine = Generator.default;
 const Combinator = GeneratorMachine.Combinator;
 const Picker = GeneratorMachine.Picker;
@@ -118,15 +116,18 @@ export class Collection extends SmartContract {
         return this.#classes;
     }
     /**
-     *
+     * @returns Una lista con i nomi dei nodi inclusi nella
+     * collezione (Elementi, Layers, Rarità, Dna). I nodi sono
+     * elementi di una classe che estende SystemEntity
      */
     get nodeNames() {
         let servedArray = [];
         this.nodes.forEach(node => servedArray.push(node.name));
         return servedArray;
     }
+    // TODO eliminare?
     /**
-     *
+     * @returns Una lista contenente gli id dei nodi
      */
     get nodesIds() {
         let servedArray = [];
@@ -146,15 +147,11 @@ export class Collection extends SmartContract {
      * @returns {Element[]}
      */
     get elementsByLayer() {
-        let result = [];
-        let layersStack = [];
-        const aggiungiALayersStack = function (layer) {
-            layersStack.push(layer);
-        };
-        this.layers.forEach(aggiungiALayersStack);
+        let result = [], layersStack = [];
+        this.layers.forEach(layer => layersStack.push(layer));
         while (layersStack.length) {
-            let elementsOfArray = [];
             const currentLayer = layersStack.shift();
+            let elementsOfArray = [];
             for (let element of this.elements) {
                 if (!currentLayer)
                     throw new Error('No Current Layer');
@@ -165,22 +162,27 @@ export class Collection extends SmartContract {
         }
         return result;
     }
-    // TODO spostare la creazione dei DNA nel costruttore
+    #possibiliDna = [];
     /**
-     *
+     * @returns Una lista dei possibili dna
      */
     get possibiliDna() {
+        let combinations, servedArray, name;
+        const creaDna = this.#creaDna;
         if (!this.elementsByLayer)
             throw new Error('no elements by layer');
-        let combinations = Combinator.generateCombinations(this.elementsByLayer);
-        let servedArray = combinations.map(e => new Dna(e, 'name'));
-        return servedArray;
+        if (this.#possibiliDna.length !== 0)
+            return this.#possibiliDna;
+        combinations = Combinator.generateCombinations(this.elementsByLayer);
+        servedArray = combinations.map(creaDna);
+        this.#possibiliDna = servedArray;
+        return this.#possibiliDna;
     }
     /**
      * @returns Ritorna una lista di tuple
      */
     get gruppiDna() {
-        const rarities = this.rarities, layers = this.layers, possibiliDnaPerLayer = this.possibiliDnaPerLayer, generateCombos = Combinator.generateCombinations;
+        const rarities = this.rarities, layers = this.layers, possibiliDnaPerLayer = this.#possibiliDnaPerLayer, generateCombos = Combinator.generateCombinations;
         let response = [], layersRarities = [];
         layers.forEach(() => layersRarities.push(rarities));
         let rarityLayersCombinations = generateCombos(layersRarities);
@@ -197,7 +199,10 @@ export class Collection extends SmartContract {
         return res;
     }
     /**
-     *
+     * @returns Ritorna una lista di tuple dei gruppi
+     * contentente il nome del gruppo (il nome delle rarità
+     * che lo compongono), la lista dei dna che appartengono
+     * al gruppo e il numero di elementi nel gruppo
      */
     get gruppiDnaImpuri() {
         const controllaPuri = this.#controllaPuri;
@@ -206,7 +211,7 @@ export class Collection extends SmartContract {
         return res;
     }
     /**
-     *
+     * @returns Ritorna un report dettagliato della collezione.
      */
     get report() {
         let report, servedRarityObj = {}, perRarityCount = 0;
@@ -313,7 +318,7 @@ export class Collection extends SmartContract {
     /**
      *
      */
-    possibiliDnaPerLayer = (rarities) => {
+    #possibiliDnaPerLayer = (rarities) => {
         let res = [];
         let checkRaritiesByLayer = (dna) => {
             let resArray = [];
@@ -437,27 +442,6 @@ export class Collection extends SmartContract {
         });
         return this.drawer.loadedImages;
     }
-    // TODO eliminare #collectionPicker?
-    #collectionPicker() {
-        new Metodo('Edition', this.#metodoEdition);
-        new Metodo('Element', this.#metodoElement);
-        const metodo = Metodo.findMetodo(this.type);
-        let strategiaDiScelta = new StrategiaDiScelta();
-        if (!metodo)
-            throw new Error('no metodo');
-        strategiaDiScelta.assegnaStrategia(metodo);
-        return strategiaDiScelta.picker();
-    }
-    #metodoElement = () => {
-        return new Picker(this.possibiliDna);
-    };
-    #metodoEdition = (possibiliDnaPerRarità = []) => {
-        let stack = [];
-        for (let possibilità of possibiliDnaPerRarità) {
-            stack.push(new Picker(possibilità));
-        }
-        return stack;
-    };
     #controllaPuri(gruppo, res = [], negative = false) {
         let set = new Set(), condizione;
         gruppo[0].forEach(name => set.add(name));
@@ -477,5 +461,10 @@ export class Collection extends SmartContract {
         tuple[1] = res;
         tuple[2] = res.length;
         response.push(tuple);
+    }
+    #creaDna(e) {
+        let names = e.map(e => e.name);
+        const concatted = names.join(', ');
+        return new Dna(e, concatted);
     }
 }

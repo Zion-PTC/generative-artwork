@@ -45,8 +45,10 @@ export interface ICollection extends ISmartContract {
     get nodeNames(): string[];
     get nodesIds(): (string | number)[];
     get elementsByLayer(): IElement[][];
-    get gruppiDna(): [string[], IDna[], number][];
     get possibiliDna(): IDna[];
+    get gruppiDna(): [string[], IDna[], number][];
+    get gruppiDnaPuri(): [string[], IDna[], number][];
+    get gruppiDnaImpuri(): [string[], IDna[], number][];
     get report(): CollectionReport;
     hasDir(): boolean;
     creaDirectory(): Collection;
@@ -54,7 +56,6 @@ export interface ICollection extends ISmartContract {
     creaEdizioni(volte: number, classe: IClass): IEdition[];
     creaTutteLeEdizioni(): IEdition[];
     stampaEdizione(edizione: IEdition): Promise<ICollection>;
-    possibiliDnaPerLayer(rarities: IRarity[]): IDna[];
 }
 export declare class Collection extends SmartContract implements ICollection {
     #private;
@@ -81,11 +82,13 @@ export declare class Collection extends SmartContract implements ICollection {
     get elements(): IElement[];
     get classes(): IClass[];
     /**
-     *
+     * @returns Una lista con i nomi dei nodi inclusi nella
+     * collezione (Elementi, Layers, Rarità, Dna). I nodi sono
+     * elementi di una classe che estende SystemEntity
      */
     get nodeNames(): string[];
     /**
-     *
+     * @returns Una lista contenente gli id dei nodi
      */
     get nodesIds(): (string | number)[];
     /**
@@ -100,7 +103,7 @@ export declare class Collection extends SmartContract implements ICollection {
      */
     get elementsByLayer(): IElement[][];
     /**
-     *
+     * @returns Una lista dei possibili dna
      */
     get possibiliDna(): IDna[];
     /**
@@ -112,11 +115,14 @@ export declare class Collection extends SmartContract implements ICollection {
      */
     get gruppiDnaPuri(): [string[], IDna[], number][];
     /**
-     *
+     * @returns Ritorna una lista di tuple dei gruppi
+     * contentente il nome del gruppo (il nome delle rarità
+     * che lo compongono), la lista dei dna che appartengono
+     * al gruppo e il numero di elementi nel gruppo
      */
     get gruppiDnaImpuri(): [string[], IDna[], number][];
     /**
-     *
+     * @returns Ritorna un report dettagliato della collezione.
      */
     get report(): CollectionReport;
     picker: IPicker<IDna>;
@@ -149,9 +155,5 @@ export declare class Collection extends SmartContract implements ICollection {
     creaEdizioni(volte: number, classe: IClass): IEdition[];
     creaTutteLeEdizioni(): IEdition[];
     stampaEdizione(edizione: IEdition): Promise<ICollection>;
-    /**
-     *
-     */
-    possibiliDnaPerLayer: (rarities: IRarity[]) => IDna[];
 }
 export {};
