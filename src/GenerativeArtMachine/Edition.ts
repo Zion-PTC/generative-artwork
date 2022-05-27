@@ -1,5 +1,4 @@
-import { Dna, IDna } from './Dna.js';
-import { Element, IElement } from './Element.js';
+import { IDna } from './Dna.js';
 import { SystemEntity, ISystemEntity } from './SystemEntity.js';
 
 export interface IEdition extends ISystemEntity<IEdition> {

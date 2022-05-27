@@ -246,32 +246,11 @@ export let CollectionTest = describe('COLLECTION CLASS', () => {
         expect(result2.length).to.be.equal(3);
       });
     });
-    describe(`Getter property 'elementsByLayerByRarity'`, () => {
-      it(`dovrebbe tornare gli elementi divisi prima per rarità e in seguito in base al loro layer.`, () => {
-        let listaDiELementiPerRaritàPerLayer =
-          newCollection.elementsByLayerByRarity;
-        expect(Array.isArray(listaDiELementiPerRaritàPerLayer)).to.be.true;
-        expect(listaDiELementiPerRaritàPerLayer.length).to.be.equal(
-          newCollection.rarities.length
-        );
-        expect(listaDiELementiPerRaritàPerLayer[0].length).to.be.equal(
-          newCollection.layers.length
-        );
-      });
-    });
     describe(`Getter property 'possibiliDna'`, () => {
       it(`dovrebbe creare una lista con tutte le combinazioni possibili`, () => {
         let result = newCollection.possibiliDna;
         // log(result[0].dna);
         expect(result.length).to.be.equal(512);
-      });
-    });
-    describe(`Getter property 'possibiliDnaPerRarità'`, () => {
-      it(`dovrebbe tornare un lista di possibilità divise per rarità.`, () => {
-        let result = newCollection.possibiliDnaPerRarità;
-        expect(result[0].length).to.be.equal(125);
-        expect(result[1].length).to.be.equal(8);
-        expect(result[2].length).to.be.equal(1);
       });
     });
   });
@@ -357,12 +336,12 @@ export let CollectionTest = describe('COLLECTION CLASS', () => {
         ).to.be.equal(510);
       });
     });
-    describe(`Method creaEdizioneNVolte()`, () => {
+    describe(`Method creaEdizioni()`, () => {
       it(`dovrebbe effettuare piu volte l'estrazione fra i possibili dna`, () => {
         expect(
           newCollection.picker.estrazione.elementiRimanenti.length
         ).to.be.equal(510);
-        let dnas = newCollection.creaEdizioneNVolte(10);
+        let dnas = newCollection.creaEdizioni(10);
         expect(dnas.length).to.be.equal(10);
         expect(
           newCollection.picker.estrazione.elementiRimanenti.length
@@ -410,16 +389,28 @@ export let CollectionTest = describe('COLLECTION CLASS', () => {
       });
     });
   });
-  describe(`Method methodName`, () => {
-    it(`task description`, () => {
+  describe(`Method stampaEdizione()`, () => {
+    it(`dovrebbe creare un file .png`, () => {
       let classes = newCollection.classes;
       let primaClasse = classes[0];
       // log(primaClasse);
     });
     it(`some tests`, async () => {
-      log(await newCollection.possibiliDna[0].layeredImages);
-      log(newCollection.editionsReport);
-      log(newCollection.picker.estrazione.elementiEstratti.length);
+      const edizione = newCollection.editions[0];
+      const path2 = edizione.path + '/' + edizione.id + '.png';
+      const collection = await newCollection.stampaEdizione(edizione);
+      setTimeout(() => {
+        expect(system.isFileInFolder(edizione.id + '.png', edizione.path)).to.be
+          .true;
+      }, 100);
+      setTimeout(() => {
+        system.deleteFile(path2, () => {});
+      }, 100);
+    });
+  });
+  describe(`Method methodName`, () => {
+    it(`task description`, () => {
+      log(newCollection.possibiliDna);
     });
   });
 });

@@ -44,10 +44,11 @@ export class Size implements ISize {
     this.#width = width;
     this.#height = height;
 
-    // TODO #2 far funzionare ratio
-    // this.#ratio = zionUtil.convertDecimalToFracionString(
-    //   this.#width / this.#height
-    // );
     Size.#sizes.push(this);
+    if (width !== 0 && height !== 0)
+      this.#ratio = zionUtil.convertDecimalToFracionString(
+        this.#width / this.#height
+      );
+    else this.#ratio = `Entity is not an image file`;
   }
 }

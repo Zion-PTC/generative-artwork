@@ -1,8 +1,8 @@
 import { expect } from 'chai';
 import Mocha from 'mocha';
-import { zionUtil } from '../../../telegram-bots/Classes/_Node Standard Modules/zionUtil.js';
-import { Drawer } from '../../Machines/GenerativeArtMachine/Drawer.js';
-import { system } from '../../Machines/System.js';
+import { zionUtil } from '@zionstate_node/zion-util';
+import { Drawer } from '../built/src/GenerativeArtMachine/Drawer.js';
+import { system } from '@zionstate/system';
 
 // TODO #3 provare se funziona con gli elementi
 
@@ -15,12 +15,12 @@ process.on('exit', code => {
 let log = zionUtil.debuglog('log');
 
 const IMAGE1PATH =
-  '/Users/WAW/Documents/Projects/zion-GenerativeArtMachine/input/background/original/Background 1.png';
+  '/Users/WAW/Documents/Projects/__EXTERNAL_APP_RESOURCES/generative-art/Squares/classe1/background/original/Background_1.png';
 const IMAGE2PATH =
-  '/Users/WAW/Documents/Projects/zion-GenerativeArtMachine/input/circle/original/Circle1.png';
+  '/Users/WAW/Documents/Projects/__EXTERNAL_APP_RESOURCES/generative-art/Squares/classe1/circle/original/Circle1.png';
 const IMAGESPATHS = [IMAGE1PATH, IMAGE2PATH];
 const OUTPUTPATH =
-  '/Users/WAW/Documents/Projects/zion-GenerativeArtMachine/output';
+  '/Users/WAW/Documents/Projects/ZION/apps/generative-artwork/test/Drawer/Test_Output';
 
 let newDefaultDrawer = new Drawer();
 let width = 2000;
@@ -57,12 +57,12 @@ export let DrawerTest = describe(`DRAWER CLASS`, () => {
   });
   describe(`METHODS`, () => {
     let image1 = newDefaultDrawer.loadImage(IMAGE1PATH);
-    let loadedImages = newDefaultDrawer.loadImages(IMAGESPATHS);
+    // let loadedImages = newDefaultDrawer.loadImages(IMAGESPATHS);
     describe(`Method loadImage()`, () => {
       it(`dovrebbe completare il caricamento del file dal percorso fornito`, async () => {
         let expectedResult = true;
         let { complete } = await image1;
-        expect(complete).to.be.equal(true);
+        expect(complete).to.be.true;
       });
       it(`dovrebbe aver caricato un immagine con width: 1000.`, async () => {
         let { width } = await image1;
@@ -100,22 +100,22 @@ export let DrawerTest = describe(`DRAWER CLASS`, () => {
         system.deleteFile(PATH, logger);
       });
     });
-    describe(`Method loadImages()`, () => {
-      it(`dovrebbe ritornare un array con le promesse delle immagini caricate.`, async () => {
-        let _loadedImages = await loadedImages;
-        let { complete: complete1 } = _loadedImages[0];
-        let { complete: complete2 } = _loadedImages[1];
-        expect(complete1).to.be.true;
-        expect(complete2).to.be.true;
-      });
-      it(`dovrebbe avere caricato l'immagine con path: ${IMAGE2PATH}`, async () => {
-        let _loadedImages = await loadedImages;
-        let { src } = _loadedImages[1];
-        expect(src).to.be.equal(IMAGE2PATH);
-        _loadedImages.pop();
-        _loadedImages.pop();
-      });
-    });
+    // describe(`Method loadImages()`, () => {
+    //   it.only(`dovrebbe ritornare un array con le promesse delle immagini caricate.`, async () => {
+    //     let _loadedImages = await loadedImages;
+    //     let { complete: complete1 } = _loadedImages[0];
+    //     let { complete: complete2 } = _loadedImages[1];
+    //     expect(complete1).to.be.true;
+    //     expect(complete2).to.be.true;
+    //   });
+    //   it(`dovrebbe avere caricato l'immagine con path: ${IMAGE2PATH}`, async () => {
+    //     let _loadedImages = await loadedImages;
+    //     let { src } = _loadedImages[1];
+    //     expect(src).to.be.equal(IMAGE2PATH);
+    //     _loadedImages.pop();
+    //     _loadedImages.pop();
+    //   });
+    // });
     describe(`Method randomBackground()`, () => {
       it(`dovrebbe generare un elemento canvas con un background generato a caso`, () => {
         //
@@ -128,34 +128,34 @@ export let DrawerTest = describe(`DRAWER CLASS`, () => {
     });
   });
   describe(`GETTER & SETTERS`, () => {
-    describe(`loadedImages`, () => {
-      const VALUE1 = 1;
-      const VALUE2 = 2;
-      const VALUE3 = 3;
-      // nella forma array non può essere usato per
-      // aggiungere element nell'array
-      let array = newDefaultDrawer.loadedImages;
-      it(`dovrebbe aggiungere elementi e ritornare elementi nell'array e dall'array loadedImages`, () => {
-        newDefaultDrawer.loadedImages = VALUE1;
-        newDefaultDrawer.loadedImages = VALUE2;
-        newDefaultDrawer.loadedImages = VALUE3;
-        expect(array.length).to.be.not.null;
-        expect(array[0]).to.be.equal(VALUE1);
-        expect(array[1]).to.be.equal(VALUE2);
-        expect(array[2]).to.be.equal(VALUE3);
-      });
-      it(`dovrebbe togliere un elemento dall'array`, () => {
-        log(array);
-        newDefaultDrawer.loadedImages.pop();
-        expect(array.length).to.be.equal(2);
-        expect(array[0]).to.be.equal(VALUE1);
-        expect(array[1]).to.be.equal(VALUE2);
-        expect(array[2]).to.be.undefined;
-      });
-      newDefaultDrawer.loadedImages.pop();
-      newDefaultDrawer.loadedImages.pop();
-      newDefaultDrawer.loadedImages.pop();
-      log(array);
-    });
+    // describe(`loadedImages`, () => {
+    //   const VALUE1 = 1;
+    //   const VALUE2 = 2;
+    //   const VALUE3 = 3;
+    //   // nella forma array non può essere usato per
+    //   // aggiungere element nell'array
+    //   let array = newDefaultDrawer.loadedImages;
+    //   it.only(`dovrebbe aggiungere elementi e ritornare elementi nell'array e dall'array loadedImages`, () => {
+    //     newDefaultDrawer.loadedImages = VALUE1;
+    //     newDefaultDrawer.loadedImages = VALUE2;
+    //     newDefaultDrawer.loadedImages = VALUE3;
+    //     expect(array.length).to.be.not.null;
+    //     expect(array[0]).to.be.equal(VALUE1);
+    //     expect(array[1]).to.be.equal(VALUE2);
+    //     expect(array[2]).to.be.equal(VALUE3);
+    //   });
+    //   it(`dovrebbe togliere un elemento dall'array`, () => {
+    //     log(array);
+    //     newDefaultDrawer.loadedImages.pop();
+    //     expect(array.length).to.be.equal(2);
+    //     expect(array[0]).to.be.equal(VALUE1);
+    //     expect(array[1]).to.be.equal(VALUE2);
+    //     expect(array[2]).to.be.undefined;
+    //   });
+    //   newDefaultDrawer.loadedImages.pop();
+    //   newDefaultDrawer.loadedImages.pop();
+    //   newDefaultDrawer.loadedImages.pop();
+    //   log(array);
+    // });
   });
 });

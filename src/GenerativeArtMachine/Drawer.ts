@@ -1,16 +1,19 @@
 import * as Canvas from '@zionrepack/canvas';
 import * as Generator from '@zionstate/generator';
+import { system } from '@zionstate/system';
 import { CanvasProperties, CanvasContext } from './CanvasProperties.js';
 import { Collection, ICollection } from './Collection';
+import { IEdition } from './Edition.js';
 import { Size, ISize } from './Size.js';
 
 type Image = Canvas.Image;
+type Canvas = Canvas.Canvas;
 let GeneratorMachine = Generator.default;
 const { createCanvas, loadImage } = Canvas.default;
 
-export type drawImage = {
+export type DrawImage = {
   (
-    loadedImage: Buffer,
+    loadedImage: Image | Canvas,
     x: number,
     y: number,
     width: number,
@@ -36,12 +39,12 @@ export interface IDrawer {
   get collection(): Collection;
   set collection(collection);
   get ctx(): Canvas.CanvasRenderingContext2D;
+  loadImage(path: string): Promise<Canvas.Image>;
+  drawImage: DrawImage;
+  getImageSize(path: String): Promise<ISize>;
+  printImage(edizione: IEdition): Promise<IDrawer | undefined>;
   randomBackground(): void;
   signImage(sig: string): void;
-  loadImage(path: string): Promise<Canvas.Image>;
-  drawImage: drawImage;
-  getImageSize(path: String): Promise<ISize>;
-  printImage(): IDrawer;
 }
 
 export class LoadedImage {
@@ -76,10 +79,10 @@ export class Drawer implements IDrawer {
   set collection(collection) {
     this.#collection = collection;
   }
-  #ctx: Canvas.CanvasRenderingContext2D;
-  get ctx() {
-    return this.#ctx;
-  }
+  // #ctx: Canvas.CanvasRenderingContext2D;
+  // get ctx() {
+  //   return this.#ctx;
+  // }
   #canvasPropertiesWidth: number;
   get canvasPropertiesWidth() {
     return this.#canvasPropertiesWidth;
@@ -99,18 +102,62 @@ export class Drawer implements IDrawer {
    * @param {number} heigth
    * @param {*} context
    */
+  ctx: Canvas.CanvasRenderingContext2D;
   constructor(
     public width: number = 1000,
     public heigth: number = 1000,
-    public context: CanvasContext,
+    public context: CanvasContext = '2d',
     collection: Collection
   ) {
     this.#canvasProperties = new CanvasProperties(context, width, heigth);
     this.#canvasPropertiesWidth = width;
     this.#canvasPropertiesHeight = heigth;
     this.#collection = collection;
-    this.#canvas = createCanvas(width, heigth, 'svg');
-    this.#ctx = this.canvas.getContext(this.canvasProperties.context);
+    this.#canvas = createCanvas(width, heigth);
+    this.ctx = this.canvas.getContext(this.canvasProperties.context);
+  }
+  /**
+   * @param {Buffer} loadedImage immagine caricata da
+   * disegnare nel ctx.
+   * @param {number} dx posizione su asse x
+   * @param {number} dy posizione su asse y
+   * @param {number} dw larghezza
+   * @param {number} dh altezza
+   * @returns
+   */
+  drawImage = (loadedImage: Image | Canvas, dx: number, dy: number) => {
+    console.log();
+
+    let ctx = this.canvas.getContext('2d');
+    ctx.drawImage(loadedImage, dx, dy);
+    return this;
+  };
+  async getImageSize(path: string): Promise<ISize> {
+    let size = new Size();
+    let image = await loadImage(path);
+    size.width = image.width;
+    size.height = image.height;
+    return size;
+  }
+  // TODO #1 fare funzione print image
+  async printImage(edizione: IEdition): Promise<IDrawer | undefined> {
+    try {
+      let path: string, loadedImages: (Image | undefined)[];
+      const drawImage = this.drawImage;
+      if (!edizione.path) return;
+      path = edizione.path + '/' + edizione.id + '.png';
+      loadedImages = await edizione.dna.layeredImages;
+      function draw(image: Image | undefined) {
+        if (!image) return;
+        drawImage(image, 0, 0);
+      }
+      loadedImages.forEach(draw);
+      system.writePng(path, this.canvas.toBuffer('image/png'));
+      console.log('printed', path);
+    } catch (error) {
+      console.log(error);
+    }
+    return this;
   }
   randomBackground() {
     this.ctx.fillStyle = GeneratorMachine.color();
@@ -137,36 +184,5 @@ export class Drawer implements IDrawer {
   async loadImage(path: string): Promise<Canvas.Image> {
     let image = await loadImage(path);
     return image;
-  }
-  /**
-   *
-   * @param {Buffer} loadedImage immagine caricata da
-   * disegnare nel ctx.
-   * @param {number} x posizione su asse x
-   * @param {number} y posizione su asse y
-   * @param {number} width larghezza
-   * @param {number} heigth altezza
-   * @returns
-   */
-  drawImage = (
-    loadedImage: Buffer,
-    x: number,
-    y: number,
-    width: number,
-    heigth: number
-  ) => {
-    this.ctx.drawImage(loadedImage, x, y, width, heigth);
-    return this;
-  };
-  async getImageSize(path: string): Promise<ISize> {
-    let size = new Size();
-    let image = await loadImage(path);
-    size.width = image.width;
-    size.height = image.height;
-    return size;
-  }
-  // TODO #1 fare funzione print image
-  printImage() {
-    return this;
   }
 }

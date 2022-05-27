@@ -99,5 +99,5 @@
     "skipLibCheck": true /* Skip type checking all .d.ts files. */,
     "watch": true
   },
-  "exclude": ["./built/**/*", "./test/**/*", "./test", "@zion"]
+  "exclude": ["./built/**/*", "./test/**/*", "./test", "@zion","./hashlips/**/*"]
 }

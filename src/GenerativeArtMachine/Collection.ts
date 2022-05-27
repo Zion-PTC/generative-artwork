@@ -1,12 +1,4 @@
-import {
-  system,
-  TreeNode,
-  ITree,
-  ITreeNode,
-  IFile,
-  IFolder,
-  IRoot,
-} from '@zionstate/system';
+import { system, ITreeNode, IFile, IFolder, IRoot } from '@zionstate/system';
 import { SmartContract, ISmartContract } from './SmartContract.js';
 import { Drawer, IDrawer, LoadedImage } from './Drawer.js';
 import { zionUtil } from '@zionstate_node/zion-util';
@@ -15,129 +7,23 @@ import { Layer, ILayer } from './Layer.js';
 import { Element, IElement } from './Element.js';
 import { Class, IClass } from './Class.js';
 import * as Generator from '@zionstate/generator';
-import { IEstrazione, IPicker } from '@zionstate/generator';
+import { IPicker } from '@zionstate/generator';
 import { Dna, IDna } from './Dna.js';
 import { Edition, IEdition } from './Edition.js';
 import { ISystemEntity } from './SystemEntity.js';
 import { Image } from '@zionrepack/canvas';
-// import { TreeNode } from '@zionstate/system/built/src/TreeNode';
+import { CollectionReport } from './Collection/CollectionReport.js';
+import { EditionsReport } from './Collection/EditionsReport.js';
+import { Metodo } from './Metodo/Metodo.js';
+import { MetodoScelta } from './Metodo/MetodoScelta.js';
+import { StrategiaDiScelta } from './Metodo/StratediDiScelta.js';
 
 let GeneratorMachine = Generator.default;
 
 const Combinator = GeneratorMachine.Combinator;
 const Picker = GeneratorMachine.Picker;
-const Estrazione = GeneratorMachine.Picker.Estrazione;
-
-class CollectionReport {
-  constructor(
-    public name: string,
-    public classes: [number, string][],
-    public rarities: [number, string][],
-    public layers: [number, string][],
-    public elements: [number, string][],
-    public possibleCombinations: {
-      perLayer: { [key: string]: number };
-      totali: number;
-    },
-    public supply: number,
-    public extractableCombinations: IDna[]
-  ) {}
-}
-
-class EditionsReport {
-  #elementsUsage: { [key: string]: number } = {};
-  set elementUsage(elementUsage: string) {
-    if (this.#elementsUsage[elementUsage]) this.#elementsUsage[elementUsage]++;
-    else this.#elementsUsage[elementUsage] = 1;
-    this.#composeReport();
-  }
-  get createdEditionsAmount(): number | undefined {
-    if (this.createdEditions) return this.createdEditions.length;
-  }
-  constructor(
-    public collection: string,
-    public createdEditions: IEdition[] = [],
-    public elementsReport: { [key: string]: string } = {}
-  ) {}
-  #composeReport() {
-    for (let key in this.#elementsUsage) {
-      if (this.createdEditionsAmount)
-        this.elementsReport[key] =
-          (
-            Math.floor(
-              (this.#elementsUsage[key] / this.createdEditionsAmount) * 10000
-            ) / 100
-          ).toString() + ' %';
-    }
-  }
-}
 
 type SystemEntities = IClass | IElement | IEdition | ILayer;
-class MetodoScelta {
-  static #metodiScelta: MetodoScelta[] = [];
-  static get metodiScelta() {
-    let copiedArray = [];
-    this.#metodiScelta.forEach(metodo => copiedArray.push(metodo));
-    return this.#metodiScelta;
-  }
-  static scegliMetodo(type: 'Edition' | 'Element') {
-    return MetodoScelta.metodiScelta.find(metodo => metodo.name === type);
-  }
-  constructor(public name?: string, public metodoScelta?: Function) {
-    MetodoScelta.#metodiScelta.push(this);
-  }
-  assegnaMetodoScelta(metodo: Function) {
-    this.metodoScelta = metodo;
-  }
-  scegliElemento() {
-    if (!this.metodoScelta) throw new Error('no method');
-    return this.metodoScelta();
-  }
-}
-const metodoScelta = new MetodoScelta();
-function metodoEdition() {}
-function metodoElemento() {}
-metodoScelta.assegnaMetodoScelta(metodoEdition);
-metodoScelta.assegnaMetodoScelta(metodoElemento);
-
-class Metodo {
-  name: string;
-  metodo: Function;
-  static #metodi: Metodo[] = [];
-  static get metodi() {
-    return Metodo.#metodi;
-  }
-  static findMetodo(name: string): Function {
-    if (!Metodo.#metodi) throw new Error('no metodi');
-    let res: Metodo | undefined = Metodo.#metodi.find(
-      metodo => metodo.name === name
-    );
-    if (!res) throw new Error('no match');
-    return res.metodo;
-  }
-  constructor(name: string, metodo: Function) {
-    this.name = name;
-    this.metodo = metodo;
-    Metodo.#metodi.push(this);
-  }
-}
-
-const collectionPicker = function (type: string) {
-  const metodo = Metodo.findMetodo(type);
-  metodoScelta.assegnaMetodoScelta(metodo);
-  return metodo;
-};
-
-class StrategiaDiScelta {
-  constructor(public strategia?: Function) {}
-  assegnaStrategia(metodo: Function) {
-    this.strategia = metodo;
-    return this;
-  }
-  picker() {
-    if (this.strategia) return this.strategia();
-  }
-}
 
 type CollectionType = 'Edition' | 'Element';
 /**
@@ -175,15 +61,16 @@ export interface ICollection extends ISmartContract {
   get nodeNames(): string[];
   get nodesIds(): (string | number)[];
   get elementsByLayer(): IElement[][];
-  get elementsByLayerByRarity(): IElement[][][];
+  get gruppiDna(): [string[], IDna[], number][];
   get possibiliDna(): IDna[];
-  get possibiliDnaPerRarità(): IDna[][];
   get report(): CollectionReport;
   hasDir(): boolean;
   creaDirectory(): Collection;
   creaEdizione(classe: IClass): IEdition;
-  creaEdizioneNVolte(volte: number, classe: IClass): IEdition[];
+  creaEdizioni(volte: number, classe: IClass): IEdition[];
   creaTutteLeEdizioni(): IEdition[];
+  stampaEdizione(edizione: IEdition): Promise<ICollection>;
+  possibiliDnaPerLayer(rarities: IRarity[]): IDna[];
 }
 
 export class Collection extends SmartContract implements ICollection {
@@ -198,19 +85,15 @@ export class Collection extends SmartContract implements ICollection {
     return Collection.#collections.some(collection => collection.name === name);
   }
   static deleteCollection(name: string) {
-    const indiceDellaCollezione = Collection.#collections.findIndex(
-      element => element.name === name
-    );
-    if (indiceDellaCollezione <= -1) {
-      throw new Error('non esiste una collezione con quel nome');
-    }
-    if (indiceDellaCollezione + 1 !== Collection.#collections.length) {
-      zionUtil.changePosition(
-        Collection.#collections,
-        indiceDellaCollezione,
-        Collection.#collections.length - 1
-      );
-    }
+    const ERROR = 'non esiste una collezione con quel nome';
+    const collections = Collection.#collections;
+    const collIndex = collections.findIndex(element => element.name === name);
+    const changePosition = zionUtil.changePosition;
+    const last = collections.length - 1;
+    const check1 = collIndex <= -1;
+    const check2 = collIndex + 1 !== collections.length;
+    if (check1) throw new Error(ERROR);
+    if (check2) changePosition(collections, collIndex, last);
     Collection.#collections.pop();
     return Collection.#collections;
   }
@@ -234,10 +117,10 @@ export class Collection extends SmartContract implements ICollection {
     return this.#type;
   }
   set type(type: string) {
-    if (type)
-      if (!this.#types.includes(type)) {
-        throw new Error('Il tipo selezionato non esiste');
-      }
+    const ERROR1 = 'No argument given',
+      ERROR2 = 'Il tipo selezionato non esiste';
+    if (!type) throw new Error(ERROR1);
+    if (!this.#types.includes(type)) throw new Error(ERROR2);
     this.#type = type;
   }
   #outputPath;
@@ -261,23 +144,9 @@ export class Collection extends SmartContract implements ICollection {
   set nodes(nodes: ISystemEntity<SystemEntities>[]) {
     this.#nodes.push(...nodes);
   }
-  #editionsReport?: EditionsReport;
+  #editionsReport: EditionsReport;
   get editionsReport(): EditionsReport {
-    if (this.#editionsReport) return this.#editionsReport;
-    return new EditionsReport(
-      'no report',
-      [
-        new Edition(
-          'no name',
-          'no path',
-          0,
-          0,
-          0,
-          new Dna(undefined, 'noname')
-        ),
-      ],
-      { element: 'no element' }
-    );
+    return this.#editionsReport;
   }
   set editionsReport(editionReport: EditionsReport) {
     this.#editionsReport = editionReport;
@@ -299,22 +168,28 @@ export class Collection extends SmartContract implements ICollection {
     return this.#elements;
   }
   #classes: IClass[] = [];
-  /**
-   * @returns {Class[]}
-   */
-  get classes() {
+  get classes(): IClass[] {
     return this.#classes;
   }
+  /**
+   *
+   */
   get nodeNames() {
     let servedArray: string[] = [];
     this.nodes.forEach(node => servedArray.push(node.name));
     return servedArray;
   }
+  /**
+   *
+   */
   get nodesIds() {
     let servedArray: (string | number)[] = [];
     this.nodes.forEach(node => servedArray.push(node.id));
     return servedArray;
   }
+  /**
+   *
+   */
   get collectionPath() {
     return `${this.outputPath}/${this.name}`;
   }
@@ -342,64 +217,92 @@ export class Collection extends SmartContract implements ICollection {
     }
     return result;
   }
+  // TODO spostare la creazione dei DNA nel costruttore
   /**
-   * Ritorna un array contenente un array per ogni rarità.
-   * Ogni array a sua volta contiene un array per ogni
-   * layer. Ognuno di questi array contiene gli elementi del
-   * layer raggruppati in sostanza per rarità.
+   *
    */
-  get elementsByLayerByRarity(): IElement[][][] {
-    let result: IElement[][][] = [];
-    for (let rarity of this.rarities) {
-      let array = this.elementsByLayer;
-      let rarityLayers: IElement[][] = [];
-      for (let layer of array) {
-        let elementsOfLayerByRarity: IElement[] = [];
-        for (let element of layer)
-          if (element.èConnessoA(rarity)) elementsOfLayerByRarity.push(element);
-        rarityLayers.push(elementsOfLayerByRarity);
-      }
-      result.push(rarityLayers);
-    }
-    return result;
-  }
   get possibiliDna(): IDna[] {
     if (!this.elementsByLayer) throw new Error('no elements by layer');
     let combinations = Combinator.generateCombinations(this.elementsByLayer);
     let servedArray: IDna[] = combinations.map(e => new Dna(e, 'name'));
     return servedArray;
   }
-  get possibiliDnaPerRarità(): IDna[][] {
-    let result: IDna[][] = [],
-      combinations: IElement[][];
-    const creaEAggiungi = function (elementsByLayer: IElement[][]) {
-      combinations = Combinator.generateCombinations(elementsByLayer);
-      let servedArray: IDna[] = combinations.map(e => new Dna(e, 'name'));
-      result.push(servedArray);
-    };
-    this.elementsByLayerByRarity.forEach(creaEAggiungi);
-    return result;
+  /**
+   * @returns Ritorna una lista di tuple
+   */
+  get gruppiDna(): [string[], IDna[], number][] {
+    const rarities = this.rarities,
+      layers = this.layers,
+      possibiliDnaPerLayer = this.possibiliDnaPerLayer,
+      generateCombos = Combinator.generateCombinations;
+    let response: [string[], IDna[], number][] = [],
+      layersRarities: IRarity[][] = [];
+    layers.forEach(() => layersRarities.push(rarities));
+    let rarityLayersCombinations = generateCombos(layersRarities);
+    rarityLayersCombinations.forEach(e =>
+      this.#possibiliDnaLayer(e, possibiliDnaPerLayer, response)
+    );
+    return response;
   }
+  /**
+   * @returns Ritorna una lista contenente un gruppo di DNA
+   */
+  get gruppiDnaPuri(): [string[], IDna[], number][] {
+    const controllaPuri = this.#controllaPuri;
+    let res: [string[], IDna[], number][] = [];
+    this.gruppiDna.forEach(gruppoDna => controllaPuri(gruppoDna, res));
+    return res;
+  }
+  /**
+   *
+   */
+  get gruppiDnaImpuri(): [string[], IDna[], number][] {
+    const controllaPuri = this.#controllaPuri;
+    let res: [string[], IDna[], number][] = [];
+    this.gruppiDna.forEach(gruppoDna => controllaPuri(gruppoDna, res, true));
+    return res;
+  }
+  /**
+   *
+   */
   get report(): CollectionReport {
     let report: CollectionReport,
-      servedRarityObj: { [key: string]: number } = {};
-    this.possibiliDnaPerRarità.forEach(
-      (rarità, index) => (servedRarityObj[index.toString()] = rarità.length)
+      servedRarityObj: { [key: string]: number } = {},
+      perRarityCount: number = 0;
+    // TODO cambiare la funzione da possibiliDna.. a gruppiDnaPuri
+    this.gruppiDnaPuri.forEach(
+      (tuple, index) => (servedRarityObj[index.toString()] = tuple[2])
     );
+    for (let key in servedRarityObj) {
+      perRarityCount = perRarityCount + servedRarityObj[key];
+    }
+    servedRarityObj.somma = perRarityCount;
     report = new CollectionReport(
       this.name,
       this.classes.map((classe, index) => [index, classe.name]),
       this.rarities.map((rarity, index) => [index, rarity.name]),
       this.layers.map((layer, index) => [index, layer.name]),
       this.elements.map((element, index) => [index, element.name]),
-      { perLayer: servedRarityObj, totali: this.possibiliDna.length },
+      { perRarity: servedRarityObj, totali: this.possibiliDna.length },
       this.supply,
-      []
+      this.picker.estrazione.elementiRimanenti
     );
-
     return report;
   }
   picker: IPicker<IDna>;
+  /**
+   *
+   * @param name Nome della collezione.
+   * @param symbol Symbolo della collezione (ticker blockchain).
+   * @param supply Quantità di token.
+   * @param baseURI Base URI per la collezione (URL)
+   * @param description Descrizione della collezione-
+   * @param path Percorso dei files.
+   * @param type Tipo di collezione.
+   * @param outputPath percorso dove vengono renderizzati i files.
+   * @param width Larghezza dell'immagine.
+   * @param height Altezza dell'immagine.
+   */
   constructor(
     name: string,
     symbol: string,
@@ -408,7 +311,7 @@ export class Collection extends SmartContract implements ICollection {
     description: string,
     path: string,
     type: 'Edition' | 'Element',
-    outputPath: string = '/Users/WAW/Documents/Projects/zion-GenerativeArtMachine/Machines/GenerativeArtMachine/Machines',
+    outputPath: string,
     width = 1000,
     height = 1000
   ) {
@@ -425,12 +328,18 @@ export class Collection extends SmartContract implements ICollection {
     this.#buildSistemEntities(system.buildTree);
     this.#loadElements();
     this.picker = new Picker<IDna>(this.possibiliDna);
+    this.#editionsReport = new EditionsReport(this.name + 'Report');
+
     // this.newPicker = this.#collectionPicker();
   }
   hasDir(): boolean {
     const folders = system.arrayOfFoldersInDirectory(this.outputPath);
     return folders.some(element => element.name === this.name);
   }
+  /**
+   * crea una directory
+   * @returns {Collection}
+   */
   creaDirectory(): Collection {
     if (this.hasDir()) throw Error('Non è stato possibile');
     if (!this.hasDir()) {
@@ -472,7 +381,7 @@ export class Collection extends SmartContract implements ICollection {
     );
     return newEdizione;
   }
-  creaEdizioneNVolte(volte: number, classe: IClass) {
+  creaEdizioni(volte: number, classe: IClass) {
     let servedArray = [];
     while (volte) {
       volte--;
@@ -481,10 +390,32 @@ export class Collection extends SmartContract implements ICollection {
     }
     return servedArray;
   }
+  // TODO fare creaTutteLeEdizioni()
   creaTutteLeEdizioni(): IEdition[] {
     let servedArray: IEdition[] = [];
     return servedArray;
   }
+  async stampaEdizione(edizione: IEdition): Promise<ICollection> {
+    this.drawer.printImage(edizione);
+    return this;
+  }
+  /**
+   *
+   */
+  possibiliDnaPerLayer = (rarities: IRarity[]): IDna[] => {
+    let res: IDna[] = [];
+    let checkRaritiesByLayer = (dna: IDna) => {
+      let resArray: boolean[] = [];
+      rarities.forEach((rarity, index) => {
+        const evaluedElement = dna.combination[index];
+        const eConnesso: boolean = evaluedElement.èConnessoA(rarity);
+        resArray.push(eConnesso);
+      });
+      if (!resArray.some(e => e === false)) res.push(dna);
+    };
+    this.possibiliDna.forEach(checkRaritiesByLayer);
+    return res;
+  };
   #buildSistemEntities(strategy: typeof system.buildTree) {
     const index = this.#types.findIndex(e => e === this.type);
     if (!this.path) return 'no path';
@@ -604,6 +535,7 @@ export class Collection extends SmartContract implements ICollection {
     });
     return this.drawer!.loadedImages;
   }
+  // TODO eliminare #collectionPicker?
   #collectionPicker() {
     new Metodo('Edition', this.#metodoEdition);
     new Metodo('Element', this.#metodoElement);
@@ -623,4 +555,31 @@ export class Collection extends SmartContract implements ICollection {
     }
     return stack;
   };
+  #controllaPuri(
+    gruppo: [string[], IDna[], number],
+    res: [string[], IDna[], number][] = [],
+    negative: boolean = false
+  ) {
+    let set = new Set(),
+      condizione: boolean;
+    gruppo[0].forEach(name => set.add(name));
+    if (!negative) condizione = set.size === 1;
+    else condizione = set.size !== 1;
+
+    if (condizione) res.push(gruppo);
+  }
+  #possibiliDnaLayer(
+    rarityLayersCombination: IRarity[],
+    possibiliDnaPerLayer: Function,
+    response: [string[], IDna[], number][]
+  ) {
+    let res = possibiliDnaPerLayer(rarityLayersCombination);
+    let tuple: [string[], IDna[], number] = [[], [], 0];
+    let names: string[] = [];
+    rarityLayersCombination.forEach(rarity => names.push(rarity.name));
+    tuple[0] = names;
+    tuple[1] = res;
+    tuple[2] = res.length;
+    response.push(tuple);
+  }
 }

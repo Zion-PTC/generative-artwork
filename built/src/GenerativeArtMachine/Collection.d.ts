@@ -8,40 +8,8 @@ import { IPicker } from '@zionstate/generator';
 import { IDna } from './Dna.js';
 import { IEdition } from './Edition.js';
 import { ISystemEntity } from './SystemEntity.js';
-declare class CollectionReport {
-    name: string;
-    classes: [number, string][];
-    rarities: [number, string][];
-    layers: [number, string][];
-    elements: [number, string][];
-    possibleCombinations: {
-        perLayer: {
-            [key: string]: number;
-        };
-        totali: number;
-    };
-    supply: number;
-    extractableCombinations: IDna[];
-    constructor(name: string, classes: [number, string][], rarities: [number, string][], layers: [number, string][], elements: [number, string][], possibleCombinations: {
-        perLayer: {
-            [key: string]: number;
-        };
-        totali: number;
-    }, supply: number, extractableCombinations: IDna[]);
-}
-declare class EditionsReport {
-    #private;
-    collection: string;
-    createdEditions: IEdition[];
-    elementsReport: {
-        [key: string]: string;
-    };
-    set elementUsage(elementUsage: string);
-    get createdEditionsAmount(): number | undefined;
-    constructor(collection: string, createdEditions?: IEdition[], elementsReport?: {
-        [key: string]: string;
-    });
-}
+import { CollectionReport } from './Collection/CollectionReport.js';
+import { EditionsReport } from './Collection/EditionsReport.js';
 declare type SystemEntities = IClass | IElement | IEdition | ILayer;
 /**
  * @param {number} id identificativo della collezione
@@ -77,15 +45,16 @@ export interface ICollection extends ISmartContract {
     get nodeNames(): string[];
     get nodesIds(): (string | number)[];
     get elementsByLayer(): IElement[][];
-    get elementsByLayerByRarity(): IElement[][][];
+    get gruppiDna(): [string[], IDna[], number][];
     get possibiliDna(): IDna[];
-    get possibiliDnaPerRarità(): IDna[][];
     get report(): CollectionReport;
     hasDir(): boolean;
     creaDirectory(): Collection;
     creaEdizione(classe: IClass): IEdition;
-    creaEdizioneNVolte(volte: number, classe: IClass): IEdition[];
+    creaEdizioni(volte: number, classe: IClass): IEdition[];
     creaTutteLeEdizioni(): IEdition[];
+    stampaEdizione(edizione: IEdition): Promise<ICollection>;
+    possibiliDnaPerLayer(rarities: IRarity[]): IDna[];
 }
 export declare class Collection extends SmartContract implements ICollection {
     #private;
@@ -110,12 +79,18 @@ export declare class Collection extends SmartContract implements ICollection {
     get rarities(): IRarity[];
     get layers(): ILayer[];
     get elements(): IElement[];
-    /**
-     * @returns {Class[]}
-     */
     get classes(): IClass[];
+    /**
+     *
+     */
     get nodeNames(): string[];
+    /**
+     *
+     */
     get nodesIds(): (string | number)[];
+    /**
+     *
+     */
     get collectionPath(): string;
     /**
      * Ritorna un array con degli array contenenti gli
@@ -125,18 +100,45 @@ export declare class Collection extends SmartContract implements ICollection {
      */
     get elementsByLayer(): IElement[][];
     /**
-     * Ritorna un array contenente un array per ogni rarità.
-     * Ogni array a sua volta contiene un array per ogni
-     * layer. Ognuno di questi array contiene gli elementi del
-     * layer raggruppati in sostanza per rarità.
+     *
      */
-    get elementsByLayerByRarity(): IElement[][][];
     get possibiliDna(): IDna[];
-    get possibiliDnaPerRarità(): IDna[][];
+    /**
+     * @returns Ritorna una lista di tuple
+     */
+    get gruppiDna(): [string[], IDna[], number][];
+    /**
+     * @returns Ritorna una lista contenente un gruppo di DNA
+     */
+    get gruppiDnaPuri(): [string[], IDna[], number][];
+    /**
+     *
+     */
+    get gruppiDnaImpuri(): [string[], IDna[], number][];
+    /**
+     *
+     */
     get report(): CollectionReport;
     picker: IPicker<IDna>;
-    constructor(name: string, symbol: string, supply: number, baseURI: URL, description: string, path: string, type: 'Edition' | 'Element', outputPath?: string, width?: number, height?: number);
+    /**
+     *
+     * @param name Nome della collezione.
+     * @param symbol Symbolo della collezione (ticker blockchain).
+     * @param supply Quantità di token.
+     * @param baseURI Base URI per la collezione (URL)
+     * @param description Descrizione della collezione-
+     * @param path Percorso dei files.
+     * @param type Tipo di collezione.
+     * @param outputPath percorso dove vengono renderizzati i files.
+     * @param width Larghezza dell'immagine.
+     * @param height Altezza dell'immagine.
+     */
+    constructor(name: string, symbol: string, supply: number, baseURI: URL, description: string, path: string, type: 'Edition' | 'Element', outputPath: string, width?: number, height?: number);
     hasDir(): boolean;
+    /**
+     * crea una directory
+     * @returns {Collection}
+     */
     creaDirectory(): Collection;
     /**
      * Accetta un lista di array, che corrisponde ai layer
@@ -144,7 +146,12 @@ export declare class Collection extends SmartContract implements ICollection {
      * @returns {Dna}
      */
     creaEdizione(classe: IClass): IEdition;
-    creaEdizioneNVolte(volte: number, classe: IClass): IEdition[];
+    creaEdizioni(volte: number, classe: IClass): IEdition[];
     creaTutteLeEdizioni(): IEdition[];
+    stampaEdizione(edizione: IEdition): Promise<ICollection>;
+    /**
+     *
+     */
+    possibiliDnaPerLayer: (rarities: IRarity[]) => IDna[];
 }
 export {};
