@@ -215,7 +215,6 @@ export class Collection extends SmartContract {
      */
     get report() {
         let report, servedRarityObj = {}, perRarityCount = 0;
-        // TODO cambiare la funzione da possibiliDna.. a gruppiDnaPuri
         this.gruppiDnaPuri.forEach((tuple, index) => (servedRarityObj[index.toString()] = tuple[2]));
         for (let key in servedRarityObj) {
             perRarityCount = perRarityCount + servedRarityObj[key];

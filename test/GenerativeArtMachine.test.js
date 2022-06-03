@@ -41,6 +41,6 @@ let newCollection = new Collection(
 );
 
 log(newCollection.possibiliDna);
-newCollection.creaEdizione(newCollection.classes[0]);
-newCollection.creaEdizione(newCollection.classes[0]);
-log(newCollection.editionsReport.percentageReport);
+// log(newCollection.editionsReport.percentageReport);
+log(newCollection.gruppiDnaPuri);
+// log(newCollection.gruppiDnaImpuri);
