@@ -43,6 +43,12 @@
     {
       "name": "canvas",
       "path": "../../packages/@zionrepack/canvas"
+    },
+    {
+      "path": "../../packages/@zionstate/terminal"
+    },
+    {
+      "path": "../../packages/@zionstate/colors"
     }
   ],
   "settings": {}
